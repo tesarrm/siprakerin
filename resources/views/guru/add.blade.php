@@ -266,11 +266,19 @@
         }
     });
 
+    // Buat variabel untuk mengecek jika tombol submit ditekan
+    let isSubmit = false;
+
+    // Tambahkan event listener pada tombol submit
+    const submitButton = document.querySelector('button[type="submit"]');
+    submitButton.addEventListener('click', function () {
+        isSubmit = true;
+    });
+
     // Listen for page unload (when user navigates away from the page)
     window.addEventListener('beforeunload', function(event) {
-        // Check if there is a file in FilePond
-        if (pond.getFiles().length > 0) {
-            // Trigger revert for each file
+        // Jika tombol submit belum ditekan, jalankan proses revert FilePond
+        if (!isSubmit && pond.getFiles().length > 0) {
             pond.getFiles().forEach(fileItem => {
                 pond.removeFile(fileItem.id, {
                     revert: true

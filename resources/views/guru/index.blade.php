@@ -157,6 +157,7 @@
             'action' => $d->id, // Gunakan ID ini untuk aksi
         ];
     }
+
     @endphp
 
     {{-- script untuk datatable --}}

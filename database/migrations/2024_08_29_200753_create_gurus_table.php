@@ -17,13 +17,11 @@ return new class extends Migration
             $table->string('nip')->nullable();
             $table->string('nama_guru')->nullable();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
-            $table->enum('peran', ['Admin', 'Kepala Bengkel', 'Siswa'])->nullable();
+            $table->enum('peran', ['Admin', 'Kepala Bengkel', 'Guru'])->nullable();
             $table->string('wali_kelas')->nullable();
             $table->string('username')->nullable();
             $table->string('password')->nullable();
             $table->timestamps();
-            // $table->foreignIdFor(Peserta::class, 'id_peserta');
-            // $table->foreign('id_peserta')->references($peserta->getKeyName())->on($peserta->getTable())->onDelete('cascade');
         });
     }
 

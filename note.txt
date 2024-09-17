@@ -1,0 +1,134 @@
+# Admin
+
+================================
+## Guru
+
+### Feature
+- tambah manual
+- tambah excel 
+- edit 
+- reset password ke default 
+- nonaktif
+
+## Guru
+
+### Table
+id
+nama
+
+================================
+## Pengaturan (single)
+
+### Table
+tahun_ajaran
+
+================================
+## Bidang Keahlian
+
+### Table
+id
+nama
+
+================================
+## Jurusan
+
+### Table
+id
+nama
+bidang_keahlian_id
+
+================================
+## Kelas
+
+### Tabel
+id
+nama
+tahun_ajaran (dari pengaturan)
+jurusan_id
+klasifikasi
+guru_id (wali kelas)
+
+================================
+## Siswa 
+
+### Table
+id
+nis
+nama
+jenis_kelamin
+kelas_id
+username
+password
+
+================================
+## Kota
+
+### Table
+id
+nama
+
+================================
+## Industri 
+
+### Table
+id
+nama 
+kota
+
+================================
+## Kuota Industri 
+
+### Table
+id
+industri_id
+jurusan_id
+kuota
+
+================================
+## Pilihan Kota
+
+### Table
+id
+siswa_id
+kota_id_1
+kota_id_2
+kota_id_3
+status
+
+================================
+## Penempatan Industri
+
+### Table
+id
+industri_id
+siswa_id
+
+================================
+## Jurnal 
+
+### Table
+id
+siswa_id
+tanggal_waktu
+kegiatan => textedior
+keterangan
+
+================================
+## Jadwal Monitoring 
+
+### Table
+id
+guru_id
+industri_id
+tanggal
+
+================================
+## Hasil Monitoring
+
+### Table
+id
+monitoring_id
+kedisiplinan
+sikap
+kerjasama
+catatan

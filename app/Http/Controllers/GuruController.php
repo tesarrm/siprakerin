@@ -49,39 +49,6 @@ class GuruController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    // public function store(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'gambar' => 'required|string',
-    //         'nip' => 'required|digits:18|unique:gurus,nip',
-    //         'nama_guru' => 'required|string|max:255',
-    //         'jenis_kelamin' => 'required|in:L,P',
-    //         'peran' => 'required|string|max:50',
-    //         'wali_kelas' => 'nullable|string|max:50',
-    //         'username' => 'required|string|unique:gurus,username|max:255',
-    //         'password' => 'required|string|min:8|confirmed',
-    //     ]);
-
-    //     // $tmp_file = TemporaryFile::where('folder', $request->gambar)->first();
-    //     $tmp_file = TemporaryFile::where('folder', $validatedData['gambar'])->first();
-
-
-    //     if($tmp_file){
-    //         Storage::copy('posts/tmp/' . $tmp_file->folder . '/'.$tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
-
-    //         $create = collect($request->only($this->guruModel->getFillable()))
-    //             ->put('gambar', $tmp_file->folder . '/' . $tmp_file->file)
-    //             ->toArray();
-    //         $this->guruModel->create($create);
-
-    //         Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
-    //         $tmp_file->delete();
-
-    //         return redirect('guru')->with('status', 'Data berhasil ditambah!');
-    //     }
-
-    // }
-
     public function store(Request $request)
     {
         // Validasi input
