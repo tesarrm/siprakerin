@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Industri;
+use App\Models\Kota;
 use Illuminate\Http\Request;
 
 class IndustriController extends Controller
@@ -17,7 +18,7 @@ class IndustriController extends Controller
      */
     public function index()
     {
-        $data = $this->model->get();
+        $data = $this->model->with('kota')->get();
 
         return view('industri.index', [
             'data' => $data
@@ -29,7 +30,11 @@ class IndustriController extends Controller
      */
     public function create()
     {
-        return view('industri.add');
+        $kota = Kota::get();
+
+        return view('industri.add', [
+            'kota' => $kota
+        ]);
     }
 
     /**
@@ -63,8 +68,11 @@ class IndustriController extends Controller
      */
     public function edit(Industri $industri)
     {
+        $kota = Kota::with('kota')->get();
+
         return view('industri.edit', [
-            'data' => $industri
+            'data' => $industri,
+            'kota' => $kota
         ]);
     }
 

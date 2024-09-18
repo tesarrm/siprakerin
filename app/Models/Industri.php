@@ -12,16 +12,19 @@ class Industri extends Model
     protected $fillable = [
         'nama',
         'alamat',
-        'kota'
+        'kota_id'
     ];
 
     public function kuotaIndustri()
     {
         return $this->hasMany(KuotaIndustri::class);
     }
-
     public function penempatanIndustri()
     {
         return $this->hasMany(PenempatanIndustri::class);
+    }
+    public function kota()
+    {
+        return $this->belongsTo(Kota::class);
     }
 }

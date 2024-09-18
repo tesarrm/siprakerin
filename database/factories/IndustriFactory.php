@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Kota;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +20,7 @@ class IndustriFactory extends Factory
         return [
             'nama' => $this->faker->name(),
             'alamat' => $this->faker->name(),
-            'kota' => $this->faker->name(),
+            'kota_id' => Kota::inRandomOrder()->first()->id,
         ];
     }
 }

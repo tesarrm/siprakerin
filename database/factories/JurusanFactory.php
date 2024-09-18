@@ -13,13 +13,13 @@ class JurusanFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama' => $this->faker->randomElement([
+            'nama' => $this->faker->unique()->randomElement([
                 'Rekayasa Perangkat Lunak', 
                 'Akuntansi', 
                 'Keperawatan', 
                 'Agribisnis Tanaman'
             ]),
-            'singkatan' => $this->faker->randomElement([
+            'singkatan' => $this->faker->unique()->randomElement([
                 'RPL', 
                 'AK', 
                 'KN', 

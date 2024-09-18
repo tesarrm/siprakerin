@@ -29,12 +29,16 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="kota" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota<span class="text-danger">*</span></label>
+                                <div class="flex items-center mt-4">
+                                    <label for="kota_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota<span class="text-danger">*</span></label>
                                     <div class="flex-1">
-                                        <input value="{{ $data->kota }}" required id="kota" type="text" name="kota" class="form-input w-full" 
-                                            placeholder="Isi Kota" />
-                                        @error('kota')
+                                        <select required id="kota_id" name="kota_id" class="form-select w-full">
+                                            <option value="">Pilih Kota</option>
+                                            @foreach($kota as $item)
+                                                <option value="{{ $item->id }}" @selected($data->kota_id == $item->id)>{{ $item->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('kota_id')
                                             <div class="mt-2 text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>

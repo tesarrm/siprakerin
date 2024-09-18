@@ -28,12 +28,26 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="mt-4 flex items-center">
+                                {{-- <div class="mt-4 flex items-center">
                                     <label for="kota" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota<span class="text-danger">*</span></label>
                                     <div class="flex-1">
                                         <input required id="kota" type="text" name="kota" class="form-input w-full" 
                                             placeholder="Isi Kota" />
                                         @error('kota')
+                                            <div class="mt-2 text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div> --}}
+                                <div class="flex items-center mt-4">
+                                    <label for="kota_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota<span class="text-danger">*</span></label>
+                                    <div class="flex-1">
+                                        <select required id="kota_id" name="kota_id" class="form-select w-full">
+                                            <option value="">Pilih Kota</option>
+                                            @foreach($kota as $item)
+                                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('kota_id')
                                             <div class="mt-2 text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>

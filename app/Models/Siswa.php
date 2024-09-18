@@ -23,4 +23,8 @@ class Siswa extends Model
     {
         return $this->belongsTo(Kelas::class);
     }
+    public function pilihankota()
+    {
+        return $this->hasOne(PilihanKota::class);
+    }
 }

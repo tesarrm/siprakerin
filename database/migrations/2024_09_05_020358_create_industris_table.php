@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama')->nullable();
             $table->text('alamat')->nullable();
-            $table->string('kota')->nullable();
+            $table->foreignId('kota_id')->constrained('kotas')->onDelete('cascade');
             $table->timestamps();
         });
     }

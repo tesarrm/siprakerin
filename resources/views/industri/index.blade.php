@@ -150,7 +150,7 @@
             'id' => $d->id,
             'nama' => $d->nama,
             'alamat' => $d->alamat,
-            'kota' => $d->nama,
+            'kota' => $d->kota->nama,
             'action' => $d->id, // Gunakan ID ini untuk aksi
         ];
     }

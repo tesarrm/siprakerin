@@ -15,7 +15,7 @@ class BidangKeahlianFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama' => $this->faker->randomElement([
+            'nama' => $this->faker->unique()->randomElement([
                 'Teknologi Informasi dan Komunikasi', 
                 'Bisnis dan Manajemen', 
                 'Kesehatan', 

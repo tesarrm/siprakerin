@@ -2,7 +2,7 @@
 
     <script src="/assets/js/simple-datatables.js"></script>
 
-   @php
+    @php
     $items = [];
     $allJurusan = $jurusan->pluck('singkatan'); 
 
@@ -81,8 +81,6 @@
             }
         }
     }
-
-    // dd($output);
     @endphp
 
     <div>
@@ -122,10 +120,10 @@
                             </div>
                             <div class="lg:w-1/2 w-full pt-6">
                                 <div class="mt-4 flex items-center">
-                                    <label for="kota" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota<span class="text-danger">*</span></label>
+                                    <label for="kota_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota<span class="text-danger">*</span></label>
                                     <div class="flex-1">
-                                        <input value="{{ $industri->kota }}" required id="kota" type="text" class="form-input w-full" placeholder="Isi Kota" />
-                                        @error('kota')
+                                        <input value="{{ $industri->kota->nama }}" required id="kota_id" type="text" class="form-input w-full" placeholder="Isi Kota" />
+                                        @error('kota_id')
                                             <div class="mt-2 text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -268,61 +266,6 @@
             </div>
         </form>
     </div>
-
-    <!-- AlpineJS Script -->
-    {{-- <script>
-        document.addEventListener("alpine:init", () => {
-            Alpine.data("form", () => ({
-                tableData: @json($siswaTerfilter).map(siswa => ({
-                    id_siswa: siswa.id,
-                    jenis_kelamin: siswa.jenis_kelamin,
-                    kelas: siswa.kelas.nama + " " + siswa.kelas.klasifikasi,
-                    jurusan: siswa.kelas.jurusan.singkatan + " (" + siswa.kelas.jurusan.nama + ")",
-                    tahun_ajaran: (() => {
-                        let penempatanSiswa = @json($penempatan).find(penempatan => penempatan.siswa_id == siswa.id);
-                        return penempatanSiswa ? penempatanSiswa.tahun_ajaran : "";
-                    })()
-                })),
-                siswaData: @json($siswa),
-                initialize() {
-                    this.tableData.forEach((row, index) => {
-                        this.$nextTick(() => {
-                            let selectElement = document.querySelector(`select[name="data[${index}][id_siswa]"]`);
-                            if (selectElement) {
-                                selectElement.value = row.id_siswa;
-                            }
-                        });
-                    });
-                },
-                pengaturan: @json($pengaturan),
-                addRow() {
-                    this.tableData.push({ id_siswa: '', jenis_kelamin: '', kelas: '', jurusan: '', tahun_ajaran: '' });
-                },
-                removeRow(index) {
-                    this.tableData.splice(index, 1);
-                },
-                updateSiswa(id, index) {
-                    const selectedSiswa = this.siswaData.find(s => s.id == id);
-                    
-                    // Check for duplicate
-                    const isDuplicate = this.tableData.some((row, i) => row.id_siswa == id && i != index);
-                    if (isDuplicate) {
-                        alert('Siswa sudah dipilih di baris lain.');
-                        // Reset the selection
-                        this.tableData[index].id_siswa = '';
-                        return;
-                    }
-                    
-                    if (selectedSiswa) {
-                        this.tableData[index].jenis_kelamin = selectedSiswa.jenis_kelamin;
-                        this.tableData[index].kelas = selectedSiswa.kelas.nama + " " + selectedSiswa.kelas.klasifikasi;
-                        this.tableData[index].jurusan = selectedSiswa.kelas.jurusan.singkatan + " (" + selectedSiswa.kelas.jurusan.nama + ")";
-                        this.tableData[index].tahun_ajaran = this.pengaturan.tahun_ajaran;
-                    }
-                }
-            }));
-        });
-    </script> --}}
 
     <script>
         document.addEventListener("alpine:init", () => {

@@ -17,6 +17,7 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PilihanKotaController;
 use App\Http\Controllers\SiswaController;
 use App\Models\Jurnal;
+use App\Models\PilihanKota;
 
 Route::view('/', 'index');
 Route::view('/tabel', 'tabel');
@@ -55,6 +56,7 @@ Route::post('/kuota-industri', [KuotaIndustriController::class, 'storeOrUpdate']
 Route::resource('kota', KotaController::class);
 
 Route::resource('pilihankota', PilihanKotaController::class);
+Route::post('/pilihankota', [PilihanKotaController::class, 'storeOrUpdate']);
 
 Route::resource('penempatan', PenempatanIndustriController::class);
 Route::post('/penempatan', [PenempatanIndustriController::class, 'storeOrUpdate'])->name('penempatan.storeOrUpdate');

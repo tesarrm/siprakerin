@@ -11,7 +11,7 @@
             <div class="px-5">
                 <div class="md:absolute md:top-5 ltr:md:left-5 rtl:md:right-5">
                     <div class="flex items-center gap-2 mb-5">
-                        <button type="button" class="btn btn-danger gap-2" @click="deleteRow()">
+                        {{-- <button type="button" class="btn btn-danger gap-2" @click="deleteRow()">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                                 <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5"
@@ -35,9 +35,9 @@
                                 <line x1="12" y1="5" x2="12" y2="19"></line>
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
-                            Tambah </a>
+                            Tambah </a> --}}
                         {{-- menu dropdown --}}
-                        <div class="relative inline-flex align-middle flex-col items-start justify-center">
+                        {{-- <div class="relative inline-flex align-middle flex-col items-start justify-center">
                             <div class="relative">
                                 <div x-data="dropdown" @click.outside="open = false" class="dropdown">
                                     <button type="button" class="btn dropdown-toggle btn-outline-dark"
@@ -57,7 +57,19 @@
                                     </ul>
                                 </div>
                             </div>
+                        </div> --}}
+
+                        <div class="" style="width: 150px">
+                            <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
+                                <option value="">Pilih Kelas</option>
+                                @foreach($kelas as $item)
+                                    <option value="{{ $item->nama . ' ' . $item->klasifikasi }}">
+                                        {{ $item->nama . ' ' . $item->klasifikasi }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
+
                         {{-- isi modal --}}
                         <div x-data="modal" @open-modal.window="toggle">
                             <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
@@ -147,13 +159,14 @@
     $items = [];
     foreach ($data as $d) {
         $items[] = [
-            'id' => $d->id,
-            'siswa' => $d->siswa->nama,
-            'kota_1' => $d->kota1->nama,
-            'kota_2' => $d->kota2->nama,
-            'kota_3' => $d->kota3->nama,
-            'status' => $d->status,
-            'action' => $d->id, // Gunakan ID ini untuk aksi
+            'id' => $d['siswa']->id,
+            'siswa' => $d['siswa']->nama,
+            'kelas' => $d['siswa']->kelas->nama . " " . $d['siswa']->kelas->klasifikasi,
+            'kota_1' => $d['kota1'],
+            'kota_2' => $d['kota2'],
+            'kota_3' => $d['kota3'],
+            'status' => $d['status'],
+            'action' => $d['siswa']->id, // Gunakan ID ini untuk aksi
         ];
     }
     @endphp
@@ -162,26 +175,44 @@
     <script>
         document.addEventListener("alpine:init", () => {
             Alpine.data('invoiceList', () => ({
-                selectedRows: [],
-                items: @json($items),
-                searchText: '',
-                datatable: null,
-                dataArr: [],
+                // selectedRows: [],
+                // items: @json($items),
+                // searchText: '',
+                // datatable: null,
+                // dataArr: [],
 
-                init() {
-                    this.setTableData();
-                    this.initializeTable();
-                    this.$watch('items', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
-                    });
-                    this.$watch('selectedRows', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
-                    });
-                },
+                // init() {
+                //     this.setTableData();
+                //     this.initializeTable();
+                //     this.$watch('items', value => {
+                //         this.datatable.destroy()
+                //         this.setTableData();
+                //         this.initializeTable();
+                //     });
+                //     this.$watch('selectedRows', value => {
+                //         this.datatable.destroy()
+                //         this.setTableData();
+                //         this.initializeTable();
+                //     });
+                // },
+
+        selectedRows: [],
+        items: @json($items),
+        searchText: '',
+        selectedKelas: '', // Tambahkan untuk pilihan kelas
+        datatable: null,
+        dataArr: [],
+
+        init() {
+            this.setTableData();
+            this.initializeTable();
+            this.$watch('items', value => {
+                this.refreshTable();
+            });
+            this.$watch('selectedRows', value => {
+                this.refreshTable();
+            });
+        },
 
                 initializeTable() {
                     this.datatable = new simpleDatatables.DataTable('#myTable', {
@@ -189,6 +220,7 @@
                             headings: [
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                                 "Siswa",
+                                "Kelas",
                                 "Pilihan 1",
                                 "Pilihan 2",
                                 "Pilihan 3",
@@ -208,11 +240,11 @@
                                 }
                             },
                             {
-                                select: 6,
+                                select: 7,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">
-                                                <a href="/jurusan/${data}/edit" class="hover:text-info">
+                                                <a href="/pilihankota/${data}/edit" class="hover:text-info">
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5">
                                                         <path
                                                             opacity="0.5"
@@ -291,17 +323,38 @@
                     }
                 },
 
-                setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
-                    }
-                },
+        refreshTable() {
+            this.datatable.destroy();
+            this.setTableData();
+            this.initializeTable();
+        },
+
+                // setTableData() {
+                //     this.dataArr = [];
+                //     for (let i = 0; i < this.items.length; i++) {
+                //         this.dataArr[i] = [];
+                //         for (let p in this.items[i]) {
+                //             if (this.items[i].hasOwnProperty(p)) {
+                //                 this.dataArr[i].push(this.items[i][p]);
+                //             }
+                //         }
+                //     }
+                // },
+
+       setTableData() {
+            this.dataArr = this.items
+                .filter(item => {
+                    // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                    return this.selectedKelas === '' || item.kelas === this.selectedKelas;
+                })
+                .map(item => {
+                    return Object.values(item); // Mengonversi setiap item ke array data
+                });
+        },
+
+        filterByKelas() {
+            this.refreshTable(); // Muat ulang tabel ketika filter berubah
+        },
 
                 searchInvoice() {
                     return this.items.filter((d) =>

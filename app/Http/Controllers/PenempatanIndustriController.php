@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Industri;
 use App\Models\Jurusan;
+use App\Models\Kota;
 use App\Models\PenempatanIndustri;
 use App\Models\Pengaturan;
 use App\Models\Siswa;
@@ -78,19 +79,30 @@ class PenempatanIndustriController extends Controller
      */
     public function edit($industri_id)
     {
-        $industri = Industri::findOrFail($industri_id);
+        $industri = Industri::with('kota')->findOrFail($industri_id);
         $siswa = Siswa::with(['kelas.jurusan'])->get();
         $pengaturan = Pengaturan::first();
-        
-        // dd($siswa);
 
-        // dd($pengaturan);
+        // $kota_id = $industri->kota->id;
+
+        // // Filter siswa berdasarkan pilihan_kotas yang kota_id_1, kota_id_2, atau kota_id_3 cocok dengan kota_id industri
+        // $siswa = Siswa::with(['kelas.jurusan'])
+        //     ->whereHas('pilihankota', function ($query) use ($kota_id) {
+        //         $query->where('kota_id_1', $kota_id)
+        //             ->orWhere('kota_id_2', $kota_id)
+        //             ->orWhere('kota_id_3', $kota_id);
+        //     })
+        //     ->get();
 
         $data = Industri::with(['kuotaIndustri', 'kuotaIndustri.jurusan'])->where('id', $industri_id)->get();
         $jurusan = Jurusan::get();
 
         $penempatan = PenempatanIndustri::where('industri_id', $industri_id)->get();
         $siswaIds = $penempatan->pluck('siswa_id')->toArray();
+        // $siswa = Siswa::whereHas('pilihanKota')
+        //     ->whereIn('id', $siswaIds) 
+        //     ->with('kelas.jurusan')
+        //     ->get();
         $siswaTerfilter = Siswa::whereIn('id', $siswaIds)->with('kelas.jurusan')->get();
 
         return view('penempatan_industri.edit', compact(['penempatan', 'pengaturan','industri', 'siswa', 'siswaTerfilter', 'data', 'jurusan']));
