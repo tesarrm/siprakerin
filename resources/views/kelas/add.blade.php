@@ -4,72 +4,67 @@
             @csrf
             <div class="flex xl:flex-row flex-col gap-2.5">
                 <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
-                    <div class=" px-4">
-                        <div class="flex justify-between lg:flex-row flex-col">
-                            <div class="lg:w-1/2 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="text-lg font-semibold">Data Bidang Keahlian</div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input required id="reciever-name" type="text" name="nama" class="form-input w-full" 
-                                            placeholder="Isi Nama" />
-                                        @error('nama')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Tahun Ajaran<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input value="{{ $pengaturan->tahun_ajaran }}" id="reciever-name" type="text" name="tahun_ajaran" 
-                                            class="form-input disabled:pointer-events-none" readonly 
-                                            placeholder="Isi Tahun Ajaran" />
-                                        @error('tahun_ajaran')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center mt-4">
-                                    <label for="jurusan_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Jurusan<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="jurusan_id" name="jurusan_id" class="form-select w-full">
-                                            <option value="">Pilih Jurusan</option>
-                                            @foreach($jurusan as $item)
-                                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('jurusan_id')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+                    <div class="px-4">
+                        <div class="text-lg font-semibold mb-4">Data Kelas</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            {{-- <div>
+                                <label for="nama">Nama<span class="text-danger">*</span></label>
+                                <input required id="nama" type="text" name="nama" class="form-input w-full" 
+                                placeholder="Isi Nama" />
+                                @error('nama')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div> --}}
+                            <div>
+                                <label for="nama">Kelas</label>
+                                <select required id="nama" name="nama" class="form-select w-full">
+                                    <option value="">Pilih Kelas</option>
+                                    <option value="X">X</option>
+                                    <option value="XI">XI</option>
+                                    <option value="XII">XII</option>
+                                </select>
+                                @error('nama')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <div class="lg:w-1/2 w-full">
-                                <div class="mt-11 flex items-center">
-                                    <label for="klasifikasi" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Klasifikasi<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input required id="klasifikasi" type="text" name="klasifikasi" class="form-input w-full" 
-                                            placeholder="Isi Klasifikasi" />
-                                        @error('klasifikasi')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="flex items-center mt-4">
-                                    <label for="guru_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Wali Kelas<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="guru_id" name="guru_id" class="form-select w-full">
-                                            <option value="">Pilih Wali Kelas</option>
-                                            @foreach($guru as $item)
-                                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('jurusan_id')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+                            <div>
+                                <label for="tahun_ajaran">Tahun Ajaran<span class="text-danger">*</span></label>
+                                <input value="{{ $pengaturan->tahun_ajaran }} "required id="tahun_ajaran" type="text" name="tahun_ajaran" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                @error('tahun_ajaran')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="jurusan_id">Jurusan<span class="text-danger">*</span></label>
+                                <select required id="jurusan_id" name="jurusan_id" class="form-select w-full">
+                                    <option value="">Pilih Jurusan</option>
+                                    @foreach($jurusan as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('jurusan_id')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="klasifikasi">Klasifikasi<span class="text-danger">*</span></label>
+                                <input required id="klasifikasi" type="text" name="klasifikasi" class="form-input w-full" 
+                                placeholder="Isi Klasifikasi"/>
+                                @error('klasifikasi')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="guru_id">Wali Kelas<span class="text-danger">*</span></label>
+                                <select required id="guru_id" name="guru_id" class="form-select w-full">
+                                    <option value="">Pilih Wali Kelas</option>
+                                    @foreach($guru as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('guru_id')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -106,6 +101,8 @@
                                 Kembali </button>
                         </div>
                     </div>
+                </div>
+                <div class="xl:w-96 w-full xl:mt-0 mt-6">
                 </div>
             </div>
         </form>

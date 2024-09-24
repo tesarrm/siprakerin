@@ -119,7 +119,7 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="/apps/notes" class="group">
+                            <a href="/nonaktif" class="group">
                                 <div class="flex items-center">
 
                                     <svg class="group-hover:!text-primary shrink-0" width="20" height="20"
@@ -139,7 +139,7 @@
                                     </svg>
                                     <span
                                         class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                                        Tidak Aktif</span>
+                                        Nonaktif</span>
                                 </div>
                             </a>
                         </li>

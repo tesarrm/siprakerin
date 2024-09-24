@@ -6,32 +6,41 @@ use App\Exports\GuruExport;
 use App\Imports\GuruImport;
 use App\Models\Guru;
 use App\Models\TemporaryFile;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Rels;
 
 class GuruController extends Controller
 {
-    protected $guruModel;
+    protected $model;
     public function __construct(Guru $guru)
     {
-        $this->guruModel = $guru;
+        $this->model = $guru;
+
+        // $this->middleware('can:c_guru')->only(['index', 'show']);
+        // $this->middleware('can:r_guru')->only(['create', 'store']);
+        // $this->middleware('can:u_guru')->only(['edit', 'update']);
+        // $this->middleware('can:d_guru')->only('destroy');
+
     }
 
-    /**
-     * Display a listing of the resource.
-     */
+        // dd(auth()->user()->getRoleNames());
+        // dd(auth()->user()->getAllPermissions());
     public function index()
     {
-        // $guru = $this->guruModel->with(['peserta'])->get();
+        // Ambil semua data guru beserta user dan role terkait
+        $guru = $this->model->with(['user.roles', 'hoKelas'])->where('aktif', 1)->get()->map(function ($guru) {
+            // Ambil peran dari user yang terkait dengan guru
+            $guru->user->peran = $guru->user->roles->isNotEmpty() 
+                ? $guru->user->roles->pluck('name')->implode(', ')
+                : '-';
+            return $guru;
+        });
 
-        // return Controller::success('Berhasil Menampilkan Laporan', $guru);
-
-        $guru = $this->guruModel->get();
-
+        // Kirim data ke view
         return view('guru.index', [
             'guru' => $guru
         ]);
@@ -42,7 +51,6 @@ class GuruController extends Controller
      */
     public function create()
     {
-
         return view('guru.add');
     }
 
@@ -51,22 +59,51 @@ class GuruController extends Controller
      */
     public function store(Request $request)
     {
-        // Validasi input
         $validatedData = $request->validate([
+            'aktif' => 'nullable|string',
             'gambar' => 'nullable|string',
             'nip' => 'required|unique:gurus,nip',
-            'nama_guru' => 'required|string|max:255',
+            'no_ktp' => 'nullable|string',
+            'nama' => 'required|string|max:255',
+            'tempat_lahir' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|string',
             'jenis_kelamin' => 'required',
-            'peran' => 'required|string|max:50',
-            'wali_kelas' => 'nullable|string|max:50',
-            'username' => 'required|string|unique:gurus,username|max:255',
-            // 'password' => 'required|string|min:8|confirmed',
+            'golongan_darah' => 'nullable|string',
+            'kecamatan' => 'nullable|string',
+            'alamat' => 'nullable|string',
+            'rt' => 'nullable|string',
+            'rw' => 'nullable|string',
+            'kode_pos' => 'nullable|string',
+            'no_telp' => 'nullable|string',
+            'no_hp' => 'nullable|string',
+            'agama' => 'nullable|string',
+            'email' => 'required|string|unique:users,email|max:255',
             'password' => 'required',
         ]);
 
+        // buat data user
+        $user = User::create([
+            'name' => $validatedData['nama'], 
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']), 
+        ]);
+
+        // assign role
+        $user->assignRole('guru');
+        if (!empty($request->peran_admin)) {
+            $user->assignRole('admin');
+        }
+        if (!empty($request->peran_kabeng)) {
+            $user->assignRole('kabeng');
+        }
+        if (!empty($request->peran_ortu)) {
+            $user->assignRole('ortu');
+        }
+
+        // colect data sesaui dengan fillable
         $create = collect($validatedData);
 
-        // Jika ada gambar, proses seperti biasa
+        // kondisi cek gambar
         if (!empty($validatedData['gambar'])) {
             $tmp_file = TemporaryFile::where('folder', $validatedData['gambar'])->first();
 
@@ -79,29 +116,24 @@ class GuruController extends Controller
                 $tmp_file->delete();
             }
         } else {
-            // Jika tidak ada gambar, Anda bisa menetapkan nilai default atau membiarkan gambar kosong
             $create->put('gambar', null); // atau $create->forget('gambar');
         }
 
-        $this->guruModel->create($create->toArray());
+        // create guru
+        $create->put('user_id', $user->id);
+        Guru::create($create->toArray());
 
         return redirect('guru')->with('status', 'Data berhasil ditambah!');
     }
 
 
-    /**
-     * Display the specified resource.
-     */
+
     public function show($id)
     {
-        $laporan = $this->guruModel->with(['peserta'])->findOrFail($id);
 
-        // return Controller::success('Berhasil Menampilkan Laporan', $laporan);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+
     public function edit(Guru $guru)
     {
         //
@@ -110,23 +142,10 @@ class GuruController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    // public function update($id, Request $request)
-    // {
-    //     $guru = $this->guruModel->findOrFail($id);
-
-    //     $update = collect($request->only($this->guruModel->getFillable()))
-    //         ->toArray();
-    //     $guru->update($update);
-
-    //     return redirect('guru')->with('status', 'Data berhasil diubah!');
-    // }
 
     public function update($id, Request $request)
     {
-        $guru = $this->guruModel->findOrFail($id);
+        $guru = $this->model->findOrFail($id);
 
         $validatedData = $request->validate([
             'gambar' => 'nullable|string',
@@ -174,15 +193,12 @@ class GuruController extends Controller
         $guru->update($update->toArray());
 
         return redirect('guru')->with('status', 'Data berhasil diubah!');
-}
+    }
 
-
-    /**
-     * Remove the specified resource from storage.
-     */
+ 
     public function destroy($id)
     {
-        $guru = $this->guruModel->findOrFail($id);
+        $guru = $this->model->findOrFail($id);
 
         // Hapus gambar dan foldernya dari storage
         if ($guru->gambar) {
@@ -221,23 +237,12 @@ class GuruController extends Controller
         }
     }
 
-    // public function deleteMultiple(Request $request)
-    // {
-    //     $ids = $request->input('ids');
-    //     if (!empty($ids)) {
-    //         Guru::whereIn('id', $ids)->delete();
-    //         return response()->json(['success' => true]);
-    //     } else {
-    //         return response()->json(['success' => false, 'message' => 'Tidak ada data yang dipilih.']);
-    //     }
-    // }
-
     public function deleteMultiple(Request $request)
     {
         $ids = $request->input('ids');
 
         // Ambil semua data guru berdasarkan ID yang dipilih
-        $gurus = $this->guruModel->whereIn('id', $ids)->get();
+        $gurus = $this->model->whereIn('id', $ids)->get();
 
         foreach ($gurus as $guru) {
             // Hapus gambar dan foldernya dari storage
@@ -262,5 +267,45 @@ class GuruController extends Controller
     public function import(Request $request){
         Excel::import(new GuruImport, $request->file('excel'));
         return redirect('guru');
+    }
+
+    public function resetPassword($user_id)
+    {
+        $user = User::find($user_id);
+
+        if ($user) {
+            $user->password = Hash::make('password');
+            $user->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function nonaktif($id){
+        $data = $this->model->find($id);
+
+        if ($data) {
+            $data->aktif = 0;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function aktif($id){
+        $data = $this->model->find($id);
+
+        if ($data) {
+            $data->aktif = 1;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
     }
 }

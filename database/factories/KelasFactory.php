@@ -12,12 +12,15 @@ class KelasFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama' => $this->faker->word(),
-            // 'tahun_ajaran' => $this->faker->year() . '/' . $this->faker->year(),
+            'nama' => $this->faker->unique()->randomElement([
+                'X', 
+                'XI', 
+                'XII', 
+            ]),
             'tahun_ajaran' => "2024/2025",
-            'jurusan_id' => \App\Models\Jurusan::inRandomOrder()->first()->id, // Relasi ke jurusan
+            'jurusan_id' => \App\Models\Jurusan::inRandomOrder()->first()->id, 
             'klasifikasi' => $this->faker->randomElement(['A', 'B', 'C']),
-            'guru_id' => \App\Models\Guru::inRandomOrder()->first()->id, // Relasi ke guru
+            'guru_id' => \App\Models\Guru::inRandomOrder()->first()->id, 
         ];
     }
 }

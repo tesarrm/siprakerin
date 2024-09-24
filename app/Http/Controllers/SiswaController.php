@@ -3,9 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kelas;
+use App\Models\Ortu;
+use App\Models\OrtuSiswa;
+use App\Models\Pengaturan;
 use App\Models\Siswa;
 use App\Models\TemporaryFile;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class SiswaController extends Controller
@@ -14,14 +19,21 @@ class SiswaController extends Controller
     public function __construct(Siswa $a)
     {
         $this->model = $a;
+
+        // $this->middleware('can:c_siswa')->only(['index', 'show']);
+        // $this->middleware('can:r_siswa')->only(['create', 'store']);
+        // $this->middleware('can:u_siswa')->only(['edit', 'update']);
+        // $this->middleware('can:d_siswa')->only('destroy');
     }
 
     public function index()
     {
-        $data = $this->model->with('kelas')->get();
+        $data = $this->model->with(['kelas', 'user'])->where('aktif', 1)->get();
+        $pengaturan = Pengaturan::first();
 
         return view('siswa.index', [
-            'data' => $data
+            'data' => $data,
+            'pengaturan' => $pengaturan
         ]);
     }
 
@@ -30,10 +42,10 @@ class SiswaController extends Controller
      */
     public function create()
     {
-        $kelas = Kelas::get();
+        $kelas = Kelas::with('jurusan.bidangKeahlian')->get();
 
         return view('siswa.add', [
-            'kelas' => $kelas
+            'kelas' => $kelas,
         ]);
     }
 
@@ -44,18 +56,38 @@ class SiswaController extends Controller
     {
         // Validasi input
         $validatedData = $request->validate([
+            'kelas_id' => 'required|string',
+            'aktif' => 'nullable|string',
             'gambar' => 'nullable|string',
             'nis' => 'required|unique:siswas,nis',
+            'nisn' => 'nullable|string',
+            'nama_lengkap' => 'nullable|string',
             'nama' => 'required|string|max:255',
+            'tempat_lahir' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|string',
             'jenis_kelamin' => 'required',
-            'kelas_id' => 'required',
-            'username' => 'required|string|unique:siswas,username|max:255',
+            'agama' => 'nullable|string',
+            'alamat' => 'nullable|string',
+            'no_telp' => 'nullable|string',
+            'email' => 'required|string|unique:users,email|max:255',
             'password' => 'required',
         ]);
 
+
+        // buat data user
+        $user = User::create([
+            'name' => $validatedData['nama'], 
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']), 
+        ]);
+
+        // assign role
+        $user->assignRole('siswa');
+
+        // colect data sesaui dengan fillable
         $create = collect($validatedData);
 
-        // Jika ada gambar, proses seperti biasa
+        // kondisi cek gambar
         if (!empty($validatedData['gambar'])) {
             $tmp_file = TemporaryFile::where('folder', $validatedData['gambar'])->first();
 
@@ -68,11 +100,12 @@ class SiswaController extends Controller
                 $tmp_file->delete();
             }
         } else {
-            // Jika tidak ada gambar, Anda bisa menetapkan nilai default atau membiarkan gambar kosong
             $create->put('gambar', null); // atau $create->forget('gambar');
         }
 
-        $this->model->create($create->toArray());
+        // create siswa 
+        $create->put('user_id', $user->id);
+        Siswa::create($create->toArray());
 
         return redirect('siswa')->with('status', 'Data berhasil ditambah!');
     }
@@ -91,10 +124,16 @@ class SiswaController extends Controller
     public function edit(Siswa $siswa)
     {
         $kelas = Kelas::get();
+        $ortu = Ortu::with(['siswas', 'user'])->get();
+
+        // $siswa_ortu = Siswa::whereIn('id', $siswa->id)->with(['ortus.user'])->get();
+        $siswa_ortu = Siswa::with('ortus.user')->findOrFail($siswa->id);
 
         return view('siswa.edit', [
             'data' => $siswa,
-            'kelas' => $kelas
+            'kelas' => $kelas,
+            'ortu' => $ortu,
+            'siswa_ortu' => $siswa_ortu,
         ]);
     }
 
@@ -103,20 +142,28 @@ class SiswaController extends Controller
      */
     public function update($id, Request $request)
     {
-        $data = $this->model->findOrFail($id);
+        $data = Siswa::findOrFail($id);
 
         // Validasi input
         $validatedData = $request->validate([
+            'data.*.ortu_id' => 'required|string',
+            'kelas_id' => 'required|string',
+            'aktif' => 'nullable|string',
             'gambar' => 'nullable|string',
             'nis' => 'required|unique:siswas,nis,' . $id,
+            'nisn' => 'nullable|string',
+            'nama_lengkap' => 'nullable|string',
             'nama' => 'required|string|max:255',
+            'tempat_lahir' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|string',
             'jenis_kelamin' => 'required',
-            'kelas_id' => 'required',
-            'username' => 'required|string|unique:siswas,username,' . $id,
-            'password' => 'required',
+            'agama' => 'nullable|string',
+            'alamat' => 'nullable|string',
+            'no_telp' => 'nullable|string',
         ]);
 
-        $update = collect($validatedData);
+        // $update = collect($validatedData);
+        $update = collect($validatedData)->except('data');
 
         // Cek apakah ada gambar baru
         if (!empty($validatedData['gambar'])) {
@@ -145,6 +192,16 @@ class SiswaController extends Controller
                 Storage::delete('posts/' . $data->gambar); // Hapus gambar lama
             }
             $update->put('gambar', null);
+        }
+
+        OrtuSiswa::where('siswa_id', $id)
+                    ->delete();
+        foreach ($validatedData['data'] as $item) {
+            OrtuSiswa::updateOrCreate([
+                    'siswa_id' => $id,
+                    'ortu_id' => $item['ortu_id'],
+                ],
+            );
         }
 
         $data->update($update->toArray());
@@ -188,5 +245,45 @@ class SiswaController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    public function resetPassword($user_id)
+    {
+        $user = User::find($user_id);
+
+        if ($user) {
+            $user->password = Hash::make('password');
+            $user->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function nonaktif($id){
+        $data = $this->model->find($id);
+
+        if ($data) {
+            $data->aktif = 0;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function aktif($id){
+        $data = $this->model->find($id);
+
+        if ($data) {
+            $data->aktif = 1;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
     }
 }

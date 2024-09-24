@@ -1,6 +1,17 @@
 # Admin
 
 ================================
+## User 
+
+### Table
+id
+name
+email
+email_verified_at
+password
+
+
+================================
 ## Guru
 
 ### Feature
@@ -13,8 +24,26 @@
 ## Guru
 
 ### Table
-id
-nama
+id	
+user_id
+aktif
+gambar
+NIP	
+NO_KTP	
+NAMA	
+TEMPAT_LAHIR	
+TANGGAL_LAHIR	
+JENIS_KELAMIN	
+GOLONGAN_DARAH	
+KECAMATAN	
+ALAMAT	
+RT	
+RW	
+KODE_POS	
+NO_TELP	
+NO_HP	
+AGAMA	
+
 
 ================================
 ## Pengaturan (single)
@@ -48,17 +77,37 @@ jurusan_id
 klasifikasi
 guru_id (wali kelas)
 
+
+================================
+## Ortu 
+
+### Table
+id
+nama
+pekerjaan
+no_telp
+jenis_kelamin
+
+
 ================================
 ## Siswa 
 
 ### Table
 id
-nis
-nama
-jenis_kelamin
+user_id
 kelas_id
-username
-password
+aktif
+gambar
+nis
+nisn
+nama_lengkap
+nama
+tempat_lahir
+tanggal_lahir
+jenis_kelamin
+agama
+alamat
+no_telp
 
 ================================
 ## Kota

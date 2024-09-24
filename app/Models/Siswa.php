@@ -10,13 +10,20 @@ class Siswa extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
+        'kelas_id',
+        'aktif',
         'gambar',
         'nis',
+        'nisn',
+        'nama_lengkap',
         'nama',
+        'tempat_lahir',
+        'tanggal_lahir',
         'jenis_kelamin',
-        'kelas_id',
-        'username',
-        'password'
+        'agama',
+        'alamat',
+        'no_telp',
     ];
 
     public function kelas()
@@ -26,5 +33,13 @@ class Siswa extends Model
     public function pilihankota()
     {
         return $this->hasOne(PilihanKota::class);
+    }
+    public function ortus()
+    {
+        return $this->belongsToMany(Ortu::class, 'ortu_siswa');
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

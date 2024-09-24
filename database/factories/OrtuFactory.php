@@ -2,15 +2,14 @@
 
 namespace Database\Factories;
 
-use App\Models\Kelas;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Siswa>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Ortu>
  */
-class SiswaFactory extends Factory
+class OrtuFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -25,15 +24,13 @@ class SiswaFactory extends Factory
             'password' => Hash::make('password'), 
         ]);
 
-        $user->assignRole('siswa');
+        $user->assignRole('ortu');
 
         return [
-            'nis' => $this->faker->unique()->numerify('##########'), // 10 digit
-            'nama' => $this->faker->name(),
-            'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
-            'kelas_id' => Kelas::inRandomOrder()->first()->id,
             'user_id' => $user->id,
-            'gambar' => null, // Gambar di-set null
+            'nama' => $this->faker->name(),
+            'pekerjaan' => $this->faker->word(),
+            'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
         ];
     }
 }

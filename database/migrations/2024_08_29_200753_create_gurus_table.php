@@ -13,14 +13,24 @@ return new class extends Migration
     {
         Schema::create('gurus', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->boolean('aktif')->default(1);
             $table->text('gambar')->nullable();
             $table->string('nip')->nullable();
-            $table->string('nama_guru')->nullable();
+            $table->string('no_ktp')->nullable();
+            $table->string('nama')->nullable();
+            $table->string('tempat_lahir')->nullable();
+            $table->string('tanggal_lahir')->nullable();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
-            $table->enum('peran', ['Admin', 'Kepala Bengkel', 'Guru'])->nullable();
-            $table->string('wali_kelas')->nullable();
-            $table->string('username')->nullable();
-            $table->string('password')->nullable();
+            $table->string('golongan_darah')->nullable();
+            $table->string('kecamatan')->nullable();
+            $table->string('alamat')->nullable();
+            $table->string('rt')->nullable();
+            $table->string('rw')->nullable();
+            $table->string('kode_pos')->nullable();
+            $table->string('no_telp')->nullable();
+            $table->string('no_hp')->nullable();
+            $table->string('agama')->nullable();
             $table->timestamps();
         });
     }

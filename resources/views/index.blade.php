@@ -1,5 +1,22 @@
 <x-layout.default>
     <div>
-        <h1>starter page</h1>
+        @can('r_dashadmin')
+            <h1>admin</h1>
+        @endcan
+        @can('r_dashguru')
+            <h1>guru</h1>
+        @endcan
+        @can('r_dashkabeng')
+            <h1>kabeng</h1>
+        @endcan
+        @can('r_dashsiswa')
+            <h1>siswa</h1>
+        @endcan
+        @can('r_dashindustri')
+            <h1>industri</h1>
+        @endcan
+        @can('r_dashortu')
+            <h1>ortu</h1>
+        @endcan
     </div>
 </x-layout.default>

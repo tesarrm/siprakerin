@@ -10,20 +10,32 @@ class Guru extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
+        'aktif',
         'gambar',
-        'nip', 
-        'nama_guru',
-        'jenis_kelamin',
-        'peran',
-        'wali_kelas',
-        'username',
-        'password'
+        'nip', //
+        'no_ktp',
+        'nama', //
+        'tempat_lahir',
+        'tanggal_lahir',
+        'jenis_kelamin', //
+        'golongan_darah',
+        'kecamatan',
+        'alamat',
+        'rt',
+        'rw',
+        'kode_pos',
+        'no_telp',
+        'no_hp',
+        'agama',
     ];
 
-    public $timestamps = false;
-
-    // public function peserta()
-    // {
-    //     return $this->belongsTo(Peserta::class, 'id_peserta');
-    // }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function hoKelas()
+    {
+        return $this->hasOne(Kelas::class);
+    }
 }

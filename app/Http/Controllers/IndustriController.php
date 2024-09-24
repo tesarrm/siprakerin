@@ -105,4 +105,17 @@ class IndustriController extends Controller
         $data->delete();
         return response()->json(['success' => true]);
     }
+
+    public function aktif($id){
+        $data = $this->model->find($id);
+
+        if ($data) {
+            $data->aktif = 1;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
 }

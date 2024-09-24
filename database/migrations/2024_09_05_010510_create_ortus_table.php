@@ -11,14 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kelas', function (Blueprint $table) {
+        Schema::create('ortus', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('cascade');
-            $table->foreignId('guru_id')->nullable()->constrained('gurus')->onDelete('set null');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->boolean('aktif')->default(1);
+            $table->text('gambar')->nullable();
             $table->string('nama');
-            $table->string('tahun_ajaran');
-            $table->string('klasifikasi');
+            $table->string('pekerjaan')->nullable();
+            $table->string('no_telp')->nullable();
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('kelas');
+        Schema::dropIfExists('ortus');
     }
 };

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangKeahlianController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuruController;
@@ -12,19 +13,35 @@ use App\Http\Controllers\KotaController;
 use App\Http\Controllers\KuotaIndustriController;
 use App\Http\Controllers\Monitoring2Controller;
 use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\NonaktifController;
 use App\Http\Controllers\PenempatanIndustriController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PilihanKotaController;
 use App\Http\Controllers\SiswaController;
-use App\Models\Jurnal;
-use App\Models\PilihanKota;
+use App\Http\Controllers\UserController;
 
 Route::view('/', 'index');
 Route::view('/tabel', 'tabel');
 
+// middleware untuk auth
+
+Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+Route::post('login', [AuthController::class, 'login']);
+Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('register', [AuthController::class, 'showRegistrationForm'])->name('register');
+Route::post('register', [AuthController::class, 'register']);
+
+Route::resource('user', UserController::class);
+Route::get('user/{id}/delete', [UserController::class, 'destroy']);
+
+Route::get('nonaktif', [NonaktifController::class, 'index']);
+
 Route::resource('guru', GuruController::class);
-Route::get('guru/{guruId}/delete', [GuruController::class, 'destroy']);
+Route::get('guru/{id}/delete', [GuruController::class, 'destroy']);
+Route::post('guru/{user_id}/reset', [GuruController::class, 'resetPassword']);
 Route::post('/guru/delete-multiple', [GuruController::class, 'deleteMultiple']);
+Route::post('guru/{id}/nonaktif', [GuruController::class, 'nonaktif']);
+Route::post('guru/{id}/aktif', [GuruController::class, 'aktif']);
 Route::get('/guru-export', [GuruController::class, 'export']);
 Route::post('/guru-import', [GuruController::class, 'import']);
 
@@ -42,13 +59,19 @@ Route::get('jurusan/{jurusanId}/delete', [JurusanController::class, 'destroy']);
 Route::resource('kelas', KelasController::class);
 Route::get('/kelas/{kelas}/edit', [KelasController::class, 'edit']);
 Route::get('kelas/{kelasId}/delete', [KelasController::class, 'destroy']);
+Route::post('kelas/{id}/nonaktif', [KelasController::class, 'nonaktif']);
+Route::post('kelas/{id}/aktif', [KelasController::class, 'aktif']);
 
 Route::resource('siswa', SiswaController::class);
 Route::get('siswa/{siswaId}/delete', [SiswaController::class, 'destroy']);
 Route::post('/siswa/delete-multiple', [SiswaController::class, 'deleteMultiple']);
+Route::post('siswa/{user_id}/reset', [SiswaController::class, 'resetPassword']);
+Route::post('siswa/{id}/nonaktif', [SiswaController::class, 'nonaktif']);
+Route::post('siswa/{id}/aktif', [SiswaController::class, 'aktif']);
 
 Route::resource('industri', IndustriController::class);
 Route::get('industri/{industriId}/delete', [IndustriController::class, 'destroy']);
+Route::post('industri/{id}/aktif', [IndustriController::class, 'aktif']);
 
 Route::resource('kuotaindustri', KuotaIndustriController::class);
 Route::post('/kuota-industri', [KuotaIndustriController::class, 'storeOrUpdate'])->name('kuota-industri.storeOrUpdate');

@@ -14,11 +14,16 @@ class KelasController extends Controller
     public function __construct(Kelas $a)
     {
         $this->model = $a;
+
+        // $this->middleware('can:c_kelas')->only(['index', 'show']);
+        // $this->middleware('can:r_kelas')->only(['create', 'store']);
+        // $this->middleware('can:u_kelas')->only(['edit', 'update']);
+        // $this->middleware('can:d_kelas')->only('destroy');
     }
 
     public function index()
     {
-        $data = $this->model->with(['jurusan', 'guru'])->get();
+        $data = $this->model->with(['jurusan.bidangKeahlian', 'guru'])->where('aktif', 1)->get();
 
         return view('kelas.index', [
             'data' => $data
@@ -28,7 +33,7 @@ class KelasController extends Controller
     public function create()
     {
         $jurusan = Jurusan::get();
-        $guru = Jurusan::get();
+        $guru = Guru::get();
         $pengaturan = Pengaturan::first();
 
         return view('kelas.add', [
@@ -95,5 +100,31 @@ class KelasController extends Controller
         $data = $this->model->findOrFail($id);
         $data->delete();
         return response()->json(['success' => true]);
+    }
+
+    public function nonaktif($id){
+        $data = $this->model->find($id);
+
+        if ($data) {
+            $data->aktif = 0;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function aktif($id){
+        $data = $this->model->find($id);
+
+        if ($data) {
+            $data->aktif = 1;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
     }
 }

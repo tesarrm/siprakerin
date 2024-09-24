@@ -148,20 +148,53 @@
     foreach ($guru as $d) {
         $items[] = [
             'id' => $d->id,
-            'nip' => $d->nip,
-            'nama' => $d->nama_guru,
-            'jenis_kelamin' => $d->jenis_kelamin,
-            'peran' => $d->peran,
-            'username' => $d->username,
+            'user_id' => $d->user_id,
             'gambar' => $d->gambar, 
-            'action' => $d->id, // Gunakan ID ini untuk aksi
+            'nama' => $d->nama,
+            'nip' => $d->nip,
+            'email' => $d->user->email,
+            'no_telp' => $d->no_telp,
+            'jenis_kelamin' => $d->jenis_kelamin,
+            'peran' => $d->user->peran,
+            'kelas' => $d->hoKelas->nama ?? '-',
+            'action' => $d->id,
+
+            '_user_id' => $d->user_id, //11
+            '_aktif' => $d->aktif,
+            '_gambar' => $d->gambar,
+            '_nip' => $d->nip,
+            '_no_ktp' => $d->no_ktp,
+            '_nama' => $d->nama,
+            '_tempat_lahir' => $d->tempat_lahir,
+            '_tanggal_lahir' => $d->tanggal_lahir,
+            '_jenis_kelamin' => $d->jenis_kelamin,
+            '_golongan_darah' => $d->golongan_darah,
+            '_kecamatan' => $d->kecamatan, //21
+            '_alamat' => $d->alamat,
+            '_rt' => $d->rt,
+            '_rw' => $d->rw,
+            '_kode_post' => $d->kodepos,
+            '_no_telp' => $d->no_telp,
+            '_no_hp' => $d->no_hp,
+            '_agama' => $d->agama,
         ];
     }
 
     @endphp
 
+
     {{-- script untuk datatable --}}
     <script>
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("detail", (initialOpenState = false) => ({
+                open: initialOpenState,
+
+                toggle1() {
+                    this.open = !this.open;
+                },
+            }));
+        });
+
         document.addEventListener("alpine:init", () => {
             Alpine.data('invoiceList', () => ({
                 selectedRows: [],
@@ -190,19 +223,45 @@
                         data: {
                             headings: [
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
-                                "NIP",
+                                "User Id",
+                                "Gambar",
                                 "Nama",
+                                "NIP",
+                                "Email",
+                                "No Telp",
                                 "Jenis Kelamin",
                                 "Peran",
-                                "Username",
-                                "Gambar",
+                                "Kelas",
                                 "Aksi",
+
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
+                                "X",
                             ],
                             data: this.dataArr
                         },
                         perPage: 10,
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
+                            {
+                                select: [11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
+                                hidden: true,
+                            },
                             {
                                 select: 0,
                                 sortable: false,
@@ -211,9 +270,17 @@
                                 }
                             },
                             {
+                                select: 1,
+                                hidden: true,
+                            },
+                            {
                                 select: 2,
+                                hidden: true,
+                            },
+                            {
+                                select: 3,
                                 render: function(data, cell, row) {
-                                    const gambar = row.cells[6].data; 
+                                    const gambar = row.cells[2].data; 
                                     // const gambar = ''
                                     const imageUrl = gambar ? `/storage/posts/${gambar}` : '/storage/blank_profile.png'; // Ganti dengan path gambar default
                                     return `<div class="flex items-center font-semibold">
@@ -224,64 +291,271 @@
                                 }
                             },
                             {
+                                select: 4,
+                                render: function(data, cell, row) {
+                                    return `${data ? data : "-"}`;
+                                }
+                            },
+                            {
                                 select: 5,
                                 render: function(data, cell, row) {
-                                    return '<div class="font-semibold">$' + data +
-                                        '</div>';
+                                    return `${data ? data : "-"}`;
                                 }
                             },
                             {
                                 select: 6,
-                                hidden: true,
+                                render: function(data, cell, row) {
+                                    return `${data ? data : "-"}`;
+                                }
                             },
                             {
-                                select: 7,
+                                select: 9,
+                                render: function(data, cell, row) {
+                                    return `${data ? data : "-"}`;
+                                }
+                            },
+                            // {
+                            //     select: 10,
+                            //     sortable: false,
+                            //     render: function(data, cell, row) {
+                            //         return `<div class="items-center">
+                            //                     <div x-data="dropdown" @click.outside="open = false"
+                            //                         class="dropdown w-max">
+                            //                         <a href="javascript:;" class="inline-block" @click="toggle">
+
+                            //                             <svg class="w-5 h-5 opacity-70 m-auto" viewBox="0 0 24 24"
+                            //                                 fill="none" xmlns="http://www.w3.org/2000/svg">
+                            //                                 <circle cx="5" cy="12" r="2"
+                            //                                     stroke="currentColor" stroke-width="1.5"></circle>
+                            //                                 <circle opacity="0.5" cx="12" cy="12"
+                            //                                     r="2" stroke="currentColor" stroke-width="1.5">
+                            //                                 </circle>
+                            //                                 <circle cx="19" cy="12" r="2"
+                            //                                     stroke="currentColor" stroke-width="1.5"></circle>
+                            //                             </svg>
+                            //                         </a>
+                            //                         <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
+                            //                             class="ltr:right-0 rtl:left-0">
+                            //                             <li><a href="#" @click="$dispatch('open-detail')">Detail</a></li>
+                            //                             <li><a href="/guru/${data}/edit">Edit</a></li>
+                            //                             <li><a href="#" @click="resetPassword('${row.cells[8].data}')">Reset Password</a></li>
+                            //                             <li><a href="#" @click="nonaktif('${data}')">Nonaktifkan</a></li>
+                            //                             <li><a href="#" onclick="confirmDelete('${data}')">Hapus</a></li>
+                            //                         </ul>
+                            //                     </div>
+
+                            //                     <div x-data="detail" @open-detail.window="toggle1">
+                            //                         <div class="fixed inset-0 bg-[black]/60 z-[999]  hidden" :class="open && '!block'">
+                            //                             <div class="flex items-start justify-center min-h-screen px-4"
+                            //                                 @click.self="open = false">
+                            //                                 <div x-show="open" x-transition x-transition.duration.300
+                            //                                     class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-5xl my-8">
+                            //                                     <div
+                            //                                         class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
+                            //                                         <h5 class="font-bold text-lg">Modal Title</h5>
+                            //                                         <button type="button" class="text-white-dark hover:text-dark"
+                            //                                             @click="toggle1">
+
+                            //                                             <svg xmlns="http://www.w3.org/2000/svg" width="24px"
+                            //                                                 height="24px" viewBox="0 0 24 24" fill="none"
+                            //                                                 stroke="currentColor" stroke-width="1.5"
+                            //                                                 stroke-linecap="round" stroke-linejoin="round"
+                            //                                                 class="w-6 h-6">
+                            //                                                 <line x1="18" y1="6" x2="6"
+                            //                                                     y2="18"></line>
+                            //                                                 <line x1="6" y1="6" x2="18"
+                            //                                                     y2="18"></line>
+                            //                                             </svg>
+                            //                                         </button>
+                            //                                     </div>
+                            //                                     <div class="p-5">
+                            //                                         <div
+                            //                                             class="dark:text-white-dark/70 text-base font-medium text-[#1f2937]">
+                            //                                             <p>Mauris mi tellus, pharetra vel mattis sed, tempus ultrices eros.
+                            //                                                 Phasellus egestas sit amet velit sed luctus. Orci varius natoque
+                            //                                                 penatibus et magnis dis parturient montes, nascetur ridiculus
+                            //                                                 mus. Suspendisse potenti. Vivamus ultrices sed urna ac pulvinar.
+                            //                                                 Ut sit amet ullamcorper mi.</p>
+                            //                                         </div>
+                            //                                         <div class="flex justify-end items-center mt-8">
+                            //                                             <button type="button" class="btn btn-outline-danger"
+                            //                                                 @click="toggle1">Discard</button>
+                            //                                             <button type="button" class="btn btn-primary ltr:ml-4 rtl:mr-4"
+                            //                                                 @click="toggle1">Save</button>
+                            //                                         </div>
+                            //                                     </div>
+                            //                                 </div>
+                            //                             </div>
+                            //                         </div>
+                            //                     </div>
+
+                            //                 </div>`;
+                            //     },
+                            // }
+
+                            {
+                                select: 10,
                                 sortable: false,
                                 render: function(data, cell, row) {
-                                    return `<div class="flex gap-4 items-center">
-                                                <a href="/guru/${data}/edit" class="hover:text-info">
-                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5">
-                                                        <path
-                                                            opacity="0.5"
-                                                            d="M22 10.5V12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2H13.5"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                            stroke-linecap="round"
-                                                        ></path>
-                                                        <path
-                                                            d="M17.3009 2.80624L16.652 3.45506L10.6872 9.41993C10.2832 9.82394 10.0812 10.0259 9.90743 10.2487C9.70249 10.5114 9.52679 10.7957 9.38344 11.0965C9.26191 11.3515 9.17157 11.6225 8.99089 12.1646L8.41242 13.9L8.03811 15.0229C7.9492 15.2897 8.01862 15.5837 8.21744 15.7826C8.41626 15.9814 8.71035 16.0508 8.97709 15.9619L10.1 15.5876L11.8354 15.0091C12.3775 14.8284 12.6485 14.7381 12.9035 14.6166C13.2043 14.4732 13.4886 14.2975 13.7513 14.0926C13.9741 13.9188 14.1761 13.7168 14.5801 13.3128L20.5449 7.34795L21.1938 6.69914C22.2687 5.62415 22.2687 3.88124 21.1938 2.80624C20.1188 1.73125 18.3759 1.73125 17.3009 2.80624Z"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                        ></path>
-                                                        <path
-                                                            opacity="0.5"
-                                                            d="M16.6522 3.45508C16.6522 3.45508 16.7333 4.83381 17.9499 6.05034C19.1664 7.26687 20.5451 7.34797 20.5451 7.34797M10.1002 15.5876L8.4126 13.9"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                        ></path>
-                                                    </svg>
-                                                </a>
-                                                <a href="#" class="hover:text-danger" onclick="confirmDelete('${data}')">
-                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                                        <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path
-                                                            d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                            stroke-linecap="round"
-                                                        ></path>
-                                                        <path opacity="0.5" d="M9.5 11L10 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path opacity="0.5" d="M14.5 11L14 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path
-                                                            opacity="0.5"
-                                                            d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                        ></path>
-                                                    </svg>
-                                                </a>
+                                    const rowId = `row-${data}`; // Buat unique row ID berdasarkan data
+
+                                    const gambar = row.cells[13].data; 
+                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/storage/blank_profile.png'; 
+
+                                    return `<div class="items-center">
+                                                <div x-data="dropdown" @click.outside="open = false"
+                                                    class="dropdown w-max">
+                                                    <a href="javascript:;" class="inline-block" @click="toggle">
+
+                                                        <svg class="w-5 h-5 opacity-70 m-auto" viewBox="0 0 24 24"
+                                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <circle cx="5" cy="12" r="2"
+                                                                stroke="currentColor" stroke-width="1.5"></circle>
+                                                            <circle opacity="0.5" cx="12" cy="12"
+                                                                r="2" stroke="currentColor" stroke-width="1.5">
+                                                            </circle>
+                                                            <circle cx="19" cy="12" r="2"
+                                                                stroke="currentColor" stroke-width="1.5"></circle>
+                                                        </svg>
+                                                    </a>
+                                                    <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
+                                                        class="ltr:right-0 rtl:left-0">
+                                                        <li><a href="#" @click="$dispatch('open-detail', { rowId: '${rowId}' })">Detail</a></li>
+                                                        <li><a href="/guru/${data}/edit">Edit</a></li>
+                                                        <li><a href="#" @click="resetPassword('${row.cells[8].data}')">Reset Password</a></li>
+                                                        <li><a href="#" @click="nonaktif('${data}')">Nonaktifkan</a></li>
+                                                        <li><a href="#" onclick="confirmDelete('${data}')">Hapus</a></li>
+                                                    </ul>
+                                                </div>
+
+                                                <div x-data="detail" @open-detail.window="if ($event.detail.rowId === '${rowId}') toggle1()">
+                                                    <div class="fixed inset-0 bg-[black]/60 z-[999] hidden" :class="open && '!block'" style="text-wrap: wrap;">
+                                                        <div class="flex items-start justify-center min-h-screen px-4"
+                                                            @click.self="open = false">
+                                                            <div x-show="open" x-transition x-transition.duration.300
+                                                                class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-5xl my-8">
+                                                                <div
+                                                                    class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
+                                                                    <h5 class="font-bold text-lg">Detail</h5>
+                                                                    <button type="button" class="text-white-dark hover:text-dark"
+                                                                        @click="toggle1">
+
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="24px"
+                                                                            height="24px" viewBox="0 0 24 24" fill="none"
+                                                                            stroke="currentColor" stroke-width="1.5"
+                                                                            stroke-linecap="round" stroke-linejoin="round"
+                                                                            class="w-6 h-6">
+                                                                            <line x1="18" y1="6" x2="6"
+                                                                                y2="18"></line>
+                                                                            <line x1="6" y1="6" x2="18"
+                                                                                y2="18"></line>
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="p-5 pt-0 overflow-hidden max-h-[80vh] overflow-y-auto">
+                                                                    <div class="flex xl:flex-row flex-col gap-6">
+                                                                        <div class="xl:w-80 w-full xl:mt-0 mt-6">
+                                                                            <div class="mb-4">
+                                                                                <img src="${imageUrl}" alt="image"
+                                                                                    class="xl:w-52 xl:h-52 w-60 h-60 rounded-full object-cover mx-auto border border-[#eee] border-4" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="space-y-5 w-full px-0 flex-1">
+                                                                            <div class="text-lg font-semibold">Informasi Umum</div>
+                                                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                                <div>
+                                                                                    <label for="nip">NIP<span class="text-danger">*</span></label>
+                                                                                    <input value="${row.cells[14].data}" required id="nip" type="text" name="nip" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label for="nama">Nama<span class="text-danger">*</span></label>
+                                                                                    <input value="${row.cells[14].data}" required id="nama" type="text" name="nama" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label for="jenis_kelamin">Jenis Kelamin<span class="text-danger">*</span></label>
+                                                                                    <input value="${row.cells[19].data}" required id="jenis_kelamin" type="text" name="jenis_kelamin" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label for="peran">Peran<span class="text-danger">*</span></label>
+                                                                                    <input value="${row.cells[8].data}" required id="peran" type="text" name="peran" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label for="email">Email<span class="text-danger">*</span></label>
+                                                                                    <input value="${row.cells[5].data}" required id="email" type="text" name="email" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="text-lg font-semibold pt-2">Detail</div>
+                                                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                                                                <div>
+                                                                                    <label>No KTP</label>
+                                                                                    <input value="${row.cells[15].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>Tempat Lahir</label>
+                                                                                    <input value="${row.cells[18].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>Tanggal Lahir</label>
+                                                                                    <input value="${row.cells[19].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>Golongan Darah</label>
+                                                                                    <input value="${row.cells[20].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>Kecamatan</label>
+                                                                                    <input value="${row.cells[21].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>Alamat</label>
+                                                                                    <input value="${row.cells[22].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>RT</label>
+                                                                                    <input value="${row.cells[23].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>RW</label>
+                                                                                    <input value="${row.cells[24].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>Kode Pos</label>
+                                                                                    <input value="${row.cells[25].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>No Telp</label>
+                                                                                    <input value="${row.cells[26].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>No HP</label>
+                                                                                    <input value="${row.cells[27].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                                <div>
+                                                                                    <label>Agama</label>
+                                                                                    <input value="${row.cells[28].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                </div>
+                                                                               
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex justify-end items-center mt-8">
+                                                                        <button type="button" class="btn btn-outline-danger"
+                                                                            @click="toggle1">Discard</button>
+                                                                        <a href="/guru/${data}/edit" class="btn btn-primary ltr:ml-4 rtl:mr-4"
+                                                                            >Edit</a>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
                                             </div>`;
-                                }
+                                },
+                                // {
+                                //     select: [11,12,13,14,15,16,17,18,19,20,21,22,23,24],
+                                //     hidden: true,
+                                // },
                             }
                         ],
                         firstLast: true,
@@ -341,50 +615,7 @@
                     );
                 },
 
-                // deleteRow(item) {
-                //     if (confirm('Are you sure want to delete selected row ?')) {
-                //         if (item) {
-                //             this.items = this.items.filter((d) => d.id != item);
-                //             this.selectedRows = [];
-                //         } else {
-                //             this.items = this.items.filter((d) => !this.selectedRows.includes(d.id));
-                //             this.selectedRows = [];
-                //         }
-                //     }
-                // },
-
-                // deleteRow() {
-                //     if (this.selectedRows.length > 0) {
-                //         console.log(this.selectedRows)
-                //         if (confirm("Apakah Anda yakin ingin menghapus data terpilih?")) {
-                //             fetch('/guru/delete-multiple', {
-                //                 method: 'POST',
-                //                 headers: {
-                //                     'Content-Type': 'application/json',
-                //                     // 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                //                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                //                 },
-                //                 body: JSON.stringify({
-                //                     ids: this.selectedRows
-                //                 })
-                //             })
-                //             .then(response => response.json())
-                //             .then(data => {
-                //                 if (data.success) {
-                //                     this.items = this.items.filter(item => !this.selectedRows.includes(item.id));
-                //                     this.selectedRows = [];
-                //                     alert('Data berhasil dihapus.');
-                //                 } else {
-                //                     alert('Terjadi kesalahan saat menghapus data.');
-                //                 }
-                //             });
-                //         }
-                //     } else {
-                //         alert('Pilih setidaknya satu data untuk dihapus.');
-                //     }
-                // }
-
-                deleteRow() {
+                 deleteRow() {
                     if (this.selectedRows.length > 0) {
                         window.Swal.fire({
                             icon: 'warning',
@@ -501,7 +732,114 @@
                     });
                 }
             });
+        }        
+        
+        function resetPassword(user_id) {
+            window.Swal.fire({
+                icon: 'warning',
+                title: 'Apakah Anda yakin?',
+                text: "Data akan direset password!",
+                showCancelButton: true,
+                confirmButtonText: 'Reset',
+                cancelButtonText: 'Batal',
+                padding: '2em',
+                customClass: 'sweet-alerts'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/guru/${user_id}/reset`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.Swal.fire({
+                                title: 'Direset Password!',
+                                text: 'Data berhasil direset password.',
+                                icon: 'success',
+                                customClass: 'sweet-alerts'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            window.Swal.fire({
+                                title: 'Gagal!',
+                                text: 'Terjadi kesalahan saat mereset password data.',
+                                icon: 'error',
+                                customClass: 'sweet-alerts'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        window.Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat mereset password data.',
+                            icon: 'error',
+                            customClass: 'sweet-alerts'
+                        });
+                    });
+                }
+            });
+        }
+
+        function nonaktif(id) {
+            window.Swal.fire({
+                icon: 'warning',
+                title: 'Apakah Anda yakin?',
+                text: "Data akan dinonaktifkan!",
+                showCancelButton: true,
+                confirmButtonText: 'Nonaktif',
+                cancelButtonText: 'Batal',
+                padding: '2em',
+                customClass: 'sweet-alerts'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/guru/${id}/nonaktif`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.Swal.fire({
+                                title: 'Dinonaktifkan!',
+                                text: 'Data berhasil dinonaktifkan.',
+                                icon: 'success',
+                                customClass: 'sweet-alerts'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            window.Swal.fire({
+                                title: 'Gagal!',
+                                text: 'Terjadi kesalahan saat menonaktifkan data.',
+                                icon: 'error',
+                                customClass: 'sweet-alerts'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error)
+                        window.Swal.fire({
+                            title: 'Error!',
+                            text: 'Terjadi kesalahan saat menonaktifkan data.',
+                            icon: 'error',
+                            customClass: 'sweet-alerts'
+                        });
+                    });
+                }
+            });
         }
     </script>
+
+
+
 
 </x-layout.default>

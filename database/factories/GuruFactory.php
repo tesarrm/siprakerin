@@ -2,7 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Guru>
@@ -11,15 +13,20 @@ class GuruFactory extends Factory
 {
     public function definition(): array
     {
+        $user = User::factory()->create([
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+            'password' => Hash::make('password'), 
+        ]);
+
+        $user->assignRole('guru');
+
         return [
-            // 'gambar' => $this->faker->imageUrl(),
-            'nip' => $this->faker->unique()->numerify('##########'), // 10 digit
-            'nama_guru' => $this->faker->name(),
-            'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
-            'peran' => $this->faker->randomElement(['Admin', 'Kepala Bengkel', 'Guru']),
-            'wali_kelas' => $this->faker->word(),
-            'username' => $this->faker->userName(),
-            'password' => bcrypt('password'), // bisa diubah ke nilai yang diinginkan
+            'nip' => $this->faker->unique()->numerify('#############'), 
+            'nama' => $user->name,
+            'jenis_kelamin' => $this->faker->randomElement(['Laki-Laki', 'Perempuan']),
+            'user_id' => $user->id,
+            'gambar' => null, // Gambar di-set null
         ];
     }
 }
