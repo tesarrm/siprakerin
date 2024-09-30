@@ -6,6 +6,7 @@ use App\Models\Guru;
 use App\Models\Jurusan;
 use App\Models\Kelas;
 use App\Models\Pengaturan;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class KelasController extends Controller
@@ -15,10 +16,10 @@ class KelasController extends Controller
     {
         $this->model = $a;
 
-        // $this->middleware('can:c_kelas')->only(['index', 'show']);
-        // $this->middleware('can:r_kelas')->only(['create', 'store']);
-        // $this->middleware('can:u_kelas')->only(['edit', 'update']);
-        // $this->middleware('can:d_kelas')->only('destroy');
+        $this->middleware('can:c_kelas')->only(['create', 'store']);
+        $this->middleware('can:r_kelas')->only(['index', 'show']);
+        $this->middleware('can:u_kelas')->only(['edit', 'update']);
+        $this->middleware('can:d_kelas')->only('destroy');
     }
 
     public function index()
@@ -52,6 +53,10 @@ class KelasController extends Controller
             'klasifikasi' => 'required|string',
             'guru_id' => 'required',
         ]);
+
+        $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
+        $user = User::findOrFail($guru->user->id);
+        $user->assignRole('wali_siswa');
 
         $create = collect($validatedData);
 
@@ -87,6 +92,15 @@ class KelasController extends Controller
             'klasifikasi' => 'required|string',
             'guru_id' => 'required',
         ]);
+
+        $kelas = Kelas::findOrFail($id);
+        $oldGuru = Guru::with('user')->findOrFail($kelas->guru_id);
+        $oldUser = User::findOrFail($oldGuru->user->id);
+        $oldUser->removeRole('wali_siswa');
+
+        $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
+        $user = User::findOrFail($guru->user->id);
+        $user->assignRole('wali_siswa');
 
         $update = collect($validatedData);
 

@@ -12,7 +12,8 @@ class Industri extends Model
     protected $fillable = [
         'nama',
         'alamat',
-        'kota_id'
+        'kota_id',
+        'tahun_ajaran'
     ];
 
     public function kuotaIndustri()

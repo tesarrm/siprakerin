@@ -19,6 +19,7 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PilihanKotaController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\UserController;
+use App\Models\HasilMonitoring;
 
 Route::view('/', 'index');
 Route::view('/tabel', 'tabel');
@@ -33,6 +34,8 @@ Route::post('register', [AuthController::class, 'register']);
 
 Route::resource('user', UserController::class);
 Route::get('user/{id}/delete', [UserController::class, 'destroy']);
+Route::get('profile', [UserController::class, 'editProfile']);
+Route::post('profile', [UserController::class, 'updateProfile']);
 
 Route::get('nonaktif', [NonaktifController::class, 'index']);
 
@@ -71,6 +74,7 @@ Route::post('siswa/{id}/aktif', [SiswaController::class, 'aktif']);
 
 Route::resource('industri', IndustriController::class);
 Route::get('industri/{industriId}/delete', [IndustriController::class, 'destroy']);
+Route::post('industri/{id}/nonaktif', [IndustriController::class, 'nonaktif']);
 Route::post('industri/{id}/aktif', [IndustriController::class, 'aktif']);
 
 Route::resource('kuotaindustri', KuotaIndustriController::class);
@@ -80,9 +84,12 @@ Route::resource('kota', KotaController::class);
 
 Route::resource('pilihankota', PilihanKotaController::class);
 Route::post('/pilihankota', [PilihanKotaController::class, 'storeOrUpdate']);
+Route::get('pilihankota-buat', [PilihanKotaController::class, 'buat']);
+Route::post('/pilihankota/{id}/membuat', [PilihanKotaController::class, 'membuat']);
 
 Route::resource('penempatan', PenempatanIndustriController::class);
 Route::post('/penempatan', [PenempatanIndustriController::class, 'storeOrUpdate'])->name('penempatan.storeOrUpdate');
+Route::get('penempatan/{id}/siswa', [PenempatanIndustriController::class, 'show2']);
 
 Route::resource('jurnal', JurnalController::class);
 Route::get('jurnal/{jurnalId}/delete', [JurnalController::class, 'destroy']);
@@ -93,3 +100,4 @@ Route::get('monitoring/{id}/delete', [MonitoringController::class, 'destroy']);
 Route::resource('monitoring2', Monitoring2Controller::class);
 
 Route::resource('hasilmonitoring', HasilMonitoringController::class);
+Route::post('hasilmonitoring', [HasilMonitoringController::class, 'storeOrUpdate']);

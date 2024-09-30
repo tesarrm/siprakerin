@@ -14,9 +14,10 @@ return new class extends Migration
         Schema::create('hasil_monitorings', function (Blueprint $table) {
             $table->id();
             $table->foreignId('monitoring_id')->constrained('monitorings')->onDelete('cascade');
+            $table->foreignId('siswa_id')->constrained('siswas')->onDelete('cascade');
             $table->float('kedisiplinan')->nullable();
             $table->float('sikap')->nullable();
-            $table->float('kerja_sama')->nullable();
+            $table->float('kerjasama')->nullable();
             $table->longText('catatan')->nullable();
             $table->timestamps();
         });

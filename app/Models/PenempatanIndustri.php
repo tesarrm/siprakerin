@@ -13,6 +13,7 @@ class PenempatanIndustri extends Model
         'id',
         'industri_id',
         'siswa_id',
+        'pilihan',
         'tahun_ajaran'
     ];
 

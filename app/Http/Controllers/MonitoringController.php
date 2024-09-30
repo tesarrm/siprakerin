@@ -13,6 +13,11 @@ class MonitoringController extends Controller
     public function __construct(Monitoring $a)
     {
         $this->model = $a;
+
+        // $this->middleware('can:c_jadwal_monitoring`')->only(['create', 'store']);
+        // $this->middleware('can:r_jadwal_monitoring`')->only(['index', 'show']);
+        // $this->middleware('can:u_jadwal_monitoring`')->only(['edit', 'update']);
+        // $this->middleware('can:d_jadwal_monitoring`')->only('destroy');
     }
 
     /**

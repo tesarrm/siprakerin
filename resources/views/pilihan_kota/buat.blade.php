@@ -1,8 +1,9 @@
 <x-layout.default>
     <div>
-        <form action="{{ url('pilihankota') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ url('pilihankota/' . $siswa->id . '/membuat' ) }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="flex xl:flex-row flex-col gap-2.5">
+                @if(!$data->status)
                 <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
                     {{-- <div class=" px-4">
                         <div class="flex justify-between lg:flex-row flex-col">
@@ -82,14 +83,8 @@
                     </div> --}}
                     <div class="px-4">
                         <div class="text-lg font-semibold mb-4">Data Pilihan Kota</div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label for="nama">Nama</label>
-                                <input value="{{ old('nama', $siswa->nama) }}" required id="reciever-name" type="text" name="nama" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly />
-                                @error('nama')
-                                    <div class="mt-2 text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <div class="grid grid-cols-1 gap-4">
+                            <input type="text" hidden name="siswa_id" value="{{ $siswa->id }}">
                             <div>
                                 <label for="kota_id_1">Pilihan 1</label>
                                 <select required id="kota_id_1" name="kota_id_1" class="form-select w-full">
@@ -127,7 +122,7 @@
                                 @enderror
                             </div>
                             <div>
-                                <input type="checkbox" nama="status" class="form-checkbox"/>
+                                <input type="checkbox" name="status" class="form-checkbox" @checked($data->status) />
                                 <span>Konfirmasi pilihan kota</span>
                                 @error('status')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
@@ -150,9 +145,82 @@
                                     <path opacity="0.5" d="M7 8H13" stroke="currentColor" stroke-width="1.5"
                                         stroke-linecap="round" />
                                 </svg>
-                                Simpan </button>
+                                Submit</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="xl:w-[60%] w-full xl:mt-0 mt-6">
+                </div>
+                @else
+                <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
+                    <div class=" px-4">
+                        <div class="flex justify-between lg:flex-row flex-col">
+                            <div class="w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
+                                <div class="text-lg font-semibold">Data Pilihan Kota</div>
+                                <div class="mt-4 flex items-center">
+                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama</label>
+                                    <div class="flex-1">
+                                        <input value="{{ old('nama', $siswa->nama) }}" required id="reciever-name" type="text" name="nama" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly  />
+                                        @error('nama')
+                                            <div class="mt-2 text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center">
+                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kelas</label>
+                                    <div class="flex-1">
+                                        <input value="{{ $siswa->kelas->nama." ".$siswa->kelas->jurusan->singkatan." ".$siswa->kelas->klasifikasi }}" required id="reciever-name" type="text" name="nama" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly  />
+                                    </div>
+                                </div>
 
-                            <button type="button" class="btn btn-outline-danger gap-2">
+                                <div class="flex items-center mt-4">
+                                    <label for="kota_id_1" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Pilihan 1</label>
+                                    <div class="flex-1">
+                                        <select required id="kota_id_1" name="kota_id_1" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly>
+                                            <option value="">Pilih Pilihan 1</option>
+                                            @foreach($kota as $item)
+                                                <option value="{{ $item->id }}" @selected($data->kota_id_1 == $item->id)>{{ $item->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('kota_id_1')
+                                            <div class="mt-2 text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-4">
+                                    <label for="kota_id_2" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Pilihan 2</label>
+                                    <div class="flex-1">
+                                        <select required id="kota_id_2" name="kota_id_2" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly>
+                                            <option value="">Pilih Pilihan 2</option>
+                                            @foreach($kota as $item)
+                                                <option value="{{ $item->id }}" @selected($data->kota_id_2 == $item->id)>{{ $item->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('kota_id_2')
+                                            <div class="mt-2 text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="flex items-center mt-4">
+                                    <label for="kota_id_3" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Pilihan 3</label>
+                                    <div class="flex-1">
+                                        <select required id="kota_id_3" name="kota_id_3" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly>
+                                            <option value="">Pilih Pilihan 3</option>
+                                            @foreach($kota as $item)
+                                                <option value="{{ $item->id }}" @selected($data->kota_id_3 == $item->id)>{{ $item->nama }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('kota_id_3')
+                                            <div class="mt-2 text-danger">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 px-4">
+                        <div class="flex justify-end items-center mt-8 gap-4">
+                            <button type="submit" class="btn btn-primary gap-2">
 
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2 shrink-0">
@@ -165,12 +233,13 @@
                                     <path opacity="0.5" d="M7 8H13" stroke="currentColor" stroke-width="1.5"
                                         stroke-linecap="round" />
                                 </svg>
-                                Kembali </button>
+                                Cetak</button>
                         </div>
                     </div>
                 </div>
                 <div class="xl:w-96 w-full xl:mt-0 mt-6">
                 </div>
+                @endif
             </div>
         </form>
     </div>

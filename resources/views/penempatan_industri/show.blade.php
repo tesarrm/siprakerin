@@ -90,21 +90,6 @@
                 <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
                     <div class=" px-4">
                         <div class="text-lg font-semibold">Penempatan Prakerin</div>
-                        {{-- <div class="grid grid-cols-1 mt-4 mb-6 gap-4">
-                            <input type="hidden" name="industri_id" value="{{ $industri->id }}">
-                            <div>
-                                <label for="nama">Nama Industri</label>
-                                <input value="{{ $industri->nama }}" required id="nama" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Nama" />
-                            </div>
-                            <div>
-                                <label for="kota">Kota</label>
-                                <input value="{{ $industri->kota->nama }}" required id="kota_id" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Kota" />
-                            </div>
-                            <div>
-                                <label for="alamat">Alamat</label>
-                                <input value="{{ $industri->alamat }}" required id="alamat" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Alamat" />
-                            </div>
-                        </div> --}}
                         <div class="flex justify-between lg:flex-row flex-col">
                             <div class="w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
                                 <input type="hidden" name="industri_id" value="{{ $industri->id }}">
@@ -135,33 +120,7 @@
 
                         </div>
 
-                        {{-- table info --}}
-                        <div class="text-lg font-semibold mb-2">Penempatan</div>
-
-                            <div x-data="invoiceList">
-                                <div class="invoice-table">
-                                    <table id="myTable" class="whitespace-nowrap">
-                                        <thead>
-                                            <tr>
-                                                @foreach ($jurusanLakiLaki as $jurusan)
-                                                    <th>{{ $jurusan }}</th>
-                                                @endforeach
-                                                @foreach ($jurusanPerempuan as $jurusan)
-                                                    <th>{{ $jurusan }}</th>
-                                                @endforeach
-                                            </tr>
-                                            <tr>
-                                                <th colspan="{{ $jurusanLakiLaki->count() }}" class="!text-center border-b border-r">Laki-Laki</th>
-                                                <th colspan="{{ $jurusanPerempuan->count() }}" class="!text-center border-b">Perempuan</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-
-                                        </tbody>
-                                    </table>
-                                </div>
-                        </div>
-
+                        <div class="text-lg font-semibold mb-4">Siswa yang Ditempatkan</div>
                         {{-- table input --}}
                         <div x-data="form" x-init="initialize()">
                             @if($totalLakiLaki + $totalPerempuan > 0)
@@ -169,36 +128,16 @@
                                 <thead>
                                     <tr>
                                         <th class="px-4 py-5">Nama Siswa</th>
-                                        <th class="px-4 py-5">Pilihan Kota</th>
                                         <th class="px-4 py-5">Jenis Kelamin</th>
                                         <th class="px-4 py-5">Kelas</th>
                                         <th class="px-4 py-5">Tahun Ajaran</th>
-                                        <th class="px-4 py-5">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <template x-for="(row, index) in tableData" :key="index">
                                         <tr>
                                             <td class="px-4 py-2">
-                                                <select :name="'data['+index+'][id_siswa]'" x-model="row.id_siswa" @change="updateSiswa(row.id_siswa, index)" class="form-input w-full" style="border:none; padding: 5px; padding-right: 30px;">
-                                                    <option value="">Pilih Siswa</option>
-                                                    <template x-for="siswa in siswaData" :key="siswa.id">
-                                                        <option :value="siswa.id">
-                                                            <span x-text="siswa.nama + ' | '"></span>
-                                                            <span x-text="siswa.kelas.nama + ' ' + siswa.kelas.jurusan.singkatan + ' ' + siswa.kelas.klasifikasi + ' | '"></span>
-                                                            {{-- Logika pengecekan kota --}}
-                                                            <span x-show="siswa.pilihankota.kota1.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota2.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota3.nama === '{{ $industri->kota->nama }}'">
-                                                                (<span x-text="getMatchingKota(siswa.pilihankota)"></span>)
-                                                            </span>
-                                                        </option>
-                                                    </template>
-                                                </select>
-                                            </td>
-                                            {{-- <td class="px-4 py-2">
-                                                <input type="text" :name="'data['+index+'][id_siswa]'" x-model="row.id_siswa" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td> --}}
-                                            <td class="px-4 py-2">
-                                                <input type="text" x-model="row.pilihan" name="pilihan" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                <input type="text" x-model="row.nama" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                             </td>
                                             <td class="px-4 py-2">
                                                 <input type="text" x-model="row.jenis_kelamin" class="form-input w-full" style="border:none; padding: 0;" readonly />
@@ -206,64 +145,20 @@
                                             <td class="px-4 py-2">
                                                 <input type="text" x-model="row.kelas" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                             </td>
-                                            {{-- <td class="px-4 py-2">
-                                                <input type="text" x-model="row.jurusan" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td> --}}
                                             <td class="px-4 py-2">
                                                 <input type="text" x-model="row.tahun_ajaran" name="tahun_ajaran" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td>
-                                            <td class="px-4 py-2 text-center">
-                                                {{-- <button type="button" @click="removeRow(index)" class="text-red-500">Hapus</button> --}}
-                                                <a href="javascript:;" x-tooltip="Delete" @click="removeRow(index)" >
-
-                                                    <svg width="24" height="24" viewBox="0 0 24 24"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg"
-                                                        class="w-5 h-5 text-danger">
-                                                        <circle opacity="0.5" cx="12" cy="12"
-                                                            r="10" stroke="currentColor"
-                                                            stroke-width="1.5" />
-                                                        <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
-                                                            stroke="currentColor" stroke-width="1.5"
-                                                            stroke-linecap="round" />
-                                                    </svg>
-                                                </a>
                                             </td>
                                         </tr>
                                     </template>
                                 </tbody>
                             </table>
-                            <div class="flex mr-7 mt-4">
-                                <button type="button" @click="addRow" class="btn btn-sm btn-dark w-8 h-8 p-0 rounded-full ml-auto">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                </button>
-                            </div>
                             @endif
                         </div>
                     </div>
 
                     <div class="px-4">
                         <div class="flex justify-end items-center mt-6 gap-4">
-                            @if($totalLakiLaki + $totalPerempuan > 0)
-                            <button type="submit" class="btn btn-success gap-2">
-
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2 shrink-0">
-                                    <path
-                                        d="M3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 11.6585 22 11.4878 21.9848 11.3142C21.9142 10.5049 21.586 9.71257 21.0637 9.09034C20.9516 8.95687 20.828 8.83317 20.5806 8.58578L15.4142 3.41944C15.1668 3.17206 15.0431 3.04835 14.9097 2.93631C14.2874 2.414 13.4951 2.08581 12.6858 2.01515C12.5122 2 12.3415 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355Z"
-                                        stroke="currentColor" stroke-width="1.5" />
-                                    <path
-                                        d="M17 22V21C17 19.1144 17 18.1716 16.4142 17.5858C15.8284 17 14.8856 17 13 17H11C9.11438 17 8.17157 17 7.58579 17.5858C7 18.1716 7 19.1144 7 21V22"
-                                        stroke="currentColor" stroke-width="1.5" />
-                                    <path opacity="0.5" d="M7 8H13" stroke="currentColor" stroke-width="1.5"
-                                        stroke-linecap="round" />
-                                </svg>
-                                Simpan </button>
-                            @endif
-
-                            <button type="button" class="btn btn-outline-danger gap-2">
+                              <button type="button" class="btn btn-outline-danger gap-2">
 
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2 shrink-0">
@@ -287,21 +182,9 @@
     <script>
         document.addEventListener("alpine:init", () => {
             Alpine.data("form", () => ({
-                getMatchingKota(pilihankota) {
-                    // Check for matching kota
-                    if (pilihankota.kota1.nama === '{{ $industri->kota->nama }}') {
-                        return 'Pilihan 1';
-                    } else if (pilihankota.kota2.nama === '{{ $industri->kota->nama }}') {
-                        return 'Pilihan 2';
-                    } else if (pilihankota.kota3.nama === '{{ $industri->kota->nama }}') {
-                        return 'Pilihan 3';
-                    }
-                    return '';
-                },
-
                 tableData: @json($siswaTerfilter).map(siswa => ({
                     id_siswa: siswa.id,
-                    pilihan: siswa.penempatan.pilihan,
+                    nama: siswa.nama,
                     jenis_kelamin: siswa.jenis_kelamin,
                     kelas: siswa.kelas.nama + " " + siswa.kelas.jurusan.singkatan + " " + siswa.kelas.klasifikasi,
                     jurusan: siswa.kelas.jurusan.singkatan + " (" + siswa.kelas.jurusan.nama + ")",
@@ -331,9 +214,8 @@
                     });
                 },
 
-
                 addRow() {
-                    this.tableData.push({ id_siswa: '', pilihan: '', jenis_kelamin: '', kelas: '', jurusan: '', tahun_ajaran: '' });
+                    this.tableData.push({ id_siswa: '', jenis_kelamin: '', kelas: '', jurusan: '', tahun_ajaran: '' });
                 },
 
                 removeRow(index) {
@@ -372,7 +254,6 @@
                             })
                             this.tableData[index].id_siswa = ''; // Reset pilihan siswa
                         } else {
-                            this.tableData[index].pilihan = this.getMatchingKota(selectedSiswa.pilihankota);
                             this.tableData[index].jenis_kelamin = selectedSiswa.jenis_kelamin;
                             this.tableData[index].kelas = selectedSiswa.kelas.nama + " " + selectedSiswa.kelas.jurusan.singkatan + " " + selectedSiswa.kelas.klasifikasi;
                             this.tableData[index].jurusan = selectedSiswa.kelas.jurusan.singkatan + " (" + selectedSiswa.kelas.jurusan.nama + ")";
@@ -387,88 +268,9 @@
         });
     </script>
 
-    <script>
-        document.addEventListener("alpine:init", () => {
-            Alpine.data('invoiceList', () => ({
-                selectedRows: [],
-                items: @json($items),
-                searchText: '',
-                datatable: null,
-                dataArr: [],
 
-                init() {
-                    this.setTableData();
-                    this.initializeTable();
-                    this.$watch('items', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
-                    });
-                    this.$watch('selectedRows', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
-                    });
-                },
 
-                initializeTable() {
-                    this.datatable = new simpleDatatables.DataTable('#myTable', {
-                        data: {
-                            data: this.dataArr
-                        },
-                        searchable: false,
-                        paging: false,
-                    });
-                },
 
-                setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
-                    }
-                },
-            }))
-        })
 
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const thead = document.querySelector('#myTable thead');
-            const rows = Array.from(thead.querySelectorAll('tr'));
-            
-            if (rows.length === 2) {
-                // Swap rows as needed
-                thead.appendChild(rows[0]); // Move first row to the end
-                thead.insertBefore(rows[1], rows[0]); // Move last row before the new first row
-            }
-        });
-    </script>
-
-<script>
-    function form() {
-        return {
-            initialize() {
-                // Any necessary initialization here
-            },
-            getMatchingKota(pilihankota) {
-                // Check for matching kota
-                if (pilihankota.kota1.nama === '{{ $industri->kota->nama }}') {
-                    return 'kota1';
-                } else if (pilihankota.kota2.nama === '{{ $industri->kota->nama }}') {
-                    return 'kota2';
-                } else if (pilihankota.kota3.nama === '{{ $industri->kota->nama }}') {
-                    return 'kota3';
-                }
-                return '';
-            }
-        };
-    }
-</script>
 
 </x-layout.default>

@@ -15,8 +15,37 @@
             <div class="flex xl:flex-row flex-col gap-2.5">
                 <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
                     <div class=" px-4">
-                        <div class="text-lg font-semibold">Data Bidang Keahlian</div>
-                        <div class="flex justify-between lg:flex-row flex-col">
+                        <div class="text-lg font-semibold mb-4">Data Bidang Keahlian</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <label for="tanggal">Tanggal<span class="text-danger">*</span></label>
+                                <div x-data="tanggal">
+                                    <input id="basic" x-model="date1" name="tanggal" class="form-input" />
+                                </div>
+                                @error('tanggal')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="preloading-time">Waktu Mulai<span class="text-danger">*</span></label>
+                                <div x-data="time_start">
+                                    <input id="preloading-time" name="time_start" x-model="date4" class="form-input" />
+                                </div>
+                                @error('time_start')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="preloading-time2">Waktu Selesai<span class="text-danger">*</span></label>
+                                <div x-data="time_end">
+                                    <input id="preloading-time2" name="time_end" x-model="date4" class="form-input" />
+                                </div>
+                                @error('time_end')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                        {{-- <div class="flex justify-between lg:flex-row flex-col">
                             <div class="lg:w-1/3 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
                                 <div class="mt-4 flex items-center">
                                     <label for="tanggal" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Tanggal<span class="text-danger">*</span></label>
@@ -56,7 +85,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="items-center">
                             <div class="text-lg font-semibold mb-4">Kegiatan</div>
                             <textarea id="kegiatan" name="kegiatan" hidden></textarea>

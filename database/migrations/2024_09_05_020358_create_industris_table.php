@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('industris', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('kota_id')->constrained('kotas')->onDelete('cascade');
+            $table->boolean('aktif')->default(1);
             $table->string('nama')->nullable();
             $table->text('alamat')->nullable();
-            $table->foreignId('kota_id')->constrained('kotas')->onDelete('cascade');
+            $table->string('tahun_ajaran')->nullable();
             $table->timestamps();
         });
     }

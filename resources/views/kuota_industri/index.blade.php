@@ -1,22 +1,97 @@
 
 <x-layout.default>
 
+    <script src="/assets/js/simple-datatables.js"></script>
+
+    @php
+        $items = [];
+        $allJurusan = $jurusan->pluck('singkatan');
+
+        // Mengelompokkan jurusan berdasarkan jenis kelamin untuk heading tabel
+        $jurusanLakiLaki = $allJurusan->filter(function($singkatan) use ($data) {
+            return $data->filter(function($d) use ($singkatan) {
+                return $d->kuotaIndustri->where('jenis_kelamin', 'Laki-laki')->where('jurusan.singkatan', $singkatan);
+            });
+        });
+        $jurusanPerempuan = $allJurusan->filter(function($singkatan) use ($data) {
+            return $data->filter(function($d) use ($singkatan) {
+                return $d->kuotaIndustri->where('jenis_kelamin', 'Perempuan')->where('jurusan.singkatan', $singkatan);
+            });
+        });
+
+       foreach ($data as $d) {
+            $row = [
+                'nama' => $d->nama,
+                'alamat' => $d->alamat,
+                'kota' => $d->kota->nama,
+                'tahun_ajaran' => $d->tahun_ajaran,
+            ];
+
+            // Hitung total kuota laki-laki dan perempuan
+            $totalLakiLaki = 0;
+            $totalPerempuan = 0;
+
+            foreach ($d->kuotaIndustri as $kuota) {
+                $jurusanSingkatan = $kuota->jurusan->singkatan;
+                $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
+                $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
+                $row[$formattedKey] = $kuota->kuota;
+
+                // Tambahkan kuota laki-laki dan perempuan ke total
+                if ($jenisKelamin == 'L') {
+                    $totalLakiLaki += $kuota->kuota;
+                } else {
+                    $totalPerempuan += $kuota->kuota;
+                }
+            }
+
+            // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
+            foreach ($allJurusan as $jurusanSingkatan) {
+                $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
+                $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
+            }
+
+            $row['Aksi'] = $d->id;
+
+            $items[] = $row;
+        }
+    @endphp
+
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
 
-    <div x-data="invoiceList">
-        <script src="/assets/js/simple-datatables.js"></script>
-
-        <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
-            <div class="px-5">
-                <div class="md:absolute md:top-5 ltr:md:left-5 rtl:md:right-5">
-                    <div class="flex items-center gap-2 mb-5">
-           
-                    </div>
-                </div>
-            </div>
+    <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
+        <div x-data="penempatan">
             <div class="invoice-table">
-                <table id="myTable" class="whitespace-nowrap"></table>
+                <table id="myTable" class="whitespace-nowrap">
+                    <thead>
+                        <tr>
+                            <th>Nama</th>
+                            <th>Alamat</th>
+                            <th>Kota</th>
+                            <th>Tahun Ajaran</th>
+                            @foreach ($jurusanLakiLaki as $jurusan)
+                                <th>{{ $jurusan }}</th>
+                            @endforeach
+                            @foreach ($jurusanPerempuan as $jurusan)
+                                <th>{{ $jurusan }}</th>
+                            @endforeach
+                            <th>Aksi</th>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th colspan="{{ $jurusanLakiLaki->count() }}" class="!text-center border-b border-r">Laki-Laki</th>
+                            <th colspan="{{ $jurusanPerempuan->count() }}" class="!text-center border-b">Perempuan</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -47,124 +122,23 @@
         </script>
     @endif
 
-    {{-- data untuk datatable --}}
-    {{-- @php
-    $items = [];
-    foreach ($data as $d) {
-        $items[] = [
-            'id' => $d->id,
-            'nama' => $d->nama,
-            'alamat' => $d->alamat,
-            'kota' => $d->nama,
-            'action' => $d->id, // Gunakan ID ini untuk aksi
-        ];
-    }
-    @endphp --}}
-
-    {{-- @php
-    $items = [];
-    foreach ($data as $d) {
-        $row = [
-            'id' => $d->id,
-            'nama' => $d->nama,
-            'alamat' => $d->alamat,
-        ];
-
-        // Initialize an array for kuota values
-        $kuotaValues = [];
-
-        foreach ($d->kuotaIndustri as $kuota) {
-            $jurusan = $kuota->jurusan->nama;
-            $kuotaValues[$jurusan] = $kuota->kuota;
-        }
-
-        // Fill in missing jurusan with empty values
-        foreach ($data->flatMap(fn($item) => $item->kuotaIndustri->pluck('jurusan.nama')->unique()) as $jurusan) {
-            $row[$jurusan] = $kuotaValues[$jurusan] ?? 0;
-        }
-
-        foreach ($data as $d) {
-            $row['Aksi'] = $d->id;
-        }
-
-        $items[] = $row;
-    }
-    @endphp --}}
-
-{{-- @php
-$items = [];
-// Ambil semua jurusan yang tersedia
-$allJurusan = $jurusan->pluck('singkatan'); // Mengambil semua nama jurusan dari variabel $jurusan
-
-foreach ($data as $d) {
-    $row = [
-        'id' => $d->id,
-        'nama' => $d->nama,
-        'alamat' => $d->alamat,
-    ];
-
-    // Initialize an array for kuota values
-    $kuotaValues = [];
-
-    foreach ($d->kuotaIndustri as $kuota) {
-        $jurusanSingkatan = $kuota->jurusan->singkatan;
-        $kuotaValues[$jurusanSingkatan] = $kuota->kuota;
-    }
-
-    // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
-    foreach ($allJurusan as $jurusanSingkatan) {
-        $row[$jurusanSingkatan] = $kuotaValues[$jurusanSingkatan] ?? 0;
-    }
-
-    // Menambahkan kolom Aksi dengan id
-    $row['Aksi'] = $d->id;
-
-    // Tambahkan hasil row ke dalam items
-    $items[] = $row;
-}
-@endphp --}}
-
-@php
-$items = [];
-// Ambil semua jurusan yang tersedia
-$allJurusan = $jurusan->pluck('singkatan'); // Mengambil semua nama jurusan dari variabel $jurusan
-
-foreach ($data as $d) {
-    $row = [
-        // 'id' => $d->id,
-        'nama' => $d->nama,
-        'alamat' => $d->alamat,
-    ];
-
-    // Initialize an array for kuota values
-    $kuotaValues = [];
-
-    foreach ($d->kuotaIndustri as $kuota) {
-        $jurusanSingkatan = $kuota->jurusan->singkatan;
-        $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P'; // Menentukan L atau P
-        $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
-        $kuotaValues[$formattedKey] = $kuota->kuota;
-    }
-
-    // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
-    foreach ($allJurusan as $jurusanSingkatan) {
-        $row["L-{$jurusanSingkatan}"] = $kuotaValues["L-{$jurusanSingkatan}"] ?? 0;
-        $row["P-{$jurusanSingkatan}"] = $kuotaValues["P-{$jurusanSingkatan}"] ?? 0;
-    }
-
-    // Menambahkan kolom Aksi dengan id
-    $row['Aksi'] = $d->id;
-
-    // Tambahkan hasil row ke dalam items
-    $items[] = $row;
-}
-@endphp
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const thead = document.querySelector('#myTable thead');
+            const rows = Array.from(thead.querySelectorAll('tr'));
+            
+            if (rows.length === 2) {
+                // Swap rows as needed
+                thead.appendChild(rows[0]); // Move first row to the end
+                thead.insertBefore(rows[1], rows[0]); // Move last row before the new first row
+            }
+        });
+    </script>
 
     {{-- script untuk datatable --}}
     <script>
         document.addEventListener("alpine:init", () => {
-            Alpine.data('invoiceList', () => ({
+            Alpine.data('penempatan', () => ({
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',
@@ -188,37 +162,13 @@ foreach ($data as $d) {
 
                 initializeTable() {
                     this.datatable = new simpleDatatables.DataTable('#myTable', {
-                        // data: {
-                        //     headings: [
-                        //         '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
-                        //         "Nama",
-                        //         "Alamat",
-                        //         "Kota",
-                        //         "Aksi",
-                        //     ],
-                        //     data: this.dataArr
-                        // },
+         
                         data: {
-                            headings: [
-                                // '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
-                                "Nama",
-                                "Alamat",
-                                // Dynamically add jurusan columns
-                                ...Object.keys(this.items[0] || {}).filter(key => key !== 'id' && key !== 'nama' && key !== 'alamat'),
-                                // "Aksi"
-                            ],
                             data: this.dataArr
                         },
                         perPage: 10,
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
-                            // {
-                            //     select: 0,
-                            //     sortable: false,
-                            //     render: function(data, cell, row) {
-                            //         return `<input type="checkbox" class="form-checkbox mt-1" :id="'chk' + ${data}" :value="(${data})" x-model.number="selectedRows" />`;
-                            //     }
-                            // },
                             {
                                 select: this.dataArr[0].length - 1,
                                 sortable: false,
@@ -296,25 +246,6 @@ foreach ($data as $d) {
                     }
                 },
 
-                // setTableData() {
-                //     this.dataArr = this.items.map(item => {
-                //         let dataRow = [
-                //             item.nama,
-                //             item.alamat
-                //         ];
-
-                //         // Append kuota values
-                //         for (let key in item) {
-                //             if (key !== 'id' && key !== 'nama' && key !== 'alamat') {
-                //                 dataRow.push(item[key]);
-                //             }
-                //         }
-
-                //         dataRow.push(item.id);
-                //         return dataRow;
-                //     });
-                // },
-
                 searchInvoice() {
                     return this.items.filter((d) =>
                         (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
@@ -325,125 +256,8 @@ foreach ($data as $d) {
                         (d.status && d.status.toLowerCase().includes(this.searchText))
                     );
                 },
-
-                deleteRow() {
-                    if (this.selectedRows.length > 0) {
-                        window.Swal.fire({
-                            icon: 'warning',
-                            title: 'Apakah Anda yakin?',
-                            text: "Data yang dihapus tidak dapat dikembalikan!",
-                            showCancelButton: true,
-                            confirmButtonText: 'Hapus',
-                            cancelButtonText: 'Batal',
-                            padding: '2em',
-                            customClass: 'sweet-alerts'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                fetch('/guru/delete-multiple', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                    },
-                                    body: JSON.stringify({
-                                        ids: this.selectedRows
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        window.Swal.fire({
-                                            title: 'Dihapus!',
-                                            text: 'Data berhasil dihapus.',
-                                            icon: 'success',
-                                            customClass: 'sweet-alerts'
-                                        });
-                                        this.items = this.items.filter((item) => !this.selectedRows.includes(item.id));
-                                        this.selectedRows = [];
-                                    } else {
-                                        window.Swal.fire({
-                                            title: 'Gagal!',
-                                            text: 'Terjadi kesalahan saat menghapus data.',
-                                            icon: 'error',
-                                            customClass: 'sweet-alerts'
-                                        });
-                                    }
-                                })
-                                .catch(error => {
-                                    window.Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Terjadi kesalahan saat menghapus data.',
-                                        icon: 'error',
-                                        customClass: 'sweet-alerts'
-                                    });
-                                });
-                            }
-                        });
-                    } else {
-                        window.Swal.fire({
-                            title: 'Tidak ada data yang dipilih',
-                            text: 'Silakan pilih data yang ingin dihapus.',
-                            icon: 'info',
-                            customClass: 'sweet-alerts'
-                        });
-                    }
-                }
-
-
             }))
         })
-
-        function confirmDelete(id) {
-            window.Swal.fire({
-                icon: 'warning',
-                title: 'Apakah Anda yakin?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                showCancelButton: true,
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal',
-                padding: '2em',
-                customClass: 'sweet-alerts'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/industri/${id}/delete`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.Swal.fire({
-                                title: 'Dihapus!',
-                                text: 'Data berhasil dihapus.',
-                                icon: 'success',
-                                customClass: 'sweet-alerts'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            window.Swal.fire({
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat menghapus data.',
-                                icon: 'error',
-                                customClass: 'sweet-alerts'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        window.Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat menghapus data.',
-                            icon: 'error',
-                            customClass: 'sweet-alerts'
-                        });
-                    });
-                }
-            });
-        }
     </script>
 
 </x-layout.default>

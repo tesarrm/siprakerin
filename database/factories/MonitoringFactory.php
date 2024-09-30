@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Guru;
+use App\Models\Industri;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class MonitoringFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'guru_id' => Guru::inRandomOrder()->first()->id,
+            'industri_id' => Industri::inRandomOrder()->first()->id,
+            'tanggal' => $this->faker->date(), 
         ];
     }
 }

@@ -15,6 +15,11 @@ class PilihanKotaController extends Controller
     public function __construct(PilihanKota $a)
     {
         $this->model = $a;
+
+        $this->middleware('can:c_pilihan_kota')->only(['index', 'show']);
+        $this->middleware('can:r_pilihan_kota')->only(['create', 'store']);
+        $this->middleware('can:u_pilihan_kota')->only(['edit', 'update']);
+        $this->middleware('can:d_pilihan_kota')->only('destroy');
     }
 
     /**
@@ -175,5 +180,52 @@ public function index()
     public function destroy(PilihanKota $pilihanKota)
     {
         //
+    }
+
+    public function buat()
+    {
+        $user_id = auth()->user()->id;
+        $siswa = Siswa::where('user_id', $user_id)->first();
+        $data = PilihanKota::where('siswa_id', $siswa->id)->first();
+
+        if (!$data) {
+            $data = new PilihanKota(); // Jika data tidak ada, buat instance kosong
+            $data->kota_id_1 = '';
+            $data->kota_id_2 = '';
+            $data->kota_id_3 = '';
+        }
+
+        $kota = Kota::all();
+        
+        // Pass data and kota to the view
+        return view('pilihan_kota.buat', [
+            'data' => $data,
+            'siswa' => $siswa,
+            'kota' => $kota
+        ]);
+    }
+    public function membuat($siswa_id, Request $request)
+    {
+        $request->validate([
+            'siswa_id' => 'required',
+            'kota_id_1' => 'required|exists:kotas,id',
+            'kota_id_2' => 'required|exists:kotas,id',
+            'kota_id_3' => 'required|exists:kotas,id',
+        ]);
+
+        PilihanKota::where('siswa_id', $request->input('siswa_id'))
+            ->delete();
+
+        PilihanKota::updateOrCreate([
+                'siswa_id' => $request->input('siswa_id'),
+                'kota_id_1' => $request->input('kota_id_1'),
+                'kota_id_2' => $request->input('kota_id_2'),
+                'kota_id_3' => $request->input('kota_id_3'),
+                'status' => $request->input('status'),
+            ]
+        );
+
+        // Redirect back with success message
+        return redirect('pilihankota-buat')->with('status', 'Data Pilihan Kota berhasil diperbarui!');
     }
 }

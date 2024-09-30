@@ -27,6 +27,10 @@ class AuthSeeder extends Seeder
             ['name' => 'kabeng'],
             ['name' => 'kabeng']
         );
+        $role_wali_siswa = Role::updateOrCreate(
+            ['name' => 'wali_siswa'],
+            ['name' => 'wali_siswa']
+        );
         $role_siswa = Role::updateOrCreate(
             ['name' => 'siswa'],
             ['name' => 'siswa']
@@ -83,23 +87,6 @@ class AuthSeeder extends Seeder
             ['name' => 'd_guru'],
             ['name' => 'd_guru']
         );
-// siswa
-        $permission_c_siswa = Permission::updateOrCreate(
-            ['name' => 'c_siswa'],
-            ['name' => 'c_siswa']
-        );
-        $permission_r_siswa = Permission::updateOrCreate(
-            ['name' => 'r_siswa'],
-            ['name' => 'r_siswa']
-        );
-        $permission_u_siswa = Permission::updateOrCreate(
-            ['name' => 'u_siswa'],
-            ['name' => 'u_siswa']
-        );
-        $permission_d_siswa = Permission::updateOrCreate(
-            ['name' => 'd_siswa'],
-            ['name' => 'd_siswa']
-        );
 // kelas
         $permission_c_kelas = Permission::updateOrCreate(
             ['name' => 'c_kelas'],
@@ -117,32 +104,246 @@ class AuthSeeder extends Seeder
             ['name' => 'd_kelas'],
             ['name' => 'd_kelas']
         );
+// siswa
+        $permission_c_siswa = Permission::updateOrCreate(
+            ['name' => 'c_siswa'],
+            ['name' => 'c_siswa']
+        );
+        $permission_r_siswa = Permission::updateOrCreate(
+            ['name' => 'r_siswa'],
+            ['name' => 'r_siswa']
+        );
+        $permission_u_siswa = Permission::updateOrCreate(
+            ['name' => 'u_siswa'],
+            ['name' => 'u_siswa']
+        );
+        $permission_d_siswa = Permission::updateOrCreate(
+            ['name' => 'd_siswa'],
+            ['name' => 'd_siswa']
+        );
+// industri 
+        $permission_c_industri = Permission::updateOrCreate(
+            ['name' => 'c_industri'],
+            ['name' => 'c_industri']
+        );
+        $permission_r_industri = Permission::updateOrCreate(
+            ['name' => 'r_industri'],
+            ['name' => 'r_industri']
+        );
+        $permission_u_industri = Permission::updateOrCreate(
+            ['name' => 'u_industri'],
+            ['name' => 'u_industri']
+        );
+        $permission_d_industri = Permission::updateOrCreate(
+            ['name' => 'd_industri'],
+            ['name' => 'd_industri']
+        );
+// kuota industri 
+        $permission_c_kuota_industri = Permission::updateOrCreate(
+            ['name' => 'c_kuota_industri'],
+            ['name' => 'c_kuota_industri']
+        );
+        $permission_r_kuota_industri = Permission::updateOrCreate(
+            ['name' => 'r_kuota_industri'],
+            ['name' => 'r_kuota_industri']
+        );
+        $permission_u_kuota_industri = Permission::updateOrCreate(
+            ['name' => 'u_kuota_industri'],
+            ['name' => 'u_kuota_industri']
+        );
+        $permission_d_kuota_industri = Permission::updateOrCreate(
+            ['name' => 'd_kuota_industri'],
+            ['name' => 'd_kuota_industri']
+        );
+// pilihan kota 
+        $permission_c_pilihan_kota = Permission::updateOrCreate(
+            ['name' => 'c_pilihan_kota'],
+            ['name' => 'c_pilihan_kota']
+        );
+        $permission_r_pilihan_kota = Permission::updateOrCreate(
+            ['name' => 'r_pilihan_kota'],
+            ['name' => 'r_pilihan_kota']
+        );
+        $permission_u_pilihan_kota = Permission::updateOrCreate(
+            ['name' => 'u_pilihan_kota'],
+            ['name' => 'u_pilihan_kota']
+        );
+        $permission_d_pilihan_kota = Permission::updateOrCreate(
+            ['name' => 'd_pilihan_kota'],
+            ['name' => 'd_pilihan_kota']
+        );
+// penempatan prakerin 
+        $permission_c_penempatan_prakerin = Permission::updateOrCreate(
+            ['name' => 'c_penempatan_prakerin'],
+            ['name' => 'c_penempatan_prakerin']
+        );
+        $permission_r_penempatan_prakerin = Permission::updateOrCreate(
+            ['name' => 'r_penempatan_prakerin'],
+            ['name' => 'r_penempatan_prakerin']
+        );
+        $permission_u_penempatan_prakerin = Permission::updateOrCreate(
+            ['name' => 'u_penempatan_prakerin'],
+            ['name' => 'u_penempatan_prakerin']
+        );
+        $permission_d_penempatan_prakerin = Permission::updateOrCreate(
+            ['name' => 'd_penempatan_prakerin'],
+            ['name' => 'd_penempatan_prakerin']
+        );
+// jurnal 
+        $permission_c_jurnal = Permission::updateOrCreate(
+            ['name' => 'c_jurnal'],
+            ['name' => 'c_jurnal']
+        );
+        $permission_r_jurnal = Permission::updateOrCreate(
+            ['name' => 'r_jurnal'],
+            ['name' => 'r_jurnal']
+        );
+        $permission_u_jurnal = Permission::updateOrCreate(
+            ['name' => 'u_jurnal'],
+            ['name' => 'u_jurnal']
+        );
+        $permission_d_jurnal = Permission::updateOrCreate(
+            ['name' => 'd_jurnal'],
+            ['name' => 'd_jurnal']
+        );
+// jadwal_monitoring 
+        $permission_c_jadwal_monitoring = Permission::updateOrCreate(
+            ['name' => 'c_jadwal_monitoring'],
+            ['name' => 'c_jadwal_monitoring']
+        );
+        $permission_r_jadwal_monitoring = Permission::updateOrCreate(
+            ['name' => 'r_jadwal_monitoring'],
+            ['name' => 'r_jadwal_monitoring']
+        );
+        $permission_u_jadwal_monitoring = Permission::updateOrCreate(
+            ['name' => 'u_jadwal_monitoring'],
+            ['name' => 'u_jadwal_monitoring']
+        );
+        $permission_d_jadwal_monitoring = Permission::updateOrCreate(
+            ['name' => 'd_jadwal_monitoring'],
+            ['name' => 'd_jadwal_monitoring']
+        );
+// hasil monitoring 
+        $permission_c_hasil_monitoring = Permission::updateOrCreate(
+            ['name' => 'c_hasil_monitoring'],
+            ['name' => 'c_hasil_monitoring']
+        );
+        $permission_r_hasil_monitoring = Permission::updateOrCreate(
+            ['name' => 'r_hasil_monitoring'],
+            ['name' => 'r_hasil_monitoring']
+        );
+        $permission_u_hasil_monitoring = Permission::updateOrCreate(
+            ['name' => 'u_hasil_monitoring'],
+            ['name' => 'u_hasil_monitoring']
+        );
+        $permission_d_hasil_monitoring = Permission::updateOrCreate(
+            ['name' => 'd_hasil_monitoring'],
+            ['name' => 'd_hasil_monitoring']
+        );
 
 // dash
-        $role_admin->givePermissionTo($permission_r_dashadmin);
         $role_guru->givePermissionTo($permission_r_dashguru);
-        $role_kabeng->givePermissionTo($permission_r_dashkabeng);
-        $role_siswa->givePermissionTo($permission_r_dashsiswa);
         $role_industri->givePermissionTo($permission_r_dashindustri);
         $role_ortu->givePermissionTo($permission_r_dashortu);
+
+// admin
+        $role_admin->givePermissionTo($permission_r_dashadmin);
 
         $role_admin->givePermissionTo($permission_c_guru);
         $role_admin->givePermissionTo($permission_r_guru);
         $role_admin->givePermissionTo($permission_u_guru);
         $role_admin->givePermissionTo($permission_d_guru);
+
         $role_admin->givePermissionTo($permission_c_siswa);
         $role_admin->givePermissionTo($permission_r_siswa);
         $role_admin->givePermissionTo($permission_u_siswa);
         $role_admin->givePermissionTo($permission_d_siswa);
+
         $role_admin->givePermissionTo($permission_c_kelas);
         $role_admin->givePermissionTo($permission_r_kelas);
         $role_admin->givePermissionTo($permission_u_kelas);
         $role_admin->givePermissionTo($permission_d_kelas);
 
-        $user   = User::find(1);
-        // $user2  = User::find(2);
+        $role_admin->givePermissionTo($permission_c_industri);
+        $role_admin->givePermissionTo($permission_r_industri);
+        $role_admin->givePermissionTo($permission_u_industri);
+        $role_admin->givePermissionTo($permission_d_industri);
 
-        $user->assignRole('admin');
-        // $user2->assignRole('writer');
+        $role_admin->givePermissionTo($permission_c_kuota_industri);
+        $role_admin->givePermissionTo($permission_r_kuota_industri);
+        $role_admin->givePermissionTo($permission_u_kuota_industri);
+        $role_admin->givePermissionTo($permission_d_kuota_industri);
+
+        $role_admin->givePermissionTo($permission_r_pilihan_kota);
+        $role_admin->givePermissionTo($permission_u_pilihan_kota);
+        $role_admin->givePermissionTo($permission_d_pilihan_kota);
+
+        $role_admin->givePermissionTo($permission_c_penempatan_prakerin);
+        $role_admin->givePermissionTo($permission_r_penempatan_prakerin);
+        $role_admin->givePermissionTo($permission_u_penempatan_prakerin);
+        $role_admin->givePermissionTo($permission_d_penempatan_prakerin);
+
+        $role_admin->givePermissionTo($permission_r_jurnal);
+        $role_admin->givePermissionTo($permission_d_jurnal);
+
+        $role_admin->givePermissionTo($permission_c_jadwal_monitoring);
+        $role_admin->givePermissionTo($permission_r_jadwal_monitoring);
+        $role_admin->givePermissionTo($permission_u_jadwal_monitoring);
+        $role_admin->givePermissionTo($permission_d_jadwal_monitoring);
+
+        $role_admin->givePermissionTo($permission_c_hasil_monitoring);
+        $role_admin->givePermissionTo($permission_r_hasil_monitoring);
+        $role_admin->givePermissionTo($permission_u_hasil_monitoring);
+        $role_admin->givePermissionTo($permission_d_hasil_monitoring);
+// kabeng 
+        $role_kabeng->givePermissionTo($permission_r_dashkabeng);
+
+        $role_kabeng->givePermissionTo($permission_c_penempatan_prakerin);
+        $role_kabeng->givePermissionTo($permission_r_penempatan_prakerin);
+        $role_kabeng->givePermissionTo($permission_u_penempatan_prakerin);
+        $role_kabeng->givePermissionTo($permission_d_penempatan_prakerin);
+
+        $role_kabeng->givePermissionTo($permission_c_hasil_monitoring);
+        $role_kabeng->givePermissionTo($permission_r_hasil_monitoring);
+        $role_kabeng->givePermissionTo($permission_u_hasil_monitoring);
+        $role_kabeng->givePermissionTo($permission_d_hasil_monitoring);
+// wali siswa 
+        $role_wali_siswa->givePermissionTo($permission_r_penempatan_prakerin);
+
+        $role_wali_siswa->givePermissionTo($permission_r_jurnal);
+
+        $role_wali_siswa->givePermissionTo($permission_c_hasil_monitoring);
+        $role_wali_siswa->givePermissionTo($permission_r_hasil_monitoring);
+        $role_wali_siswa->givePermissionTo($permission_u_hasil_monitoring);
+        $role_wali_siswa->givePermissionTo($permission_d_hasil_monitoring);
+// siswa 
+        $role_siswa->givePermissionTo($permission_r_dashsiswa);
+
+        $role_siswa->givePermissionTo($permission_c_pilihan_kota);
+        $role_siswa->givePermissionTo($permission_r_pilihan_kota);
+        $role_siswa->givePermissionTo($permission_u_pilihan_kota);
+        $role_siswa->givePermissionTo($permission_d_pilihan_kota);
+
+        $role_siswa->givePermissionTo($permission_c_jurnal);
+        $role_siswa->givePermissionTo($permission_r_jurnal);
+        $role_siswa->givePermissionTo($permission_u_jurnal);
+        $role_siswa->givePermissionTo($permission_d_jurnal);
+
+        $role_siswa->givePermissionTo($permission_c_hasil_monitoring);
+        $role_siswa->givePermissionTo($permission_r_hasil_monitoring);
+        $role_siswa->givePermissionTo($permission_u_hasil_monitoring);
+        $role_siswa->givePermissionTo($permission_d_hasil_monitoring);
+
+
+// assign role to user
+        $admin = User::find(1);
+        $kabeng = User::find(2);
+        $wali_siswa = User::find(3);
+        $siswa = User::find(4);
+
+        $admin->assignRole('admin');
+        $kabeng->assignRole('kabeng');
+        $wali_siswa->assignRole('wali_siswa');
+        $siswa->assignRole('siswa');
     }
 }

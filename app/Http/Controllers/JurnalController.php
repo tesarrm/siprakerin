@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Guru;
 use App\Models\Jurnal;
+use App\Models\Kelas;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
 
@@ -12,14 +14,31 @@ class JurnalController extends Controller
     public function __construct(Jurnal $a)
     {
         $this->model = $a;
+
+        $this->middleware('can:c_jurnal')->only(['create', 'store']);
+        $this->middleware('can:r_jurnal')->only(['index', 'show']);
+        $this->middleware('can:u_jurnal')->only(['edit', 'update']);
+        $this->middleware('can:d_jurnal')->only('destroy');
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $data = $this->model->with('siswa')->get();
+        if(auth()->user()->hasRole('wali_siswa')){
+            $guru = Guru::where('user_id', auth()->user()->id)->first();
+            $kelas = Kelas::where('guru_id', $guru->id)->first();
+
+            // Filter jurnal berdasarkan kelas
+            $data = Jurnal::whereHas('siswa.kelas', function ($query) use ($kelas) {
+                $query->where('kelas.id', $kelas->id);
+            })->with('siswa.kelas')->get();
+        } else if(auth()->user()->hasRole('siswa')) {
+            $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+            $siswa_id = $siswa->id;
+
+            $data = Jurnal::with('siswa.kelas')->where('siswa_id', $siswa_id)->get();
+        } else {
+            $data = Jurnal::with('siswa.kelas')->get();
+        }
 
         return view('jurnal.index', [
             'data' => $data
@@ -40,7 +59,6 @@ class JurnalController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            // 'siswa_id' => 'required',
             'tanggal' => 'required|string',
             'time_start' => 'required|string',
             'time_end' => 'required|string',
@@ -48,9 +66,12 @@ class JurnalController extends Controller
             'keterangan' => 'required',
         ]);
 
+        $siswa= Siswa::where('user_id', auth()->user()->id)->first();
+        $siswa_id = $siswa->id;
+
         $create = collect($validatedData);
         $create->put('tanggal_waktu', $validatedData['tanggal'] . " " . $validatedData['time_start'] . " - " . $validatedData['time_end']);
-        $create->put('siswa_id', 1);
+        $create->put('siswa_id', $siswa_id);
         $this->model->create($create->toArray());
 
         return redirect('jurnal')->with('status', 'Data berhasil ditambah!');
@@ -118,9 +139,12 @@ public function edit($id)
             'keterangan' => 'required',
         ]);
 
+        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+        $siswa_id = $siswa->id;
+
         $update = collect($validatedData);
         $update->put('tanggal_waktu', $validatedData['tanggal'] . " " . $validatedData['time_start'] . " - " . $validatedData['time_end']);
-        $update->put('siswa_id', 1);
+        $update->put('siswa_id', $siswa_id);
         $data->update($update->toArray());
 
         return redirect('jurnal')->with('status', 'Data berhasil ditambah!');

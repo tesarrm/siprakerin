@@ -3,6 +3,9 @@
 namespace Database\Factories;
 
 use App\Models\Kelas;
+use App\Models\Kota;
+use App\Models\PilihanKota;
+use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -19,21 +22,46 @@ class SiswaFactory extends Factory
      */
     public function definition(): array
     {
+        // Membuat nama siswa terlebih dahulu
+        $namaSiswa = $this->faker->name;
+
+        // Membuat user dengan nama yang sama
         $user = User::factory()->create([
-            'name' => $this->faker->name,
+            'name' => $namaSiswa, // Menggunakan nama siswa yang sama
             'email' => $this->faker->unique()->safeEmail,
             'password' => Hash::make('password'), 
         ]);
 
+        // Memberikan peran 'siswa' kepada user
         $user->assignRole('siswa');
 
+        // Mengembalikan data siswa dengan user_id yang sesuai
         return [
             'nis' => $this->faker->unique()->numerify('##########'), // 10 digit
-            'nama' => $this->faker->name(),
+            'nama' => $namaSiswa, // Nama siswa yang sama dengan nama user
             'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
             'kelas_id' => Kelas::inRandomOrder()->first()->id,
             'user_id' => $user->id,
             'gambar' => null, // Gambar di-set null
         ];
+
+
+        // Memilih tiga kota secara acak dari tabel kotas
+        $kota1 = Kota::inRandomOrder()->first();
+        $kota2 = Kota::inRandomOrder()->first();
+        $kota3 = Kota::inRandomOrder()->first();
+        // $kota2 = Kota::inRandomOrder()->where('id', '!=', $kota1->id)->first();
+        // $kota3 = Kota::inRandomOrder()->whereNotIn('id', [$kota1->id, $kota2->id])->first();
+
+        // Mengisi data pilihan kota
+        PilihanKota::create([
+            'siswa_id' => $siswa->id,
+            'kota_id_1' => $kota1->id,
+            'kota_id_2' => $kota2->id,
+            'kota_id_3' => $kota3->id,
+            'status' => 'proses', // Status default
+        ]);
+
+        
     }
 }

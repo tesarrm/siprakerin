@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Industri;
 use App\Models\Kota;
+use App\Models\Pengaturan;
 use Illuminate\Http\Request;
 
 class IndustriController extends Controller
@@ -12,13 +13,18 @@ class IndustriController extends Controller
     public function __construct(Industri $a)
     {
         $this->model = $a;
+
+        $this->middleware('can:c_industri')->only(['create', 'store']);
+        $this->middleware('can:r_industri')->only(['index', 'show']);
+        $this->middleware('can:u_industri')->only(['edit', 'update']);
+        $this->middleware('can:d_industri')->only('destroy');
     }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $data = $this->model->with('kota')->get();
+        $data = $this->model->with('kota')->where('aktif', 1)->get();
 
         return view('industri.index', [
             'data' => $data
@@ -31,9 +37,11 @@ class IndustriController extends Controller
     public function create()
     {
         $kota = Kota::get();
+        $pengaturan = Pengaturan::first();
 
         return view('industri.add', [
-            'kota' => $kota
+            'kota' => $kota,
+            'pengaturan' => $pengaturan
         ]);
     }
 
@@ -45,7 +53,8 @@ class IndustriController extends Controller
         $validatedData = $request->validate([
             'nama' => 'required|string',
             'alamat' => 'required|string',
-            'kota' => 'required|string',
+            'kota_id' => 'required|string',
+            'tahun_ajaran' => 'required|string',
         ]);
 
         $create = collect($validatedData);
@@ -68,7 +77,7 @@ class IndustriController extends Controller
      */
     public function edit(Industri $industri)
     {
-        $kota = Kota::with('kota')->get();
+        $kota = Kota::get();
 
         return view('industri.edit', [
             'data' => $industri,
@@ -86,7 +95,8 @@ class IndustriController extends Controller
         $validatedData = $request->validate([
             'nama' => 'required|string',
             'alamat' => 'required|string',
-            'kota' => 'required|string',
+            'kota_id' => 'required|string',
+            'tahun_ajaran' => 'required|string',
         ]);
 
         $update = collect($validatedData);
@@ -104,6 +114,19 @@ class IndustriController extends Controller
         $data = $this->model->findOrFail($id);
         $data->delete();
         return response()->json(['success' => true]);
+    }
+
+    public function nonaktif($id){
+        $data = $this->model->find($id);
+
+        if ($data) {
+            $data->aktif = 0;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
     }
 
     public function aktif($id){

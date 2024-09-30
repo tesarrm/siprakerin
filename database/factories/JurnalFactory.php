@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Siswa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,10 @@ class JurnalFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'siswa_id' => Siswa::inRandomOrder()->first()->id,
+            'tanggal_waktu' => $this->faker->date(),
+            'kegiatan' => $this->faker->text(),
+            'keterangan' => $this->faker->text(),
         ];
     }
 }

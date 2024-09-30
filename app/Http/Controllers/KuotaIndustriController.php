@@ -13,14 +13,16 @@ class KuotaIndustriController extends Controller
     public function __construct(KuotaIndustri $a)
     {
         $this->model = $a;
+
+        $this->middleware('can:c_kuota_industri')->only(['create', 'store']);
+        $this->middleware('can:r_kuota_industri')->only(['index', 'show', 'storeOrUpdate']);
+        $this->middleware('can:u_kuota_industri')->only(['edit', 'update', 'storeOrUpdate']);
+        $this->middleware('can:d_kuota_industri')->only('destroy');
     }
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $data = Industri::with(['kuotaIndustri', 'kuotaIndustri.jurusan'])->get();
+        $data = Industri::with(['kuotaIndustri', 'kuotaIndustri.jurusan', 'kota'])->get();
         $jurusan = Jurusan::get();
 
         return view('kuota_industri.index', [
@@ -29,42 +31,20 @@ class KuotaIndustriController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(KuotaIndustri $kuotaIndustri)
     {
         //
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit($id)
-    // {
-    //     $jurusan = Jurusan::get();
-
-    //     return view('kuota_industri.edit', [
-    //         'industri_id' => $id,
-    //         'jurusans' => $jurusan
-    //     ]);
-    // }
 
     public function edit($industri_id)
     {
@@ -91,111 +71,45 @@ class KuotaIndustriController extends Controller
         return view('kuota_industri.edit', compact('jurusans', 'kuotas', 'industri_id'));
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, KuotaIndustri $kuotaIndustri)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(KuotaIndustri $kuotaIndustri)
     {
         //
     }
 
-    // public function storeOrUpdate(Request $request)
-    // {
-    //     $validated = $request->validate([
-    //         'industri_id' => 'required|exists:industris,id',
-    //         'kuota.*.jurusan_id' => 'required|exists:jurusans,id',
-    //         'kuota.*.kuota' => 'required|integer|min:0',
-    //     ]);
+    public function storeOrUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'industri_id' => 'required|exists:industris,id',
+            'kuota.*.jurusan_id' => 'required|exists:jurusans,id',
+            'kuota.*.laki_kuota' => 'nullable|integer|min:0',
+            'kuota.*.perempuan_kuota' => 'nullable|integer|min:0',
+        ]);
 
-    //     $industri_id = $validated['industri_id'];
+        $industri_id = $validated['industri_id'];
 
-    //     dd($validated);
-        
-    //     // Handle Laki-laki
-    //     foreach ($validated['kuota'] as $data) {
-    //         if (isset($data['jenis_kelamin']) && $data['jenis_kelamin'] == 'Laki-laki') {
-    //             KuotaIndustri::updateOrCreate(
-    //                 ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => 'Laki-laki'],
-    //                 ['kuota' => $data['kuota']]
-    //             );
-    //         }
-    //     }
-
-    //     // Handle Perempuan
-    //     foreach ($validated['kuota'] as $data) {
-    //         if (isset($data['jenis_kelamin']) && $data['jenis_kelamin'] == 'Perempuan') {
-    //             KuotaIndustri::updateOrCreate(
-    //                 ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => 'Perempuan'],
-    //                 ['kuota' => $data['kuota']]
-    //             );
-    //         }
-    //     }
-        
-    //     return redirect('kuotaindustri')->with('success', 'Data kuota industri berhasil disimpan.');
-    // }
-
-// public function storeOrUpdate(Request $request)
-// {
-//     dd($request);
-
-//     $validated = $request->validate([
-//         'industri_id' => 'required|exists:industris,id',
-//         'kuota.*.jurusan_id' => 'required|exists:jurusans,id',
-//         'kuota.*.jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
-//         'kuota.*.kuota' => 'required|integer|min:0',
-//     ]);
-
-//     $industri_id = $validated['industri_id'];
-
-    
-//     foreach ($validated['kuota'] as $data) {
-//         $kuota = KuotaIndustri::updateOrCreate(
-//             ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => $data['jenis_kelamin']],
-//             ['kuota' => $data['kuota']]
-//         );
-//     }
-    
-//     return redirect()->back()->with('success', 'Data kuota industri berhasil disimpan.');
-// }
-
-public function storeOrUpdate(Request $request)
-{
-    $validated = $request->validate([
-        'industri_id' => 'required|exists:industris,id',
-        'kuota.*.jurusan_id' => 'required|exists:jurusans,id',
-        'kuota.*.laki_kuota' => 'nullable|integer|min:0',
-        'kuota.*.perempuan_kuota' => 'nullable|integer|min:0',
-    ]);
-
-    $industri_id = $validated['industri_id'];
-
-    foreach ($validated['kuota'] as $data) {
-        // Laki-laki
-        if (isset($data['laki_kuota'])) {
-            KuotaIndustri::updateOrCreate(
-                ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => 'Laki-laki'],
-                ['kuota' => $data['laki_kuota']]
-            );
+        foreach ($validated['kuota'] as $data) {
+            // Laki-laki
+            if (isset($data['laki_kuota'])) {
+                KuotaIndustri::updateOrCreate(
+                    ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => 'Laki-laki'],
+                    ['kuota' => $data['laki_kuota']]
+                );
+            }
+            
+            // Perempuan
+            if (isset($data['perempuan_kuota'])) {
+                KuotaIndustri::updateOrCreate(
+                    ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => 'Perempuan'],
+                    ['kuota' => $data['perempuan_kuota']]
+                );
+            }
         }
-        
-        // Perempuan
-        if (isset($data['perempuan_kuota'])) {
-            KuotaIndustri::updateOrCreate(
-                ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => 'Perempuan'],
-                ['kuota' => $data['perempuan_kuota']]
-            );
-        }
+
+        return redirect('kuotaindustri')->with('success', 'Data kuota industri berhasil disimpan.');
     }
-
-    return redirect('kuotaindustri')->with('success', 'Data kuota industri berhasil disimpan.');
-}
 }

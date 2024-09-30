@@ -14,6 +14,7 @@ class Siswa extends Model
         'kelas_id',
         'aktif',
         'gambar',
+        'pas_foto',
         'nis',
         'nisn',
         'nama_lengkap',
@@ -33,6 +34,10 @@ class Siswa extends Model
     public function pilihankota()
     {
         return $this->hasOne(PilihanKota::class);
+    }
+    public function penempatan()
+    {
+        return $this->hasOne(PenempatanIndustri::class);
     }
     public function ortus()
     {

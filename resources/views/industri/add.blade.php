@@ -4,56 +4,43 @@
             @csrf
             <div class="flex xl:flex-row flex-col gap-2.5">
                 <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
-                    <div class=" px-4">
-                        <div class="flex justify-between lg:flex-row flex-col">
-                            <div class="lg:w-1/2 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="text-lg font-semibold">Data Kota</div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="nama" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input required id="nama" type="text" name="nama" class="form-input w-full" 
-                                            placeholder="Isi Nama" />
-                                        @error('nama')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="alamat" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Alamat<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input required id="alamat" type="text" name="alamat" class="form-input w-full" 
-                                            placeholder="Isi Alamat" />
-                                        @error('alamat')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                {{-- <div class="mt-4 flex items-center">
-                                    <label for="kota" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input required id="kota" type="text" name="kota" class="form-input w-full" 
-                                            placeholder="Isi Kota" />
-                                        @error('kota')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div> --}}
-                                <div class="flex items-center mt-4">
-                                    <label for="kota_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="kota_id" name="kota_id" class="form-select w-full">
-                                            <option value="">Pilih Kota</option>
-                                            @foreach($kota as $item)
-                                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('kota_id')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+                    <div class="px-4">
+                        <div class="text-lg font-semibold mb-4">Data Industri</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="tahun_ajaran">Tahun Ajaran<span class="text-danger">*</span></label>
+                                <input value="{{ $pengaturan->tahun_ajaran }} "required id="tahun_ajaran" type="text" name="tahun_ajaran" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                @error('tahun_ajaran')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <div class="lg:w-1/2 w-full">
+                            <div>
+                                <label for="nama">Nama<span class="text-danger">*</span></label>
+                                <input required id="nama" type="text" name="nama" class="form-input w-full" 
+                                placeholder="Isi Nama"/>
+                                @error('nama')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="kota_id">Kota<span class="text-danger">*</span></label>
+                                <select required id="kota_id" name="kota_id" class="form-select w-full">
+                                    <option value="">Pilih Kota</option>
+                                    @foreach($kota as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('kota_id')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="alamat">Alamat<span class="text-danger">*</span></label>
+                                <input required id="alamat" type="text" name="alamat" class="form-input w-full" 
+                                placeholder="Isi Alamat"/>
+                                @error('alamat')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -90,6 +77,8 @@
                                 Kembali </button>
                         </div>
                     </div>
+                </div>
+                <div class="xl:w-96 w-full xl:mt-0 mt-6">
                 </div>
             </div>
         </form>

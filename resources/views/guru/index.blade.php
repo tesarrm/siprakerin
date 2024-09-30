@@ -787,51 +787,51 @@
         }
 
         function nonaktif(id) {
-            window.Swal.fire({
+            window.swal.fire({
                 icon: 'warning',
-                title: 'Apakah Anda yakin?',
-                text: "Data akan dinonaktifkan!",
-                showCancelButton: true,
-                confirmButtonText: 'Nonaktif',
-                cancelButtonText: 'Batal',
+                title: 'apakah anda yakin?',
+                text: "data akan dinonaktifkan!",
+                showcancelbutton: true,
+                confirmbuttontext: 'nonaktif',
+                cancelbuttontext: 'batal',
                 padding: '2em',
-                customClass: 'sweet-alerts'
+                customclass: 'sweet-alerts'
             }).then((result) => {
-                if (result.isConfirmed) {
+                if (result.isconfirmed) {
                     fetch(`/guru/${id}/nonaktif`, {
-                        method: 'POST',
+                        method: 'post',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'content-type': 'application/json',
+                            'x-csrf-token': '{{ csrf_token() }}'
                         }
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.Swal.fire({
-                                title: 'Dinonaktifkan!',
-                                text: 'Data berhasil dinonaktifkan.',
+                            window.swal.fire({
+                                title: 'dinonaktifkan!',
+                                text: 'data berhasil dinonaktifkan.',
                                 icon: 'success',
-                                customClass: 'sweet-alerts'
+                                customclass: 'sweet-alerts'
                             }).then(() => {
                                 location.reload();
                             });
                         } else {
-                            window.Swal.fire({
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat menonaktifkan data.',
+                            window.swal.fire({
+                                title: 'gagal!',
+                                text: 'terjadi kesalahan saat menonaktifkan data.',
                                 icon: 'error',
-                                customClass: 'sweet-alerts'
+                                customclass: 'sweet-alerts'
                             });
                         }
                     })
                     .catch(error => {
                         console.log(error)
-                        window.Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat menonaktifkan data.',
+                        window.swal.fire({
+                            title: 'error!',
+                            text: 'terjadi kesalahan saat menonaktifkan data.',
                             icon: 'error',
-                            customClass: 'sweet-alerts'
+                            customclass: 'sweet-alerts'
                         });
                     });
                 }

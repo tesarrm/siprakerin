@@ -20,10 +20,10 @@ class GuruController extends Controller
     {
         $this->model = $guru;
 
-        // $this->middleware('can:c_guru')->only(['index', 'show']);
-        // $this->middleware('can:r_guru')->only(['create', 'store']);
-        // $this->middleware('can:u_guru')->only(['edit', 'update']);
-        // $this->middleware('can:d_guru')->only('destroy');
+        $this->middleware('can:c_guru')->only(['create', 'store']);
+        $this->middleware('can:r_guru')->only(['index', 'show']);
+        $this->middleware('can:u_guru')->only(['edit', 'update']);
+        $this->middleware('can:d_guru')->only('destroy');
 
     }
 

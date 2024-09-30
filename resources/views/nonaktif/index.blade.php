@@ -135,6 +135,22 @@
 
         </div>
         <div class="tab-content">
+
+            <div x-data="industri">
+                <div class="panel px-0 m-0 mt-[-20px] shadow-none">
+                    <div class="px-5">
+                        <div class="md:absolute md:top-5 ltr:md:left-5 rtl:md:right-5">
+                            <div class="flex items-center gap-2 mb-5">
+                                {{-- buttons --}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="invoice-table">
+                        <table id="table_industri" class="whitespace-nowrap"></table>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
@@ -224,6 +240,16 @@
             'tahun_ajaran' => $pengaturan->tahun_ajaran ?? '-',
             'email' => $d->user->email ?? '-',
             'gambar' => $d->gambar, 
+            'action' => $d->id, 
+        ];
+    }
+
+    $dIndustri = [];
+    foreach ($industri as $d) {
+        $dIndustri[] = [
+            'nama' => $d->nama,
+            'alamat' => $d->alamat,
+            'kota' => $d->kota->nama,
             'action' => $d->id, 
         ];
     }
@@ -537,6 +563,91 @@
                 },
             }))
         })
+        document.addEventListener("alpine:init", () => {
+            Alpine.data('industri', () => ({
+                selectedRows: [],
+                items: @json($dIndustri),
+                searchText: '',
+                datatable: null,
+                dataArr: [],
+
+                init() {
+                    this.setTableData();
+                    this.initializeTable();
+                    this.$watch('items', value => {
+                        this.datatable.destroy()
+                        this.setTableData();
+                        this.initializeTable();
+                    });
+                    this.$watch('selectedRows', value => {
+                        this.datatable.destroy()
+                        this.setTableData();
+                        this.initializeTable();
+                    });
+                },
+
+                initializeTable() {
+                    this.datatable = new simpleDatatables.DataTable('#table_industri', {
+                        data: {
+                            headings: [
+                                "Nama",
+                                "Alamat",
+                                "Kota",
+                                "Aksi",
+                            ],
+                            data: this.dataArr
+                        },
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [
+                            {
+                                select: 3,
+                                render: function(data, cell, row) {
+                                    return `<span class="badge badge-outline-dark" @click="aktifIndustri('${data}')">Aktifkan</span>`;
+                                }
+                            },
+                        ],
+                        firstLast: true,
+                        firstText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                        lastText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                        prevText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                        nextText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                        labels: {
+                            perPage: "<span class='ml-2'>{select}</span>",
+                            noRows: "No data available",
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}",
+                        },
+                    });
+                },
+
+                setTableData() {
+                    this.dataArr = [];
+                    for (let i = 0; i < this.items.length; i++) {
+                        this.dataArr[i] = [];
+                        for (let p in this.items[i]) {
+                            if (this.items[i].hasOwnProperty(p)) {
+                                this.dataArr[i].push(this.items[i][p]);
+                            }
+                        }
+                    }
+                },
+
+                searchInvoice() {
+                    return this.items.filter((d) =>
+                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
+                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
+                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
+                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
+                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
+                        (d.status && d.status.toLowerCase().includes(this.searchText))
+                    );
+                },
+            }))
+        })
+
 
         function aktifGuru(id) {
             window.Swal.fire({
@@ -743,7 +854,4 @@
             });
         }
     </script>
-
-
-
 </x-layout.default>

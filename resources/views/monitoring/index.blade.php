@@ -148,7 +148,7 @@
     foreach ($data as $d) {
         $items[] = [
             'id' => $d->id,
-            'nama_guru' => $d->guru->nama_guru,
+            'nama_guru' => $d->guru->nama,
             'nama_industri' => $d->industri->nama,
             'tanggal' => $d->tanggal,
             'action' => $d->id,

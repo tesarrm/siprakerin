@@ -21,6 +21,7 @@ class IndustriFactory extends Factory
             'nama' => $this->faker->name(),
             'alamat' => $this->faker->name(),
             'kota_id' => Kota::inRandomOrder()->first()->id,
+            'tahun_ajaran' => '2024/2025',
         ];
     }
 }

@@ -12,6 +12,7 @@ class HasilMonitoring extends Model
 
     protected $fillable = [
         'monitoring_id',
+        'siswa_id',
         'kedisiplinan',
         'sikap',
         'kerjasama',
@@ -21,5 +22,10 @@ class HasilMonitoring extends Model
     public function monitoring()
     {
         return $this->belongsTo(Monitoring::class);
+    }
+
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class);
     }
 }

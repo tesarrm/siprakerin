@@ -24,4 +24,8 @@ class KuotaIndustri extends Model
     {
         return $this->belongsTo(Jurusan::class);
     }
+    public function kota()
+    {
+        return $this->belongsTo(Kota::class);
+    }
 }

@@ -1,120 +1,88 @@
 
 <x-layout.default>
 
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+    </style>
+
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
+    <script src="/assets/js/simple-datatables.js"></script>
 
-    <div x-data="invoiceList">
-        <script src="/assets/js/simple-datatables.js"></script>
 
-        <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
-            <div class="px-5">
-                <div class="md:absolute md:top-5 ltr:md:left-5 rtl:md:right-5">
-                    <div class="flex items-center gap-2 mb-5">
-                        <button type="button" class="btn btn-danger gap-2" @click="deleteRow()">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round"></path>
-                                <path
-                                    d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                <path opacity="0.5" d="M9.5 11L10 16" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round"></path>
-                                <path opacity="0.5" d="M14.5 11L14 16" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round"></path>
-                                <path opacity="0.5"
-                                    d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
-                                    stroke="currentColor" stroke-width="1.5"></path>
-                            </svg>
-                            Hapus </button>
-                        <a href="/jurusan/create" class="btn btn-primary gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" class="w-5 h-5">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            Tambah </a>
-                        {{-- menu dropdown --}}
-                        <div class="relative inline-flex align-middle flex-col items-start justify-center">
-                            <div class="relative">
-                                <div x-data="dropdown" @click.outside="open = false" class="dropdown">
-                                    <button type="button" class="btn dropdown-toggle btn-outline-dark"
-                                        @click="toggle">Menu
+    <div class="panel">
 
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="w-4 h-4 ltr:ml-2 rtl:mr-2 inline-block shrink-0">
-                                            <path d="M19 9L12 15L5 9" stroke="currentColor" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </button>
-                                    <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                        class="ltr:right-0 rtl:left-0 whitespace-nowrap">
-                                        <li><a href="javascript:;" @click="$dispatch('open-modal')">Import</a></li>
-                                        <li><a href="/guru-export" @click="toggle">Export</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        {{-- isi modal --}}
-                        <div x-data="modal" @open-modal.window="toggle">
-                            <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
-                                <div class="flex items-start justify-center min-h-screen px-4" @click.self="open = false">
-                                    <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden  w-full max-w-sm my-8">
-                                        <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
-                                            <h5 class="font-bold text-lg">Impor Excel</h5>
-                                            <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="w-6 h-6">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="p-5">
-                                            <form action="/guru-import" method="POST" enctype="multipart/form-data">
-                                                @csrf
-                                                <div>
-                                                    <label for="ctnFile">Unduh Template</label>
-                                                    <button type="button" class="btn btn-danger">
-                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                                            <path opacity="0.5"
-                                                                d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15"
-                                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                                stroke-linejoin="round"></path>
-                                                            <path d="M12 3V16M12 16L16 11.625M12 16L8 11.625" stroke="currentColor"
-                                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                                        </svg>
-                                                        &nbsp;&nbsp;Excel
-                                                    </button>
-                                                    <span class="text-white-dark text-xs">Jangan ubah bagian header!</span>
-                                                </div>
-                                                <div class="mt-6">
-                                                    <label for="ctnFile">Impor Excel</label>
-                                                    <input id="ctnFile" type="file" name="excel" class="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary" required />
-                                                </div>
-                                                <div class="flex justify-end items-center mt-8">
-                                                    <button type="button" class="btn btn-outline-danger" @click="toggle">Discard</button>
-                                                    <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4" @click="toggle">Impor</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+
+@if(!auth()->user()->hasRole('siswa'))
+        <div id="tabs" x-data="{ tab: 'jadwal'}">
+            <ul class="flex flex-wrap mb-5 border-b border-white-light dark:border-[#191e3a]">
+                <li class="tab active">
+                    <a href="javascript:;"
+                        class="p-5 py-3 -mb-[1px] flex items-center relative before:transition-all before:duration-700 before:absolute hover:text-secondary before:bottom-0 before:w-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:bg-secondary hover:before:w-full"
+                        onclick="showTab(0)"
+                        :class="{'border-b !border-secondary text-secondary' : tab === 'jadwal'}" @click="tab = 'jadwal'"
+                        >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
+                            <path opacity="0.5"
+                                d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z"
+                                stroke="currentColor" stroke-width="1.5" />
+                            <path d="M12 15L12 18" stroke="currentColor" stroke-width="1.5"
+                                stroke-linecap="round" />
+                        </svg>
+                        Jadwal Monitoring</a>
+                </li>
+                <li class="tab">
+                    <a href="javascript:;"
+                        class="p-5 py-3 -mb-[1px] flex items-center relative before:transition-all before:duration-700 hover:text-secondary before:absolute before:w-0 before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:bg-secondary hover:before:w-full"
+                        onclick="showTab(1)"
+                        :class="{'border-b !border-secondary text-secondary' : tab === 'hasil'}" @click="tab = 'hasil'"
+                        ">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
+                            <circle cx="12" cy="6" r="4"
+                                stroke="currentColor" stroke-width="1.5" />
+                            <ellipse opacity="0.5" cx="12" cy="17" rx="7"
+                                ry="4" stroke="currentColor" stroke-width="1.5" />
+                        </svg>
+                        Hasil Monitoring</a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="tab-content">
+            <div class="tab-content show">
+
+                <div x-data="invoiceList">
+                    <div class="invoice-table">
+                        <table id="myTable" class="whitespace-nowrap"></table>
                     </div>
                 </div>
+
             </div>
-            <div class="invoice-table">
-                <table id="myTable" class="whitespace-nowrap"></table>
+            <div class="tab-content">
+
+@endif
+
+                <div x-data="hasil">
+                    <div class="invoice-table">
+                        <table id="table_hasil" class="whitespace-nowrap"></table>
+                    </div>
+                </div>
+
+@if(!auth()->user()->hasRole('siswa'))
+
             </div>
         </div>
+@endif
+
     </div>
+
 
     {{-- alert toast --}}
     @if(session('status'))
@@ -145,19 +113,49 @@
     {{-- data untuk datatable --}}
     @php
     $items = [];
-    foreach ($data as $d) {
-        $items[] = [
-            'id' => $d->id,
-            'guru' => $d->monitoring->guru->nama_guru,
-            'siswa' => $d->monitoring->siswa->nama,
-            'kedisiplinan' => $d->kedisiplinan,
-            'sikap' => $d->sikap,
-            'kerjasama' => $d->kerjasama,
-            'catatan' => $d->catatan,
-            'action' => $d->id, // Gunakan ID ini untuk aksi
-        ];
+    $dHasil = [];
+
+    if(auth()->user()->hasRole('siswa')){
+        foreach ($hasil as $d) {
+            $dHasil[] = [
+                'nama_guru' => $d->monitoring->guru->nama,
+                'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi,
+                'kedisiplinan' => $d->kedisiplinan,
+                'sikap' => $d->sikap,
+                'kerjasama' => $d->kerjasama,
+                'catatan' => $d->catatan,
+            ];
+        }
+    } else {
+        foreach ($hasil as $d) {
+            $dHasil[] = [
+                'nama_siswa' => $d->siswa->nama,
+                'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi,
+                'kedisiplinan' => $d->kedisiplinan,
+                'sikap' => $d->sikap,
+                'kerjasama' => $d->kerjasama,
+                'catatan' => $d->catatan,
+            ];
+        }
     }
+
     @endphp
+
+    {{-- tab --}}
+    <script>
+        function showTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            // Hapus kelas aktif dari semua tab dan sembunyikan semua konten
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('show'));
+
+            // Tambahkan kelas aktif pada tab yang dipilih dan tampilkan kontennya
+            tabs[index].classList.add('active');
+            contents[index].classList.add('show');
+        }
+    </script>
 
     {{-- script untuk datatable --}}
     <script>
@@ -174,7 +172,7 @@
                     this.initializeTable();
                     this.$watch('items', value => {
                         this.datatable.destroy()
-                        this.setTableDataresources/views/jurusan/index.blade.php();
+                        this.setTableData();
                         this.initializeTable();
                     });
                     this.$watch('selectedRows', value => {
@@ -188,14 +186,10 @@
                     this.datatable = new simpleDatatables.DataTable('#myTable', {
                         data: {
                             headings: [
-                                '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
-                                "Nama",
-                                "Guru",
-                                "Siswa",
-                                "Kedisiplinan",
-                                "Sikap",
-                                "Kerjasama",
-                                "Catatan",
+                                "Nama Guru",
+                                "Nama Industri",
+                                "Tanggal",
+                                "Status",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -204,18 +198,11 @@
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
-                                select: 0,
-                                sortable: false,
-                                render: function(data, cell, row) {
-                                    return `<input type="checkbox" class="form-checkbox mt-1" :id="'chk' + ${data}" :value="(${data})" x-model.number="selectedRows" />`;
-                                }
-                            },
-                            {
-                                select: 3,
+                                select: 4,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">
-                                                <a href="/jurusan/${data}/edit" class="hover:text-info">
+                                                <a href="/hasilmonitoring/${data}/edit" class="hover:text-info">
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5">
                                                         <path
                                                             opacity="0.5"
@@ -236,27 +223,7 @@
                                                             stroke-width="1.5"
                                                         ></path>
                                                     </svg>
-                                                </a>
-                                                <a href="#" class="hover:text-danger" onclick="confirmDelete('${data}')">
-                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                                        <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path
-                                                            d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                            stroke-linecap="round"
-                                                        ></path>
-                                                        <path opacity="0.5" d="M9.5 11L10 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path opacity="0.5" d="M14.5 11L14 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path
-                                                            opacity="0.5"
-                                                            d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                        ></path>
-                                                    </svg>
-                                                </a>
-                                            </div>`;
+                                                </a>`;
                                 }
                             }
                         ],
@@ -316,125 +283,108 @@
                         (d.status && d.status.toLowerCase().includes(this.searchText))
                     );
                 },
-
-                deleteRow() {
-                    if (this.selectedRows.length > 0) {
-                        window.Swal.fire({
-                            icon: 'warning',
-                            title: 'Apakah Anda yakin?',
-                            text: "Data yang dihapus tidak dapat dikembalikan!",
-                            showCancelButton: true,
-                            confirmButtonText: 'Hapus',
-                            cancelButtonText: 'Batal',
-                            padding: '2em',
-                            customClass: 'sweet-alerts'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                fetch('/guru/delete-multiple', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                    },
-                                    body: JSON.stringify({
-                                        ids: this.selectedRows
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        window.Swal.fire({
-                                            title: 'Dihapus!',
-                                            text: 'Data berhasil dihapus.',
-                                            icon: 'success',
-                                            customClass: 'sweet-alerts'
-                                        });
-                                        this.items = this.items.filter((item) => !this.selectedRows.includes(item.id));
-                                        this.selectedRows = [];
-                                    } else {
-                                        window.Swal.fire({
-                                            title: 'Gagal!',
-                                            text: 'Terjadi kesalahan saat menghapus data.',
-                                            icon: 'error',
-                                            customClass: 'sweet-alerts'
-                                        });
-                                    }
-                                })
-                                .catch(error => {
-                                    window.Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Terjadi kesalahan saat menghapus data.',
-                                        icon: 'error',
-                                        customClass: 'sweet-alerts'
-                                    });
-                                });
-                            }
-                        });
-                    } else {
-                        window.Swal.fire({
-                            title: 'Tidak ada data yang dipilih',
-                            text: 'Silakan pilih data yang ingin dihapus.',
-                            icon: 'info',
-                            customClass: 'sweet-alerts'
-                        });
-                    }
-                }
-
-
             }))
         })
 
-        function confirmDelete(id) {
-            window.Swal.fire({
-                icon: 'warning',
-                title: 'Apakah Anda yakin?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                showCancelButton: true,
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal',
-                padding: '2em',
-                customClass: 'sweet-alerts'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/jurusan/${id}/delete`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.Swal.fire({
-                                title: 'Dihapus!',
-                                text: 'Data berhasil dihapus.',
-                                icon: 'success',
-                                customClass: 'sweet-alerts'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            window.Swal.fire({
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat menghapus data.',
-                                icon: 'error',
-                                customClass: 'sweet-alerts'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        window.Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat menghapus data.',
-                            icon: 'error',
-                            customClass: 'sweet-alerts'
-                        });
-                    });
-                }
-            });
+
+    </script>
+    <script>
+        let headings
+        if(@json(auth()->user()->hasRole('siswa'))){
+            headings = [
+                "Pemonitoring",
+                "Kelas",
+                "Kedisiplinan",
+                "Sikap",
+                "Kerjasama",
+                "Catatan",
+            ];
+        } else {
+            headings = [
+                "Nama Siswa",
+                "Kelas",
+                "Kedisiplinan",
+                "Sikap",
+                "Kerjasama",
+                "Catatan",
+            ];
         }
+
+        document.addEventListener("alpine:init", () => {
+            Alpine.data('hasil', () => ({
+                selectedRows: [],
+                items: @json($dHasil),
+                searchText: '',
+                datatable: null,
+                dataArr: [],
+
+                init() {
+                    this.setTableData();
+                    this.initializeTable();
+                    this.$watch('items', value => {
+                        this.datatable.destroy()
+                        this.setTableData();
+                        this.initializeTable();
+                    });
+                    this.$watch('selectedRows', value => {
+                        this.datatable.destroy()
+                        this.setTableData();
+                        this.initializeTable();
+                    });
+                },
+
+                initializeTable() {
+                    this.datatable = new simpleDatatables.DataTable('#table_hasil', {
+                        data: {
+                            headings: headings,
+                            data: this.dataArr
+                        },
+                        perPage: 10,
+                        perPageSelect: [10, 20, 30, 50, 100],
+                        columns: [
+                        ],
+                        firstLast: true,
+                        firstText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                        lastText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                        prevText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M15 5L9 12L15 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                        nextText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M9 5L15 12L9 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
+                        labels: {
+                            perPage: "<span class='ml-2'>{select}</span>",
+                            noRows: "No data available",
+                        },
+                        layout: {
+                            top: "{search}",
+                            bottom: "{info}{select}{pager}",
+                        },
+                    });
+                },
+
+                setTableData() {
+                    this.dataArr = [];
+                    for (let i = 0; i < this.items.length; i++) {
+                        this.dataArr[i] = [];
+                        for (let p in this.items[i]) {
+                            if (this.items[i].hasOwnProperty(p)) {
+                                this.dataArr[i].push(this.items[i][p]);
+                            }
+                        }
+                    }
+                },
+
+                searchInvoice() {
+                    return this.items.filter((d) =>
+                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
+                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
+                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
+                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
+                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
+                        (d.status && d.status.toLowerCase().includes(this.searchText))
+                    );
+                },
+            }))
+        })
+
+
     </script>
 
 </x-layout.default>

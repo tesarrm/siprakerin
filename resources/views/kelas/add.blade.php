@@ -7,14 +7,6 @@
                     <div class="px-4">
                         <div class="text-lg font-semibold mb-4">Data Kelas</div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            {{-- <div>
-                                <label for="nama">Nama<span class="text-danger">*</span></label>
-                                <input required id="nama" type="text" name="nama" class="form-input w-full" 
-                                placeholder="Isi Nama" />
-                                @error('nama')
-                                    <div class="mt-2 text-danger">{{ $message }}</div>
-                                @enderror
-                            </div> --}}
                             <div>
                                 <label for="nama">Kelas</label>
                                 <select required id="nama" name="nama" class="form-select w-full">

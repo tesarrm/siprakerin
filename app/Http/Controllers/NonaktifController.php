@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BidangKeahlian;
 use App\Models\Guru;
+use App\Models\Industri;
 use App\Models\Kelas;
 use App\Models\Pengaturan;
 use App\Models\Siswa;
@@ -24,6 +25,7 @@ class NonaktifController extends Controller
         $kelas = Kelas::with(['jurusan.bidangKeahlian', 'guru'])->where('aktif', 0)->get();
         $siswa = Siswa::with(['kelas', 'user'])->where('aktif', 0)->get();
         $pengaturan = Pengaturan::first();
+        $industri = Industri::with('kota')->where('aktif', 0)->get();
 
         return view('nonaktif.index', [
             'data' => $data,
@@ -31,6 +33,7 @@ class NonaktifController extends Controller
             'kelas' => $kelas,
             'siswa' => $siswa,
             'pengaturan' => $pengaturan,
+            'industri' => $industri,
         ]);
     }
 

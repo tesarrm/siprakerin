@@ -20,10 +20,10 @@ class SiswaController extends Controller
     {
         $this->model = $a;
 
-        // $this->middleware('can:c_siswa')->only(['index', 'show']);
-        // $this->middleware('can:r_siswa')->only(['create', 'store']);
-        // $this->middleware('can:u_siswa')->only(['edit', 'update']);
-        // $this->middleware('can:d_siswa')->only('destroy');
+        $this->middleware('can:c_siswa')->only(['create', 'store']);
+        $this->middleware('can:r_siswa')->only(['index', 'show']);
+        $this->middleware('can:u_siswa')->only(['edit', 'update']);
+        $this->middleware('can:d_siswa')->only('destroy');
     }
 
     public function index()
@@ -286,4 +286,5 @@ class SiswaController extends Controller
             return response()->json(['success' => false]);
         }
     }
+
 }
