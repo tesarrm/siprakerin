@@ -18,6 +18,7 @@ return new class extends Migration
             $table->foreignId('kota_id_2')->constrained('kotas')->onDelete('cascade');
             $table->foreignId('kota_id_3')->constrained('kotas')->onDelete('cascade');
             $table->string('status')->nullable();
+            $table->text('alasan')->nullable();
             $table->timestamps();
         });
     }

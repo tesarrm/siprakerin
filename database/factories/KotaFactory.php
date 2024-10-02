@@ -19,6 +19,12 @@ class KotaFactory extends Factory
         return [
             //
             'nama' => $this->faker->city(),
+            'biaya' => 'Rp 3.000.000',
+            'keterangan' => $this->faker->randomElement([
+                '', 
+                '', 
+                'Biaya akomodasi, mess, dan makan ditanggung industri', 
+            ]),
         ];
     }
 }

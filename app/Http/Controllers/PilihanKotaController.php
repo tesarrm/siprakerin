@@ -222,6 +222,7 @@ public function index()
                 'kota_id_2' => $request->input('kota_id_2'),
                 'kota_id_3' => $request->input('kota_id_3'),
                 'status' => $request->input('status'),
+                'alasan' => $request->input('alasan'),
             ]
         );
 

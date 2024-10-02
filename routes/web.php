@@ -14,6 +14,7 @@ use App\Http\Controllers\KuotaIndustriController;
 use App\Http\Controllers\Monitoring2Controller;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\NonaktifController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PenempatanIndustriController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PilihanKotaController;
@@ -71,6 +72,7 @@ Route::post('/siswa/delete-multiple', [SiswaController::class, 'deleteMultiple']
 Route::post('siswa/{user_id}/reset', [SiswaController::class, 'resetPassword']);
 Route::post('siswa/{id}/nonaktif', [SiswaController::class, 'nonaktif']);
 Route::post('siswa/{id}/aktif', [SiswaController::class, 'aktif']);
+Route::get('siswa-pdf', [PdfController::class, 'siswa']);
 
 Route::resource('industri', IndustriController::class);
 Route::get('industri/{industriId}/delete', [IndustriController::class, 'destroy']);
@@ -101,3 +103,6 @@ Route::resource('monitoring2', Monitoring2Controller::class);
 
 Route::resource('hasilmonitoring', HasilMonitoringController::class);
 Route::post('hasilmonitoring', [HasilMonitoringController::class, 'storeOrUpdate']);
+
+Route::get('pilihankota-pdf', [PdfController::class, 'pilihankota']);
+Route::get('pernyataan-pdf', [PdfController::class, 'pernyataan']);

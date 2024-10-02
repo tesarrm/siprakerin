@@ -224,6 +224,19 @@ class GuruController extends Controller
             ]);
 
             return $folder;
+        } 
+
+        if($request->hasFile('pas_foto')){
+            $gambar = $request->file('pas_foto');
+            $file_name = $gambar->getClientOriginalName();
+            $folder = uniqid('post', true);
+            $gambar->storeAs('posts/tmp/'.$folder, $file_name);
+            TemporaryFile::create([
+                'folder' => $folder,
+                'file' => $file_name,
+            ]);
+
+            return $folder;
         }
     }
 

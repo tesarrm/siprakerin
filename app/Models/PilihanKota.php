@@ -14,7 +14,8 @@ class PilihanKota extends Model
         'kota_id_1',
         'kota_id_2',
         'kota_id_3',
-        'status'
+        'status',
+        'alasan'
     ];
 
     public function siswa()
