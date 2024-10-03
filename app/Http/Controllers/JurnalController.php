@@ -3,9 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guru;
+use App\Models\Industri;
+use App\Models\Izin;
 use App\Models\Jurnal;
 use App\Models\Kelas;
+use App\Models\PenempatanIndustri;
 use App\Models\Siswa;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class JurnalController extends Controller
@@ -23,6 +27,52 @@ class JurnalController extends Controller
 
     public function index()
     {
+        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+        $izin = Izin::with('siswa.kelas.jurusan')->where('siswa_id', $siswa->id)->get();
+        $penempatan = PenempatanIndustri::with('industri')->where('siswa_id', $siswa->id)->first();
+
+        $months = [
+            'Januari' => 'January',
+            'Februari' => 'February',
+            'Maret' => 'March',
+            'April' => 'April',
+            'Mei' => 'May',
+            'Juni' => 'June',
+            'Juli' => 'July',
+            'Agustus' => 'August',
+            'September' => 'September',
+            'Oktober' => 'October',
+            'November' => 'November',
+            'Desember' => 'December',
+        ];
+
+        // // Ganti nama bulan dalam string tanggal
+        // $tanggalAwal = strtr($penempatan->industri->tanggal_awal, $months);
+        // $tanggalAkhir = strtr($penempatan->industri->tanggal_akhir, $months);
+
+        // // Mengubah string ke objek Carbon
+        // $tanggalAwal = Carbon::createFromFormat('j F Y', $tanggalAwal);
+        // $tanggalAkhir = Carbon::createFromFormat('j F Y', $tanggalAkhir);
+
+        // // Hitung selisih hari
+        // $selisihHari = $tanggalAkhir->diffInDays($tanggalAwal);
+
+        // // Tampilkan selisih hari
+        // dd($selisihHari);
+
+        // Ganti nama bulan dalam string tanggal_akhir
+        $tanggalAkhir = strtr($penempatan->industri->tanggal_akhir, $months);
+
+        // Mengubah string ke objek Carbon
+        $tanggalAkhir = Carbon::createFromFormat('j F Y', $tanggalAkhir);
+
+        // Mengambil tanggal hari ini
+        $tanggalHariIni = Carbon::now();
+
+        // Hitung selisih hari
+        $selisihHariDariHariIni = $tanggalHariIni->diffInDays($tanggalAkhir);
+
+
         if(auth()->user()->hasRole('wali_siswa')){
             $guru = Guru::where('user_id', auth()->user()->id)->first();
             $kelas = Kelas::where('guru_id', $guru->id)->first();
@@ -32,26 +82,60 @@ class JurnalController extends Controller
                 $query->where('kelas.id', $kelas->id);
             })->with('siswa.kelas')->get();
         } else if(auth()->user()->hasRole('siswa')) {
-            $siswa = Siswa::where('user_id', auth()->user()->id)->first();
-            $siswa_id = $siswa->id;
-
-            $data = Jurnal::with('siswa.kelas')->where('siswa_id', $siswa_id)->get();
+            $data = Jurnal::with('siswa.kelas')->where('siswa_id', $siswa->id)->get();
         } else {
             $data = Jurnal::with('siswa.kelas')->get();
         }
 
         return view('jurnal.index', [
-            'data' => $data
+            'data' => $data,
+            'izin' => $izin,
+            'sisa_hari' => $selisihHariDariHariIni,
         ]);
     }
 
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
-    {
-        return view('jurnal.add');
-    }
+    // public function create()
+    // {
+    //     $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+    //     $penempatan = PenempatanIndustri::with(['industri.libur'])->where('siswa_id', $siswa->id)->first();
+
+    //     dd($penempatan->industri->libur);
+
+    //     return view('jurnal.add', compact(['penempatan']));
+
+    // }
+    
+public function create()
+{
+    // Ambil data siswa berdasarkan user yang login
+    $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+    $penempatan = PenempatanIndustri::with(['industri.libur'])->where('siswa_id', $siswa->id)->first();
+
+    // Ambil hari ini
+    $hariIni = Carbon::now()->isoFormat('dddd'); // Mendapatkan hari dalam format penuh, misalnya: Senin, Selasa, dll.
+
+    // Mapping hari ke dalam bahasa Inggris yang sesuai dengan field database
+    $hariMapping = [
+        'Monday' => 'senin',
+        'Tuesday' => 'selasa',
+        'Wednesday' => 'rabu',
+        'Thursday' => 'kamis',
+        'Friday' => 'jumat',
+        'Saturday' => 'sabtu',
+        'Sunday' => 'minggu',
+    ];
+
+    // Ambil libur hari ini berdasarkan mapping
+    $hariField = $hariMapping[$hariIni] ?? null; // Jika hari tidak ada di mapping, set null
+
+    // Deteksi apakah hari ini libur
+    $libur = ($hariField && $penempatan->industri->libur->{$hariField} === 'on') ? true : false;
+
+    return view('jurnal.add', compact(['penempatan', 'libur']));
+}
 
     /**
      * Store a newly created resource in storage.
@@ -158,5 +242,16 @@ public function edit($id)
         $data = $this->model->findOrFail($id);
         $data->delete();
         return response()->json(['success' => true]);
+    }
+
+    public function show2($id, Jurnal $jurnal)
+    {
+        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+        $izin = Izin::with('siswa.kelas.jurusan')->findOrFail($id);
+
+
+        return view('jurnal.show2', [
+            'izin' => $izin,
+        ]);
     }
 }

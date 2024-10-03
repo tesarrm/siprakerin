@@ -13,7 +13,9 @@ class Industri extends Model
         'nama',
         'alamat',
         'kota_id',
-        'tahun_ajaran'
+        'tahun_ajaran',
+        'tanggal_awal',
+        'tanggal_akhir',
     ];
 
     public function kuotaIndustri()
@@ -27,5 +29,9 @@ class Industri extends Model
     public function kota()
     {
         return $this->belongsTo(Kota::class);
+    }
+    public function libur()
+    {
+        return $this->hasOne(LiburMingguan::class);
     }
 }

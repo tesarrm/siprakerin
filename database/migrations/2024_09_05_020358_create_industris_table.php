@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('nama')->nullable();
             $table->text('alamat')->nullable();
             $table->string('tahun_ajaran')->nullable();
+            $table->string('tanggal_awal')->nullable();
+            $table->string('tanggal_akhir')->nullable();
             $table->timestamps();
         });
     }

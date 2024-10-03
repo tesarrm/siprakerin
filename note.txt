@@ -181,3 +181,27 @@ kedisiplinan
 sikap
 kerjasama
 catatan
+
+================================
+## Izin 
+
+### Table
+id
+siswa_id
+gambar
+tanggal
+catatan
+
+================================
+## Libur Mingguan 
+
+### Table
+id
+industri_id
+senin
+selalsa
+rabu
+kamis
+jumat
+sabtu
+minggu

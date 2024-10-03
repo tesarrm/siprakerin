@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\HasilMonitoringController;
 use App\Http\Controllers\IndustriController;
+use App\Http\Controllers\IzinController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\JurusanController;
 use App\Http\Controllers\KelasController;
@@ -95,6 +96,7 @@ Route::get('penempatan/{id}/siswa', [PenempatanIndustriController::class, 'show2
 
 Route::resource('jurnal', JurnalController::class);
 Route::get('jurnal/{jurnalId}/delete', [JurnalController::class, 'destroy']);
+Route::get('jurnal/{id}/izin', [JurnalController::class, 'show2']);
 
 Route::resource('monitoring', MonitoringController::class);
 Route::get('monitoring/{id}/delete', [MonitoringController::class, 'destroy']);
@@ -106,3 +108,5 @@ Route::post('hasilmonitoring', [HasilMonitoringController::class, 'storeOrUpdate
 
 Route::get('pilihankota-pdf', [PdfController::class, 'pilihankota']);
 Route::get('pernyataan-pdf', [PdfController::class, 'pernyataan']);
+
+Route::resource('izin', IzinController::class);

@@ -1,4 +1,9 @@
 <x-layout.default>
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/flatpickr.min.css') }}">
+    <script src="/assets/js/flatpickr.js"></script>
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
+    <script src="/assets/js/nouislider.min.js"></script>
+
     <div>
         <form action="{{ url('industri/' . $data->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -43,7 +48,59 @@
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div>
+                                <label for="tanggal_awal">Tanggal Awal<span class="text-danger">*</span></label>
+                                <div x-data="tanggal_awal">
+                                    <input id="tanggal_awal" x-model="date1" name="tanggal_awal" class="form-input w-full" />
+                                </div>
+                                @error('tanggal_awal')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="tanggal_akhir">Tanggal Akhir<span class="text-danger">*</span></label>
+                                <div x-data="tanggal_akhir">
+                                    <input id="tanggal_akhir" x-model="date1" name="tanggal_akhir" class="form-input w-full" />
+                                </div>
+                                @error('tanggal_akhir')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
+                        <div class="mt-4">
+                            <label for="tanggal_akhir">Hari Libur<span class="text-danger">*</span></label>
+                            <div class="grid grid-cols-1 sm:grid-cols-7 mt-3">
+                                <div>
+                                    <input name="senin" type="checkbox" class="form-checkbox" 
+                                    {{ $libur && $libur->senin ? 'checked' : '' }} />Senin 
+                                </div>
+                                <div>
+                                    <input name="selasa" type="checkbox" class="form-checkbox" 
+                                    {{ $libur && $libur->selasa ? 'checked' : '' }} />Selasa 
+                                </div>
+                                <div>
+                                    <input name="rabu" type="checkbox" class="form-checkbox" 
+                                    {{ $libur && $libur->rabu ? 'checked' : '' }} />Rabu 
+                                </div>
+                                <div>
+                                    <input name="kamis" type="checkbox" class="form-checkbox" 
+                                    {{ $libur && $libur->kamis ? 'checked' : '' }} />Kamis 
+                                </div>
+                                <div>
+                                    <input name="jumat" type="checkbox" class="form-checkbox" 
+                                    {{ $libur && $libur->jumat ? 'checked' : '' }} />Jumat 
+                                </div>
+                                <div>
+                                    <input name="sabtu" type="checkbox" class="form-checkbox" 
+                                    {{ $libur && $libur->sabtu ? 'checked' : '' }} />Sabtu 
+                                </div>
+                                <div>
+                                    <input name="minggu" type="checkbox" class="form-checkbox" 
+                                    {{ $libur && $libur->minggu ? 'checked' : '' }} />Minggu 
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
 
                     <div class="mt-8 px-4">
@@ -93,4 +150,41 @@
 
     <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
     <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
+    <script>
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("tanggal_awal", () => ({
+                date1: @json($data->tanggal_awal), // Inisialisasi kosong, akan diisi di init()
+                init() {
+                    // Membuat instance Date dan mengonversinya ke format 'd F Y'
+                    let today = new Date();
+                    let options = { day: 'numeric', month: 'long', year: 'numeric' }; // Format: d F Y (contoh: 13 September 2024)
+                    this.date1 = today.toLocaleDateString('id-ID', options);
+
+                    flatpickr(document.getElementById('tanggal_awal'), {
+                        dateFormat: 'd F Y', // Format sesuai keinginan
+                        defaultDate: today, // Menggunakan tanggal hari ini
+                        locale: 'id', // Bahasa Indonesia
+                    });
+                }
+            }));
+        });
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("tanggal_akhir", () => ({
+                date1: @json($data->tanggal_akhir), // Inisialisasi kosong, akan diisi di init()
+                init() {
+                    // Membuat instance Date dan mengonversinya ke format 'd F Y'
+                    let today = new Date();
+                    let options = { day: 'numeric', month: 'long', year: 'numeric' }; // Format: d F Y (contoh: 13 September 2024)
+                    this.date1 = today.toLocaleDateString('id-ID', options);
+
+                    flatpickr(document.getElementById('tanggal_akhir'), {
+                        dateFormat: 'd F Y', // Format sesuai keinginan
+                        defaultDate: today, // Menggunakan tanggal hari ini
+                        locale: 'id', // Bahasa Indonesia
+                    });
+                }
+            }));
+        });
+    </script>
 </x-layout.default>

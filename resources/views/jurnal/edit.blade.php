@@ -45,47 +45,6 @@
                                 @enderror
                             </div>
                         </div>
-                        {{-- <div class="flex justify-between lg:flex-row flex-col">
-                            <div class="lg:w-1/3 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="mt-4 flex items-center">
-                                    <label for="tanggal" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Tanggal<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <div x-data="tanggal" x-init="init()">
-                                            <input id="basic" x-model="date1" name="tanggal" class="form-input" />
-                                        </div>
-                                        @error('tanggal')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lg:w-1/3 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="mt-4 flex items-center">
-                                    <label for="singkatan" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Waktu Mulai<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <div x-data="time_start" x-init="init()">
-                                            <input id="preloading-time" name="time_start" x-model="date4" class="form-input" />
-                                        </div>
-                                        @error('time_start')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lg:w-1/3 w-full">
-                                <div class="mt-4 flex items-center">
-                                    <label for="singkatan" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Waktu Selesai<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <div x-data="time_end" x-init="init()">
-                                            <input id="preloading-time2" name="time_end" x-model="date4" class="form-input" />
-                                        </div>
-                                        @error('time_end')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                        </div> --}}
                         <div class="items-center">
                             <div class="text-lg font-semibold mb-4">Kegiatan</div>
                             <textarea id="kegiatan" name="kegiatan" hidden></textarea>
