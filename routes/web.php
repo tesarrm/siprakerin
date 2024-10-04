@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangKeahlianController;
 use Illuminate\Support\Facades\Route;
@@ -110,3 +111,7 @@ Route::get('pilihankota-pdf', [PdfController::class, 'pilihankota']);
 Route::get('pernyataan-pdf', [PdfController::class, 'pernyataan']);
 
 Route::resource('izin', IzinController::class);
+
+Route::get('/attendance', [AttendanceController::class, 'index']);
+Route::get('/attendance-data', [AttendanceController::class, 'getAttendanceData']);
+Route::get('/cek', [AttendanceController::class, 'storeCron']);

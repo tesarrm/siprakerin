@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
 
     <style>
         .cell-content {
@@ -51,7 +52,7 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
                     </svg>
                 </div>
                 <div class="ltr:ml-3 rtl:mr-3 font-semibold">
-                    <p class="text-xl dark:text-white-light">{{ $data->count() }}</p>
+                    <p class="text-xl dark:text-white-light">{{ $hadir->count() }}</p>
                     <h5 class="text-[#506690] text-xs">Hadir</h5>
                 </div>
             </div>
@@ -107,8 +108,8 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
                     </svg>
                 </div>
                 <div class="ltr:ml-3 rtl:mr-3 font-semibold">
-                    <p class="text-xl dark:text-white-light">31.6K</p>
-                    <h5 class="text-[#506690] text-xs">Followers</h5>
+                    <p class="text-xl dark:text-white-light">{{ $alpa->count() }}</p>
+                    <h5 class="text-[#506690] text-xs">Alpa</h5>
                 </div>
             </div>
         </div>
@@ -176,13 +177,28 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
                         </svg>
                         Siswa Izin</a>
                 </li>
+                <li class="tab">
+                    <a href="javascript:;"
+                        class="p-5 py-3 -mb-[1px] flex items-center relative before:transition-all before:duration-700 hover:text-secondary before:absolute before:w-0 before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:bg-secondary hover:before:w-full"
+                        onclick="showTab(2)"
+                        :class="{'border-b !border-secondary text-secondary' : tab === 'kalender'}" 
+                        @click="tab = 'kalender'; renderCalendar();
+                        ">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
+                            <circle cx="12" cy="6" r="4"
+                                stroke="currentColor" stroke-width="1.5" />
+                            <ellipse opacity="0.5" cx="12" cy="17" rx="7"
+                                ry="4" stroke="currentColor" stroke-width="1.5" />
+                        </svg>
+                        Kalender Kehadiran</a>
+                </li>
             </ul>
         </div>
         <div id="tab-content">
             <div class="tab-content show">
 
                 <div x-data="invoiceList">
-
                     <div class="panel px-0 py-0 shadow-none">
                         @if($cud)
                         <div class="px-5">
@@ -294,6 +310,7 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
                     </div>
                 </div>
 
+
             </div>
             <div class="tab-content">
 
@@ -304,6 +321,12 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
                 </div>
 
             </div>
+            <div class="tab-content">
+
+                    <div id='calendar'></div>
+
+            </div>
+        </div>
     </div>
 
 
@@ -350,10 +373,71 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
         </script>
     @endif
 
-    {{-- data untuk datatable --}}
+    <script>
+        let calendar;
+
+        function renderCalendar() {
+            if (calendar) {
+                calendar.render();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            // calendar = new FullCalendar.Calendar(calendarEl, {
+            //     initialView: 'dayGridMonth',
+            //     events: '/attendance-data', // URL untuk mengambil data kehadiran
+            // });
+
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    // Ambil data dari endpoint backend (Laravel)
+                    fetch('/attendance-data')
+                        .then(response => response.json())
+                        .then(data => {
+                            // Map data ke format FullCalendar
+                            var events = data.map(event => {
+                                let color;
+                                switch(event.title) {
+                                    case 'hadir':
+                                        color = '#2196f3';
+                                        break;
+                                    case 'izin':
+                                        color = '#00ab55';
+                                        break;
+                                    case 'alpa':
+                                        color = '#e7515a';
+                                        break;
+                                    case 'libur':
+                                        color = '#3b3f5c';
+                                        break;
+                                    default:
+                                        color = 'gray'; // Warna default jika status tidak terdefinisi
+                                }
+
+                                return {
+                                    title: event.title,
+                                    start: event.start,
+                                    end: event.end,
+                                    backgroundColor: color, // Set warna berdasarkan status
+                                    borderColor: color,     // Sama seperti warna background
+                                    textColor: 'white'      // Set warna teks agar terlihat jelas
+                                };
+                            });
+                            successCallback(events); // Berhasil mengambil dan merender event
+                        })
+                        .catch(error => failureCallback(error)); // Tangani error
+                }
+            });
+
+        });
+    </script>
+
+    {{-- jurnal data untuk datatable --}}
     @php
     $items = [];
-
     if($cud){
         foreach ($data as $d) {
             $items[] = [
@@ -382,7 +466,6 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
     }
     @endphp
 
-    {{-- script untuk datatable --}}
     <script>
         let headings = [
             '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
@@ -681,11 +764,10 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
         }
     </script>
 
-
-    {{-- data untuk datatable --}}
+    {{-- izin data untuk datatable --}}
     @php
     $dIzin = [];
-    foreach ($izin as $d) {
+    foreach ($dataIzin as $d) {
         $dIzin [] = [
             'nis' => $d->siswa->nis,
             'nama' => $d->siswa->nama,
@@ -740,7 +822,7 @@ $cud = auth()->user()->can('c_jurnal') || auth()->user()->can('u_jurnal') || aut
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
-                                select: this.dataArr[0].length - 1,
+                                select: 6,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const rowId = `row-${data}`; 
