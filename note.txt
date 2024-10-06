@@ -205,3 +205,13 @@ kamis
 jumat
 sabtu
 minggu
+
+================================
+## Pelanggaran 
+
+### Table
+id
+siswa_id
+tanggal
+pelanggaran
+solusi

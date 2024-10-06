@@ -17,12 +17,14 @@ use App\Http\Controllers\Monitoring2Controller;
 use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\NonaktifController;
 use App\Http\Controllers\PdfController;
+use App\Http\Controllers\PelanggaranSiswaController;
 use App\Http\Controllers\PenempatanIndustriController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PilihanKotaController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\UserController;
 use App\Models\HasilMonitoring;
+use App\Models\PelanggaranSiswa;
 
 Route::view('/', 'index');
 Route::view('/tabel', 'tabel');
@@ -115,3 +117,6 @@ Route::resource('izin', IzinController::class);
 Route::get('/attendance', [AttendanceController::class, 'index']);
 Route::get('/attendance-data', [AttendanceController::class, 'getAttendanceData']);
 Route::get('/cek', [AttendanceController::class, 'storeCron']);
+
+Route::resource('pelanggaran', PelanggaranSiswaController::class);
+Route::get('pelanggaran/{id}/delete', [PelanggaranSiswaController::class, 'destroy']);
