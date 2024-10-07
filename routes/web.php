@@ -21,10 +21,9 @@ use App\Http\Controllers\PelanggaranSiswaController;
 use App\Http\Controllers\PenempatanIndustriController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PilihanKotaController;
+use App\Http\Controllers\PrakerinController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\UserController;
-use App\Models\HasilMonitoring;
-use App\Models\PelanggaranSiswa;
 
 Route::view('/', 'index');
 Route::view('/tabel', 'tabel');
@@ -120,3 +119,7 @@ Route::get('/cek', [AttendanceController::class, 'storeCron']);
 
 Route::resource('pelanggaran', PelanggaranSiswaController::class);
 Route::get('pelanggaran/{id}/delete', [PelanggaranSiswaController::class, 'destroy']);
+
+Route::resource('pkl', PrakerinController::class);
+Route::post('pkl/{id}/berhenti', [PrakerinController::class, 'berhenti']);
+Route::post('pkl/{id}/lanjut', [PrakerinController::class, 'lanjut']);

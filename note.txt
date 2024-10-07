@@ -215,3 +215,33 @@ siswa_id
 tanggal
 pelanggaran
 solusi
+
+================================
+## Pindah PKL
+
+### Table
+id
+siswa_id
+industri_lama_id
+industri_baru_id
+alasan
+tanggal
+
+================================
+## Berhenti PKL
+
+### Table
+id
+siswa_id
+industri_lama_id
+industri_baru_id
+tanggal_berhenti
+tanggal_lanjut
+alasan_berhenti
+
+
+
+Tambahan sama kayak pindah
+
+- ada kondisi industri sudah habis waktu
+- ada status: berhenti atau prakerin 
