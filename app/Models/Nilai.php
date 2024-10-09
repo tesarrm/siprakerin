@@ -12,6 +12,7 @@ class Nilai extends Model
     protected $fillable = [
         'siswa_id',
         'tujuan_pembelajaran_id',
-        'nilai'
+        'nilai',
+        'urutan'
     ];
 }

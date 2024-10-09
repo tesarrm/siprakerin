@@ -1,6 +1,16 @@
 <x-layout.default>
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+    </style>
+
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
     <script src="/assets/js/simple-datatables.js"></script>
+
 
     <div>
         <div class="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-5">
@@ -189,64 +199,99 @@
                     <h5 class="font-semibold text-lg dark:text-white-light">Nilai</h5>
                 </div>
 
-                {{-- <div x-data="nilai">
-                    <div class="invoice-table" style="word-wrap: word">
-                        <table id="myTable1" class="whitespace-nowrap"></table>
-                    </div>
-                </div> --}}
-
-                @foreach($nilai as $capaianIndex => $capaian)
-                    <div class="mb-4">
-                        <strong>{{ $capaian->nama }}</strong>
-                        <ol class="ordered-list">
-                            @foreach($capaian->tujuanPembelajaran as $tujuanIndex => $tujuan)
-                                <li class="flex justify-between mb-1">
-                                    <span>{{ ($tujuanIndex + 1) . '. ' . $tujuan->nama }}</span>
-                                    <!-- Tambahkan hidden input untuk tujuan_pembelajaran_id -->
-                                    <input type="text" value="{{ $tujuan->nilai->nilai }}" class="form-input w-20 pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Nilai" />
-                                </li>
-                            @endforeach
-                        </ol>
-                    </div>
-                @endforeach
-
-
-            </div>
-            {{-- <div class="panel">
-                <div class="flex items-center justify-between mb-10">
-                    <h5 class="font-semibold text-lg dark:text-white-light">Pro Plan</h5>
-                    <a href="javascript:;" class="btn btn-primary">Renew Now</a>
-                </div>
-                <div class="group">
-                    <ul class="list-inside list-disc text-white-dark font-semibold mb-7 space-y-2">
-                        <li>10,000 Monthly Visitors</li>
-                        <li>Unlimited Reports</li>
-                        <li>2 Years Data Storage</li>
+                <div id="tabs" x-data="{ tab: 'jadwal'}">
+                    <ul class="flex flex-wrap mb-5 border-b border-white-light dark:border-[#191e3a]">
+                        <li class="tab active">
+                            <a href="javascript:;"
+                                class="p-5 py-3 -mb-[1px] flex items-center relative before:transition-all before:duration-700 before:absolute hover:text-secondary before:bottom-0 before:w-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:bg-secondary hover:before:w-full"
+                                onclick="showTab(0)"
+                                :class="{'border-b !border-secondary text-secondary' : tab === 'jadwal'}" @click="tab = 'jadwal'"
+                                >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
+                                    <path opacity="0.5"
+                                        d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z"
+                                        stroke="currentColor" stroke-width="1.5" />
+                                    <path d="M12 15L12 18" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" />
+                                </svg>
+                                Penilaian 1</a>
+                        </li>
+                        <li class="tab">
+                            <a href="javascript:;"
+                                class="p-5 py-3 -mb-[1px] flex items-center relative before:transition-all before:duration-700 hover:text-secondary before:absolute before:w-0 before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:bg-secondary hover:before:w-full"
+                                onclick="showTab(1)"
+                                :class="{'border-b !border-secondary text-secondary' : tab === 'hasil'}" @click="tab = 'hasil'"
+                                ">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
+                                    <circle cx="12" cy="6" r="4"
+                                        stroke="currentColor" stroke-width="1.5" />
+                                    <ellipse opacity="0.5" cx="12" cy="17" rx="7"
+                                        ry="4" stroke="currentColor" stroke-width="1.5" />
+                                </svg>
+                                Penilaian 2</a>
+                        </li>
                     </ul>
-                    <div class="flex items-center justify-between mb-4 font-semibold">
-                        <p
-                            class="flex items-center rounded-full bg-dark px-2 py-1 text-xs text-white-light font-semibold">
+                </div>
 
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 ltr:mr-1 rtl:ml-1">
-                                <circle opacity="0.5" cx="12" cy="12" r="10"
-                                    stroke="currentColor" stroke-width="1.5" />
-                                <path d="M12 8V12L14.5 14.5" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                            </svg>
-                            5 Days Left
-                        </p>
-                        <p class="text-info">$25 / month</p>
+                <div id="tab-content">
+                    <div class="tab-content show">
+
+                        @foreach($nilai as $capaianIndex => $capaian)
+                            <div class="mb-4">
+                                <strong>{{ $capaian->nama }}</strong>
+                                <ol class="ordered-list">
+                                    @foreach($capaian->tujuanPembelajaran as $tujuanIndex => $tujuan)
+                                        <li class="flex justify-between mb-1">
+                                            <span>{{ ($tujuanIndex + 1) . '. ' . $tujuan->nama }}</span>
+                                            <!-- Tambahkan hidden input untuk tujuan_pembelajaran_id -->
+                                            <input type="text" value="{{ $tujuan->nilai->where('urutan', 1)->first()->nilai}}" class="form-input w-20 pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Nilai" />
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        @endforeach
+
                     </div>
-                    <div class="rounded-full h-2.5 p-0.5 bg-dark-light overflow-hidden mb-5 dark:bg-dark-light/10">
-                        <div class="bg-gradient-to-r from-[#f67062] to-[#fc5296] w-full h-full rounded-full relative"
-                            style="width: 65%;"></div>
+                    <div class="tab-content">
+
+                        @foreach($nilai as $capaianIndex => $capaian)
+                            <div class="mb-4">
+                                <strong>{{ $capaian->nama }}</strong>
+                                <ol class="ordered-list">
+                                    @foreach($capaian->tujuanPembelajaran as $tujuanIndex => $tujuan)
+                                        <li class="flex justify-between mb-1">
+                                            <span>{{ ($tujuanIndex + 1) . '. ' . $tujuan->nama }}</span>
+                                            <!-- Tambahkan hidden input untuk tujuan_pembelajaran_id -->
+                                            <input type="text" value="{{ $tujuan->nilai->where('urutan', 2)->first()->nilai}}" class="form-input w-20 pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Nilai" />
+                                        </li>
+                                    @endforeach
+                                </ol>
+                            </div>
+                        @endforeach
+
                     </div>
                 </div>
-            </div> --}}
+            </div>
         </div>
     </div>
 
+    {{-- tab --}}
+    <script>
+        function showTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            // Hapus kelas aktif dari semua tab dan sembunyikan semua konten
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('show'));
+
+            // Tambahkan kelas aktif pada tab yang dipilih dan tampilkan kontennya
+            tabs[index].classList.add('active');
+            contents[index].classList.add('show');
+        }
+    </script>
     <script>
         let calendar;
 

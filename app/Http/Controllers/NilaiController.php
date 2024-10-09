@@ -3,14 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\CapaianPembelajaran;
-use App\Models\HasilMonitoring;
 use App\Models\Industri;
-use App\Models\Jurusan;
-use App\Models\Kota;
-use App\Models\Monitoring;
 use App\Models\Nilai;
 use App\Models\PenempatanIndustri;
 use App\Models\Siswa;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class NilaiController extends Controller
@@ -54,9 +51,9 @@ class NilaiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function _edit($jadwal_monitoring_id)
+    public function _edit($industri_id)
     {
-        $penempatan = PenempatanIndustri::where('industri_id', $jadwal_monitoring_id)->with(['siswa.kelas.jurusan', 'industri'])->get();
+        $penempatan = PenempatanIndustri::where('industri_id', $industri_id)->with(['siswa.kelas.jurusan', 'industri'])->get();
         $item_penempatan = $penempatan->first();
         $industri = $item_penempatan->industri->nama;
 
@@ -152,10 +149,19 @@ class NilaiController extends Controller
         ]);
     }
 
-    public function edit($jadwal_monitoring_id) 
+    public function edit($industri_id) 
     {
+        $urutan = null;
+        $currentMonth = Carbon::now()->format('m');
+
+        if ($currentMonth == '4' || $currentMonth == '5' || $currentMonth == '6') {
+            $urutan = 1;
+        } else if ($currentMonth == '10' || $currentMonth == '11' || $currentMonth == '12') {
+            $urutan = 2;
+        }
+
         // Ambil data penempatan berdasarkan industri_id
-        $penempatan = PenempatanIndustri::where('industri_id', $jadwal_monitoring_id)
+        $penempatan = PenempatanIndustri::where('industri_id', $industri_id)
             ->with(['siswa.kelas.jurusan', 'industri'])
             ->get();
 
@@ -167,7 +173,7 @@ class NilaiController extends Controller
         $capaianGrouped = CapaianPembelajaran::with('tujuanPembelajaran.nilai')->get()->groupBy('jurusan_id');
 
         // Susun data sesuai dengan format yang diinginkan
-        $data = $penempatan->map(function($penempatan) use ($capaianGrouped) {
+        $data = $penempatan->map(function($penempatan) use ($capaianGrouped, $urutan) {
             $siswa = $penempatan->siswa;
             $jurusanId = $siswa->kelas->jurusan->id;
 
@@ -187,14 +193,15 @@ class NilaiController extends Controller
                         ],
                     ],
                 ],
-                'capaian' => $capaianForJurusan->map(function($capaian) {
+                'capaian' => $capaianForJurusan->map(function($capaian) use ($urutan) {
                     return [
                         'nama' => $capaian->nama,
-                        'tujuan' => $capaian->tujuanPembelajaran->map(function($tujuan) {
+                        'tujuan' => $capaian->tujuanPembelajaran->map(function($tujuan) use ($urutan) {
+                            $nilai = $tujuan->nilai->where('urutan', $urutan)->first()->nilai;
                             return [
                                 'id' => $tujuan->id,
                                 'nama' => $tujuan->nama,
-                                'nilai' => $tujuan->nilai->nilai,
+                                'nilai' => $nilai,
                             ];
                         })->toArray(),
                     ];
@@ -202,9 +209,17 @@ class NilaiController extends Controller
             ];
         });
 
+        // yang pertama urutan kosong
+        // kemudian diisi urutan 1
+        // terus get urutan 1 untuk ditampilkan
+        // kemudian urutan kedua di cek
+        // kemudian diisi urutan 2
+        // terus get urutan 2 untuk ditampilkan
+
         return view('nilai.edit', [
             'penempatan' => $data,
             'industri' => $industri,
+            'urutan' => $urutan,
         ]);
 
     }
@@ -232,9 +247,20 @@ public function storeOrUpdate(Request $request)
         'data.*.capaian.*.tujuan.*' => 'required',
     ]);
 
-    $siswa = Siswa::where('user_id', auth()->user()->id)->first();
-    Nilai::where('siswa_id', $siswa->id)
-        ->delete();
+    $urutan = null;
+    $currentMonth = Carbon::now()->format('m');
+
+    if ($currentMonth == '4' || $currentMonth == '5' || $currentMonth == '6') {
+        $urutan = 1;
+    } else if ($currentMonth == '10' || $currentMonth == '11' || $currentMonth == '12') {
+        $urutan = 2;
+    }
+
+    $siswa_id = $request['data'][0]['siswa_id'];
+    Nilai::where([
+        'siswa_id' => $siswa_id, 
+        'urutan' => $urutan
+        ])->delete();
 
     // Iterasi setiap baris data siswa
     foreach ($request->input('data') as $dataSiswa) {
@@ -252,9 +278,11 @@ public function storeOrUpdate(Request $request)
                         [
                             'siswa_id' => $siswaId,
                             'tujuan_pembelajaran_id' => $tujuanPembelajaranId,
+                            'urutan' => $urutan,
                         ],
                         [
                             'nilai' => $nilaiTujuan['nilai'],
+                            'urutan' => $urutan,
                         ]
                     );
                 }

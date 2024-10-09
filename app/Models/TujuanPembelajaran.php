@@ -16,6 +16,6 @@ class TujuanPembelajaran extends Model
 
     public function nilai()
     {
-        return $this->hasOne(Nilai::class);
+        return $this->hasMany(Nilai::class);
     }
 }

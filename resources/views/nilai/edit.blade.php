@@ -17,6 +17,12 @@
                                         <input value="{{ $industri->nama }}" id="industri" type="text" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                     </div>
                                 </div>
+                                <div class="mt-4 flex items-center">
+                                    <label for="penilaianke" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Penilaian</span></label>
+                                    <div class="flex-1">
+                                        <input value="Penilaian ke-{{ $urutan }}" id="penilaianke" type="text" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                    </div>
+                                </div>
                                 <div class="mt-6 flex items-center">
                                     <div class="text-lg font-semibold">Data Monitoring Siswa</div>
                                 </div>
