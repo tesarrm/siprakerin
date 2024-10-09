@@ -185,6 +185,34 @@
                 </div>
             </div>
             <div class="panel">
+                <div class="mb-5">
+                    <h5 class="font-semibold text-lg dark:text-white-light">Nilai</h5>
+                </div>
+
+                {{-- <div x-data="nilai">
+                    <div class="invoice-table" style="word-wrap: word">
+                        <table id="myTable1" class="whitespace-nowrap"></table>
+                    </div>
+                </div> --}}
+
+                @foreach($nilai as $capaianIndex => $capaian)
+                    <div class="mb-4">
+                        <strong>{{ $capaian->nama }}</strong>
+                        <ol class="ordered-list">
+                            @foreach($capaian->tujuanPembelajaran as $tujuanIndex => $tujuan)
+                                <li class="flex justify-between mb-1">
+                                    <span>{{ ($tujuanIndex + 1) . '. ' . $tujuan->nama }}</span>
+                                    <!-- Tambahkan hidden input untuk tujuan_pembelajaran_id -->
+                                    <input type="text" value="{{ $tujuan->nilai->nilai }}" class="form-input w-20 pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Nilai" />
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                @endforeach
+
+
+            </div>
+            {{-- <div class="panel">
                 <div class="flex items-center justify-between mb-10">
                     <h5 class="font-semibold text-lg dark:text-white-light">Pro Plan</h5>
                     <a href="javascript:;" class="btn btn-primary">Renew Now</a>
@@ -215,7 +243,7 @@
                             style="width: 65%;"></div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
     </div>
 

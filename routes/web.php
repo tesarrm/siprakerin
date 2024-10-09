@@ -3,6 +3,7 @@
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangKeahlianController;
+use App\Http\Controllers\CapaianPembelajaranController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\HasilMonitoringController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\KotaController;
 use App\Http\Controllers\KuotaIndustriController;
 use App\Http\Controllers\Monitoring2Controller;
 use App\Http\Controllers\MonitoringController;
+use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\NonaktifController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PelanggaranSiswaController;
@@ -23,6 +25,7 @@ use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PilihanKotaController;
 use App\Http\Controllers\PrakerinController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\TujuanPembelajaranController;
 use App\Http\Controllers\UserController;
 
 Route::view('/', 'index');
@@ -123,3 +126,8 @@ Route::get('pelanggaran/{id}/delete', [PelanggaranSiswaController::class, 'destr
 Route::resource('pkl', PrakerinController::class);
 Route::post('pkl/{id}/berhenti', [PrakerinController::class, 'berhenti']);
 Route::post('pkl/{id}/lanjut', [PrakerinController::class, 'lanjut']);
+
+Route::resource('capaian', CapaianPembelajaranController::class);
+Route::post('capaian', [CapaianPembelajaranController::class, 'storeOrUpdate']);
+Route::resource('nilai', NilaiController::class);
+Route::post('nilai', [NilaiController::class, 'storeOrUpdate']);

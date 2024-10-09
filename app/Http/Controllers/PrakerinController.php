@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\BerhentiPrakerin;
+use App\Models\CapaianPembelajaran;
 use App\Models\Industri;
 use App\Models\PelanggaranSiswa;
 use App\Models\PenempatanIndustri;
@@ -167,6 +168,10 @@ class PrakerinController extends Controller
 
         $pelanggaran = PelanggaranSiswa::with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])->where('siswa_id', $siswa->id)->get();
 
+        $nilai = CapaianPembelajaran::whereHas('tujuanPembelajaran.nilai', function ($query) use ($siswa_id) {
+            $query->where('siswa_id', $siswa_id);
+        })->with('tujuanPembelajaran.nilai')->get();
+
         return view('pkl.show', compact([
             'siswa',
             'hadir',
@@ -175,7 +180,8 @@ class PrakerinController extends Controller
             'alpa',
             'sisa_hari',
             'attendances',
-            'pelanggaran'
+            'pelanggaran',
+            'nilai',
         ]));
     }
 

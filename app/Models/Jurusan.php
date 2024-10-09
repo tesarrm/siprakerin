@@ -19,4 +19,9 @@ class Jurusan extends Model
     {
         return $this->belongsTo(BidangKeahlian::class);
     }
+
+    public function capaianPembelajaran()
+    {
+        return $this->hasMany(CapaianPembelajaran::class);
+    }
 }

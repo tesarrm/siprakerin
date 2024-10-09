@@ -1,4 +1,3 @@
-
 <x-layout.default>
 
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
@@ -149,7 +148,6 @@
         $items[] = [
             'id' => $d->id,
             'nama' => $d->nama,
-            'bidang_keahlian' => $d->bidangKeahlian->nama,
             'action' => $d->id, // Gunakan ID ini untuk aksi
         ];
     }
@@ -186,7 +184,6 @@
                             headings: [
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                                 "Nama",
-                                "Bidang Keahlian",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -202,11 +199,11 @@
                                 }
                             },
                             {
-                                select: 3,
+                                select: 2,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">
-                                                <a href="/jurusan/${data}/edit" class="hover:text-info">
+                                                <a href="/nilai/${data}/edit" class="hover:text-info">
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5">
                                                         <path
                                                             opacity="0.5"

@@ -113,6 +113,18 @@
     {{-- data untuk datatable --}}
     @php
     $items = [];
+    foreach ($data as $d) {
+        $items[] = [
+            'nama_guru' => $d->guru->nama,
+            'nama_industri' => $d->industri->nama,
+            'tanggal' => $d->tanggal,
+            'status' => $d->status,
+            'action' => $d->id,
+        ];
+    }
+    @endphp
+
+    @php
     $dHasil = [];
 
     if(auth()->user()->hasRole('siswa')){

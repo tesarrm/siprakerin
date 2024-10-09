@@ -1,8 +1,25 @@
-
 <x-layout.default>
 
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
+
+    <style>
+.list-item {
+    display: block; /* Setiap tujuan sebagai blok */
+    padding-left: 20px; /* Indentasi kiri untuk tujuan */
+    text-indent: -10px; /* Menggeser angka keluar */
+    position: relative;
+}
+
+.list-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    text-align: right;
+}
+
+
+    </style>
 
     <div x-data="invoiceList">
         <script src="/assets/js/simple-datatables.js"></script>
@@ -110,8 +127,8 @@
                     </div>
                 </div>
             </div>
-            <div class="invoice-table" style="word-wrap: word">
-                <table id="myTable" class="whitespace-nowrap"></table>
+            <div class="invoice-table">
+                <table id="myTable"></table>
             </div>
         </div>
     </div>
@@ -145,11 +162,22 @@
     {{-- data untuk datatable --}}
     @php
     $items = [];
-    foreach ($data as $d) {
+    foreach ($jurusan as $d) {
+        $capaianTujuan = $d->capaianPembelajaran->map(function($capaian) {
+            // Menyusun tujuan dengan penomoran manual dan indentasi
+            $tujuanList = $capaian->tujuanPembelajaran->map(function($tujuan, $index) {
+                return '<span class="list-item">' . ($index + 1) . '. ' . $tujuan->nama . '</span>'; // Mengembalikan tujuan dengan penomoran manual
+            })->join(''); // Menggabungkan tujuan dengan baris baru
+
+            // Mengembalikan capaian dengan format tebal dan menyertakan daftar tujuan
+            return '<strong>' . $capaian->nama . '</strong><br>' . $tujuanList;
+        })->join('<div class="mb-2"></div>'); // Menyusun capaian ke dalam baris terpisah
+
         $items[] = [
             'id' => $d->id,
             'nama' => $d->nama,
             'bidang_keahlian' => $d->bidangKeahlian->nama,
+            'capaian_tujuan' => $capaianTujuan,
             'action' => $d->id, // Gunakan ID ini untuk aksi
         ];
     }
@@ -187,6 +215,7 @@
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                                 "Nama",
                                 "Bidang Keahlian",
+                                "Capaian dan Tujuan Pembelajaran",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -202,11 +231,18 @@
                                 }
                             },
                             {
-                                select: 3,
+                                select: 3, // This should now match your combined Capaian dan Tujuan Pembelajaran column
+                                sortable: false,
+                                render: function(data, cell, row) {
+                                    return `<div style="max-width: 300px;">${data}</div>`;
+                                }
+                            },
+                            {
+                                select: 4,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">
-                                                <a href="/jurusan/${data}/edit" class="hover:text-info">
+                                                <a href="/capaian/${data}/edit" class="hover:text-info">
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5">
                                                         <path
                                                             opacity="0.5"
@@ -223,25 +259,6 @@
                                                         <path
                                                             opacity="0.5"
                                                             d="M16.6522 3.45508C16.6522 3.45508 16.7333 4.83381 17.9499 6.05034C19.1664 7.26687 20.5451 7.34797 20.5451 7.34797M10.1002 15.5876L8.4126 13.9"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                        ></path>
-                                                    </svg>
-                                                </a>
-                                                <a href="#" class="hover:text-danger" onclick="confirmDelete('${data}')">
-                                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                                        <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path
-                                                            d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
-                                                            stroke="currentColor"
-                                                            stroke-width="1.5"
-                                                            stroke-linecap="round"
-                                                        ></path>
-                                                        <path opacity="0.5" d="M9.5 11L10 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path opacity="0.5" d="M14.5 11L14 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                                        <path
-                                                            opacity="0.5"
-                                                            d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
                                                             stroke="currentColor"
                                                             stroke-width="1.5"
                                                         ></path>
@@ -308,124 +325,9 @@
                     );
                 },
 
-                deleteRow() {
-                    if (this.selectedRows.length > 0) {
-                        window.Swal.fire({
-                            icon: 'warning',
-                            title: 'Apakah Anda yakin?',
-                            text: "Data yang dihapus tidak dapat dikembalikan!",
-                            showCancelButton: true,
-                            confirmButtonText: 'Hapus',
-                            cancelButtonText: 'Batal',
-                            padding: '2em',
-                            customClass: 'sweet-alerts'
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                fetch('/guru/delete-multiple', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                    },
-                                    body: JSON.stringify({
-                                        ids: this.selectedRows
-                                    })
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-                                        window.Swal.fire({
-                                            title: 'Dihapus!',
-                                            text: 'Data berhasil dihapus.',
-                                            icon: 'success',
-                                            customClass: 'sweet-alerts'
-                                        });
-                                        this.items = this.items.filter((item) => !this.selectedRows.includes(item.id));
-                                        this.selectedRows = [];
-                                    } else {
-                                        window.Swal.fire({
-                                            title: 'Gagal!',
-                                            text: 'Terjadi kesalahan saat menghapus data.',
-                                            icon: 'error',
-                                            customClass: 'sweet-alerts'
-                                        });
-                                    }
-                                })
-                                .catch(error => {
-                                    window.Swal.fire({
-                                        title: 'Error!',
-                                        text: 'Terjadi kesalahan saat menghapus data.',
-                                        icon: 'error',
-                                        customClass: 'sweet-alerts'
-                                    });
-                                });
-                            }
-                        });
-                    } else {
-                        window.Swal.fire({
-                            title: 'Tidak ada data yang dipilih',
-                            text: 'Silakan pilih data yang ingin dihapus.',
-                            icon: 'info',
-                            customClass: 'sweet-alerts'
-                        });
-                    }
-                }
-
-
             }))
         })
 
-        function confirmDelete(id) {
-            window.Swal.fire({
-                icon: 'warning',
-                title: 'Apakah Anda yakin?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                showCancelButton: true,
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal',
-                padding: '2em',
-                customClass: 'sweet-alerts'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/jurusan/${id}/delete`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.Swal.fire({
-                                title: 'Dihapus!',
-                                text: 'Data berhasil dihapus.',
-                                icon: 'success',
-                                customClass: 'sweet-alerts'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            window.Swal.fire({
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat menghapus data.',
-                                icon: 'error',
-                                customClass: 'sweet-alerts'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        window.Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat menghapus data.',
-                            icon: 'error',
-                            customClass: 'sweet-alerts'
-                        });
-                    });
-                }
-            });
-        }
     </script>
 
 </x-layout.default>

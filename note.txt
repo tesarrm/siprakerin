@@ -245,3 +245,28 @@ Tambahan sama kayak pindah
 
 - ada kondisi industri sudah habis waktu
 - ada status: berhenti atau prakerin 
+
+================================
+## Capaian Pembelajaran 
+
+### Table
+id
+jurusan_id
+nama
+
+================================
+## Tujuan Pembelajaran 
+
+### Table
+id
+capaian_pembelajaran_id
+nama
+
+================================
+## Nilai 
+
+### Table
+id
+siswa_id
+tujuan_pembelajaran_id
+nilai
