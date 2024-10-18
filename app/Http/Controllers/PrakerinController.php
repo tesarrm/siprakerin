@@ -65,6 +65,7 @@ class PrakerinController extends Controller
                 } else {
                     $sisa_waktu = 'Sudah berakhir';
                 }
+
                 
                 // status
                 // Cek apakah penempatan sudah selesai
@@ -96,6 +97,11 @@ class PrakerinController extends Controller
 
                 // Simpan status dalam properti tambahan jika dibutuhkan
                 $s->penempatan->status = $status;
+                if($status == 'berhenti') {
+                    $s->penempatan->sisa_waktu = null;
+                } else {
+                    $s->penempatan->sisa_waktu = $sisa_waktu;
+                }
             }
         }
 
@@ -193,9 +199,7 @@ class PrakerinController extends Controller
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // pindah
     public function update($siswa_id, Request $request)
     {
         $penempatan = PenempatanIndustri::where('siswa_id', $siswa_id)->first();

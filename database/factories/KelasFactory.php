@@ -17,7 +17,7 @@ class KelasFactory extends Factory
         $guru_id = \App\Models\Guru::inRandomOrder()->first()->id;
         $guru = Guru::with('user')->findOrFail($guru_id);
         $user = User::findOrFail($guru->user->id);
-        $user->assignRole('wali_siswa');
+        $user->assignRole('wali_kelas');
 
         return [
             'nama' => $this->faker->unique()->randomElement([

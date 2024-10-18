@@ -67,25 +67,67 @@ class IzinController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Izin $izin)
+    public function show($id)
     {
-        //
+        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+        $izin = Izin::with('siswa.kelas.jurusan')->findOrFail($id);
+
+        return view('jurnal.show2', [
+            'izin' => $izin,
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Izin $izin)
+    public function edit($id)
     {
-        //
+        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+        $izin = Izin::with('siswa.kelas.jurusan')->findOrFail($id);
+
+        return view('jurnal.edit2', [
+            'izin' => $izin,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Izin $izin)
+    public function update($id, Request $request)
     {
-        //
+        $data = Izin::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'gambar' => 'required|string',
+            'tanggal' => 'required|string',
+            'catatan' => 'nullable|string',
+        ]);
+
+        // colect data sesaui dengan fillable
+        $update = collect($validatedData);
+
+        // kondisi cek gambar
+        if (!empty($validatedData['gambar'])) {
+            $tmp_file = TemporaryFile::where('folder', $validatedData['gambar'])->first();
+
+            if ($tmp_file) {
+                Storage::copy('posts/tmp/' . $tmp_file->folder . '/'.$tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
+
+                $update->put('gambar', $tmp_file->folder . '/' . $tmp_file->file);
+
+                Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
+                $tmp_file->delete();
+            }
+        } else {
+            $update->put('gambar', null); // atau $create->forget('gambar');
+        }
+
+        // update siswa 
+        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+        $update->put('siswa_id', $siswa->id);
+        $data->update($update->toArray());
+
+        return redirect('jurnal')->with('status', 'Data berhasil ditambah!');
     }
 
     /**

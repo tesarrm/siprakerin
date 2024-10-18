@@ -43,8 +43,13 @@ Route::resource('user', UserController::class);
 Route::get('user/{id}/delete', [UserController::class, 'destroy']);
 Route::get('profile', [UserController::class, 'editProfile']);
 Route::post('profile', [UserController::class, 'updateProfile']);
+Route::post('user/{id}/role', [UserController::class, 'role']);
 
 Route::get('nonaktif', [NonaktifController::class, 'index']);
+Route::post('/tmp-upload', [GuruController::class, 'tmpUpload']);
+Route::delete('/tmp-delete', [GuruController::class, 'tmpDelete']);
+
+Route::resource('pengaturan', PengaturanController::class);
 
 Route::resource('guru', GuruController::class);
 Route::get('guru/{id}/delete', [GuruController::class, 'destroy']);
@@ -55,22 +60,20 @@ Route::post('guru/{id}/aktif', [GuruController::class, 'aktif']);
 Route::get('/guru-export', [GuruController::class, 'export']);
 Route::post('/guru-import', [GuruController::class, 'import']);
 
-Route::post('/tmp-upload', [GuruController::class, 'tmpUpload']);
-Route::delete('/tmp-delete', [GuruController::class, 'tmpDelete']);
-
-Route::resource('pengaturan', PengaturanController::class);
-
-Route::resource('bidang-keahlian', BidangKeahlianController::class);
-Route::get('bidang_keahlian/{bidangKeahlianId}/delete', [BidangKeahlianController::class, 'destroy']);
+Route::resource('bidangkeahlian', BidangKeahlianController::class);
+Route::get('bidangkeahlian/{id}/delete', [BidangKeahlianController::class, 'destroy']);
+Route::post('/bidangkeahlian/delete-multiple', [BidangKeahlianController::class, 'deleteMultiple']);
 
 Route::resource('jurusan', JurusanController::class);
 Route::get('jurusan/{jurusanId}/delete', [JurusanController::class, 'destroy']);
+Route::post('jurusan/delete-multiple', [JurusanController::class, 'deleteMultiple']);
 
 Route::resource('kelas', KelasController::class);
 Route::get('/kelas/{kelas}/edit', [KelasController::class, 'edit']);
 Route::get('kelas/{kelasId}/delete', [KelasController::class, 'destroy']);
 Route::post('kelas/{id}/nonaktif', [KelasController::class, 'nonaktif']);
 Route::post('kelas/{id}/aktif', [KelasController::class, 'aktif']);
+Route::post('kelas/delete-multiple', [KelasController::class, 'deleteMultiple']);
 
 Route::resource('siswa', SiswaController::class);
 Route::get('siswa/{siswaId}/delete', [SiswaController::class, 'destroy']);
@@ -80,6 +83,10 @@ Route::post('siswa/{id}/nonaktif', [SiswaController::class, 'nonaktif']);
 Route::post('siswa/{id}/aktif', [SiswaController::class, 'aktif']);
 Route::get('siswa-pdf', [PdfController::class, 'siswa']);
 
+Route::resource('kota', KotaController::class);
+Route::get('kota/{id}/delete', [KotaController::class, 'destroy']);
+Route::post('/kota/delete-multiple', [KotaController::class, 'deleteMultiple']);
+
 Route::resource('industri', IndustriController::class);
 Route::get('industri/{industriId}/delete', [IndustriController::class, 'destroy']);
 Route::post('industri/{id}/nonaktif', [IndustriController::class, 'nonaktif']);
@@ -87,8 +94,6 @@ Route::post('industri/{id}/aktif', [IndustriController::class, 'aktif']);
 
 Route::resource('kuotaindustri', KuotaIndustriController::class);
 Route::post('/kuota-industri', [KuotaIndustriController::class, 'storeOrUpdate'])->name('kuota-industri.storeOrUpdate');
-
-Route::resource('kota', KotaController::class);
 
 Route::resource('pilihankota', PilihanKotaController::class);
 Route::post('/pilihankota', [PilihanKotaController::class, 'storeOrUpdate']);
@@ -101,21 +106,7 @@ Route::get('penempatan/{id}/siswa', [PenempatanIndustriController::class, 'show2
 
 Route::resource('jurnal', JurnalController::class);
 Route::get('jurnal/{jurnalId}/delete', [JurnalController::class, 'destroy']);
-Route::get('jurnal/{id}/izin', [JurnalController::class, 'show2']);
-
-Route::resource('monitoring', MonitoringController::class);
-Route::get('monitoring/{id}/delete', [MonitoringController::class, 'destroy']);
-
-Route::resource('monitoring2', Monitoring2Controller::class);
-
-Route::resource('hasilmonitoring', HasilMonitoringController::class);
-Route::post('hasilmonitoring', [HasilMonitoringController::class, 'storeOrUpdate']);
-
-Route::get('pilihankota-pdf', [PdfController::class, 'pilihankota']);
-Route::get('pernyataan-pdf', [PdfController::class, 'pernyataan']);
-
 Route::resource('izin', IzinController::class);
-
 Route::get('/attendance', [AttendanceController::class, 'index']);
 Route::get('/attendance-data', [AttendanceController::class, 'getAttendanceData']);
 Route::get('/cek', [AttendanceController::class, 'storeCron']);
@@ -129,5 +120,17 @@ Route::post('pkl/{id}/lanjut', [PrakerinController::class, 'lanjut']);
 
 Route::resource('capaian', CapaianPembelajaranController::class);
 Route::post('capaian', [CapaianPembelajaranController::class, 'storeOrUpdate']);
+
+Route::resource('monitoring', MonitoringController::class);
+Route::get('monitoring/{id}/delete', [MonitoringController::class, 'destroy']);
+
+Route::resource('monitoring2', Monitoring2Controller::class);
+
+Route::resource('hasilmonitoring', HasilMonitoringController::class);
+Route::post('hasilmonitoring', [HasilMonitoringController::class, 'storeOrUpdate']);
+
+Route::get('pilihankota-pdf', [PdfController::class, 'pilihankota']);
+Route::get('pernyataan-pdf', [PdfController::class, 'pernyataan']);
+
 Route::resource('nilai', NilaiController::class);
 Route::post('nilai', [NilaiController::class, 'storeOrUpdate']);

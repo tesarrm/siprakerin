@@ -1,86 +1,83 @@
 <x-layout.default>
-
     <script src="/assets/js/simple-datatables.js"></script>
 
+    {{-- atur data info --}}
     @php
-    $items = [];
-    $allJurusan = $jurusan->pluck('singkatan'); 
+        $items = [];
+        $allJurusan = $jurusan->pluck('singkatan'); 
 
-    // Mengelompokkan jurusan berdasarkan jenis kelamin
-    $jurusanLakiLaki = $allJurusan->filter(function($singkatan) use ($data) {
-        return $data->filter(function($d) use ($singkatan) {
-            return $d->kuotaIndustri->where('jenis_kelamin', 'Laki-laki')->where('jurusan.singkatan', $singkatan);
+        // buat heading
+        $jurusanLakiLaki = $allJurusan->filter(function($singkatan) use ($data) {
+            return $data->filter(function($d) use ($singkatan) {
+                return $d->kuotaIndustri->where('jenis_kelamin', 'Laki-laki')->where('jurusan.singkatan', $singkatan);
+            });
         });
-    });
-
-    $jurusanPerempuan = $allJurusan->filter(function($singkatan) use ($data) {
-        return $data->filter(function($d) use ($singkatan) {
-            return $d->kuotaIndustri->where('jenis_kelamin', 'Perempuan')->where('jurusan.singkatan', $singkatan);
+        $jurusanPerempuan = $allJurusan->filter(function($singkatan) use ($data) {
+            return $data->filter(function($d) use ($singkatan) {
+                return $d->kuotaIndustri->where('jenis_kelamin', 'Perempuan')->where('jurusan.singkatan', $singkatan);
+            });
         });
-    });
 
-    foreach ($data as $d) {
-        $row = [
-        ];
+        // buat data
+        foreach ($data as $d) {
+            $totalLakiLaki = 0;
+            $totalPerempuan = 0;
 
-        $totalLakiLaki = 0;
-        $totalPerempuan = 0;
+            foreach ($d->kuotaIndustri as $kuota) {
+                $jurusanSingkatan = $kuota->jurusan->singkatan;
+                $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
+                $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
+                $row[$formattedKey] = $kuota->kuota;
 
-        foreach ($d->kuotaIndustri as $kuota) {
-            $jurusanSingkatan = $kuota->jurusan->singkatan;
-            $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
-            $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
-            $row[$formattedKey] = $kuota->kuota;
-
-            // Tambahkan kuota laki-laki dan perempuan ke total
-            if ($jenisKelamin == 'L') {
-                $totalLakiLaki += $kuota->kuota;
-            } else {
-                $totalPerempuan += $kuota->kuota;
+                // Tambahkan kuota laki-laki dan perempuan ke total
+                if ($jenisKelamin == 'L') {
+                    $totalLakiLaki += $kuota->kuota;
+                } else {
+                    $totalPerempuan += $kuota->kuota;
+                }
             }
-        }
 
-        // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
-        foreach ($allJurusan as $jurusanSingkatan) {
-            $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
-            $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
-        }
+            // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
+            foreach ($allJurusan as $jurusanSingkatan) {
+                $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
+                $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
+            }
 
-        $items[] = $row;
-    }
+            $items[] = $row;
+        }
     @endphp
 
+    {{-- atur data input --}}
     @php
-    $output = [
-        "laki-laki" => [],
-        "perempuan" => []
-    ];
+        $output = [
+            "laki-laki" => [],
+            "perempuan" => []
+        ];
 
-    // Mengambil singkatan jurusan dari koleksi $jurusan
-    $allJurusan = $jurusan->pluck('singkatan'); 
+        // Mengambil singkatan jurusan dari koleksi $jurusan
+        $allJurusan = $jurusan->pluck('singkatan'); 
 
-    // Memproses data untuk setiap kuota industri
-    foreach ($data as $d) {
-        foreach ($d->kuotaIndustri as $kuota) {
-            $jurusanId = $kuota->jurusan->id; // ID jurusan
-            $jenisKelamin = strtolower($kuota->jenis_kelamin); // Jenis kelamin (laki-laki atau perempuan)
-            $kuotaValue = $kuota->kuota; // Nilai kuota
+        // Memproses data untuk setiap kuota industri
+        foreach ($data as $d) {
+            foreach ($d->kuotaIndustri as $kuota) {
+                $jurusanId = $kuota->jurusan->id; // ID jurusan
+                $jenisKelamin = strtolower($kuota->jenis_kelamin); // Jenis kelamin (laki-laki atau perempuan)
+                $kuotaValue = $kuota->kuota; // Nilai kuota
 
-            // Memasukkan data ke dalam array berdasarkan jenis kelamin dan id jurusan
-            if ($jenisKelamin == 'laki-laki') {
-                if (!isset($output['laki-laki'][$jurusanId])) {
-                    $output['laki-laki'][$jurusanId] = 0; // Inisialisasi jika belum ada
+                // Memasukkan data ke dalam array berdasarkan jenis kelamin dan id jurusan
+                if ($jenisKelamin == 'laki-laki') {
+                    if (!isset($output['laki-laki'][$jurusanId])) {
+                        $output['laki-laki'][$jurusanId] = 0; // Inisialisasi jika belum ada
+                    }
+                    $output['laki-laki'][$jurusanId] += $kuotaValue;
+                } elseif ($jenisKelamin == 'perempuan') {
+                    if (!isset($output['perempuan'][$jurusanId])) {
+                        $output['perempuan'][$jurusanId] = 0; // Inisialisasi jika belum ada
+                    }
+                    $output['perempuan'][$jurusanId] += $kuotaValue;
                 }
-                $output['laki-laki'][$jurusanId] += $kuotaValue;
-            } elseif ($jenisKelamin == 'perempuan') {
-                if (!isset($output['perempuan'][$jurusanId])) {
-                    $output['perempuan'][$jurusanId] = 0; // Inisialisasi jika belum ada
-                }
-                $output['perempuan'][$jurusanId] += $kuotaValue;
             }
         }
-    }
-
     @endphp
 
     <div>
@@ -90,41 +87,21 @@
                 <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
                     <div class=" px-4">
                         <div class="text-lg font-semibold">Penempatan Prakerin</div>
-                        {{-- <div class="grid grid-cols-1 mt-4 mb-6 gap-4">
-                            <input type="hidden" name="industri_id" value="{{ $industri->id }}">
-                            <div>
-                                <label for="nama">Nama Industri</label>
-                                <input value="{{ $industri->nama }}" required id="nama" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Nama" />
-                            </div>
-                            <div>
-                                <label for="kota">Kota</label>
-                                <input value="{{ $industri->kota->nama }}" required id="kota_id" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Kota" />
-                            </div>
-                            <div>
-                                <label for="alamat">Alamat</label>
-                                <input value="{{ $industri->alamat }}" required id="alamat" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Alamat" />
-                            </div>
-                        </div> --}}
                         <div class="flex justify-between lg:flex-row flex-col">
                             <div class="w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
                                 <input type="hidden" name="industri_id" value="{{ $industri->id }}">
-
-                                <!-- Nama Input -->
                                 <div class="mt-4 flex items-center">
                                     <label for="nama" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama</span></label>
                                     <div class="flex-1">
                                         <input value="{{ $industri->nama }}" required id="nama" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Nama" />
                                     </div>
                                 </div>
-
-                                <!-- Alamat Input -->
                                 <div class="mt-4 flex items-center">
                                     <label for="kota_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota</span></label>
                                     <div class="flex-1">
                                         <input value="{{ $industri->kota->nama }}" required id="kota_id" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Kota" />
                                     </div>
                                 </div>
-
                                 <div class="mt-4 flex items-center">
                                     <label for="alamat" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Alamat</span></label>
                                     <div class="flex-1">
@@ -137,8 +114,7 @@
 
                         {{-- table info --}}
                         <div class="text-lg font-semibold mb-2">Penempatan</div>
-
-                            <div x-data="invoiceList">
+                            <div x-data="info">
                                 <div class="invoice-table">
                                     <table id="myTable" class="whitespace-nowrap">
                                         <thead>
@@ -194,9 +170,6 @@
                                                     </template>
                                                 </select>
                                             </td>
-                                            {{-- <td class="px-4 py-2">
-                                                <input type="text" :name="'data['+index+'][id_siswa]'" x-model="row.id_siswa" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td> --}}
                                             <td class="px-4 py-2">
                                                 <input type="text" x-model="row.pilihan" name="pilihan" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                             </td>
@@ -206,9 +179,6 @@
                                             <td class="px-4 py-2">
                                                 <input type="text" x-model="row.kelas" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                             </td>
-                                            {{-- <td class="px-4 py-2">
-                                                <input type="text" x-model="row.jurusan" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td> --}}
                                             <td class="px-4 py-2">
                                                 <input type="text" x-model="row.tahun_ajaran" name="tahun_ajaran" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                             </td>
@@ -284,7 +254,80 @@
         </form>
     </div>
 
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
     <script>
+        /*************
+         * atur posisi header table 
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            const thead = document.querySelector('#myTable thead');
+            const rows = Array.from(thead.querySelectorAll('tr'));
+            
+            if (rows.length === 2) {
+                // Swap rows as needed
+                thead.appendChild(rows[0]); // Move first row to the end
+                thead.insertBefore(rows[1], rows[0]); // Move last row before the new first row
+            }
+        });
+
+        /*************
+         * datatable info
+         */
+
+        document.addEventListener("alpine:init", () => {
+            Alpine.data('info', () => ({
+                selectedRows: [],
+                items: @json($items),
+                searchText: '',
+                datatable: null,
+                dataArr: [],
+
+                init() {
+                    this.setTableData();
+                    this.initializeTable();
+                    this.$watch('items', value => {
+                        this.datatable.destroy()
+                        this.setTableData();
+                        this.initializeTable();
+                    });
+                    this.$watch('selectedRows', value => {
+                        this.datatable.destroy()
+                        this.setTableData();
+                        this.initializeTable();
+                    });
+                },
+
+                initializeTable() {
+                    this.datatable = new simpleDatatables.DataTable('#myTable', {
+                        data: {
+                            data: this.dataArr
+                        },
+                        searchable: false,
+                        paging: false,
+                    });
+                },
+
+                setTableData() {
+                    this.dataArr = [];
+                    for (let i = 0; i < this.items.length; i++) {
+                        this.dataArr[i] = [];
+                        for (let p in this.items[i]) {
+                            if (this.items[i].hasOwnProperty(p)) {
+                                this.dataArr[i].push(this.items[i][p]);
+                            }
+                        }
+                    }
+                },
+            }))
+        })
+
+        /*************
+         * datatable input 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("form", () => ({
                 getMatchingKota(pilihankota) {
@@ -385,90 +428,28 @@
                 }
             }));
         });
-    </script>
 
-    <script>
-        document.addEventListener("alpine:init", () => {
-            Alpine.data('invoiceList', () => ({
-                selectedRows: [],
-                items: @json($items),
-                searchText: '',
-                datatable: null,
-                dataArr: [],
+        /*************
+         * check matching kota 
+         */
 
-                init() {
-                    this.setTableData();
-                    this.initializeTable();
-                    this.$watch('items', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
-                    });
-                    this.$watch('selectedRows', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
-                    });
+        function form() {
+            return {
+                initialize() {
+                    // Any necessary initialization here
                 },
-
-                initializeTable() {
-                    this.datatable = new simpleDatatables.DataTable('#myTable', {
-                        data: {
-                            data: this.dataArr
-                        },
-                        searchable: false,
-                        paging: false,
-                    });
-                },
-
-                setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
+                getMatchingKota(pilihankota) {
+                    // Check for matching kota
+                    if (pilihankota.kota1.nama === '{{ $industri->kota->nama }}') {
+                        return 'kota1';
+                    } else if (pilihankota.kota2.nama === '{{ $industri->kota->nama }}') {
+                        return 'kota2';
+                    } else if (pilihankota.kota3.nama === '{{ $industri->kota->nama }}') {
+                        return 'kota3';
                     }
-                },
-            }))
-        })
-
-    </script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const thead = document.querySelector('#myTable thead');
-            const rows = Array.from(thead.querySelectorAll('tr'));
-            
-            if (rows.length === 2) {
-                // Swap rows as needed
-                thead.appendChild(rows[0]); // Move first row to the end
-                thead.insertBefore(rows[1], rows[0]); // Move last row before the new first row
-            }
-        });
-    </script>
-
-<script>
-    function form() {
-        return {
-            initialize() {
-                // Any necessary initialization here
-            },
-            getMatchingKota(pilihankota) {
-                // Check for matching kota
-                if (pilihankota.kota1.nama === '{{ $industri->kota->nama }}') {
-                    return 'kota1';
-                } else if (pilihankota.kota2.nama === '{{ $industri->kota->nama }}') {
-                    return 'kota2';
-                } else if (pilihankota.kota3.nama === '{{ $industri->kota->nama }}') {
-                    return 'kota3';
+                    return '';
                 }
-                return '';
-            }
-        };
-    }
-</script>
-
+            };
+        }
+    </script>
 </x-layout.default>

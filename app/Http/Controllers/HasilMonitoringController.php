@@ -22,9 +22,16 @@ class HasilMonitoringController extends Controller
      */
     public function index()
     {
-        if(auth()->user()->hasRole('wali_siswa')){
+        // dd(auth()->user()->getRoleNames());
+
+        if(auth()->user()->hasRole('pembimbing')){
             $guru = Guru::where('user_id', auth()->user()->id)->first();
             $data = Monitoring::with(['guru', 'industri'])->where('guru_id', $guru->id )->get();
+
+            $data->each(function ($d) {
+                $hasil = HasilMonitoring::where('monitoring_id', $d->id)->first();
+                $d->status = $hasil ? 'Sudah Monitoring' : 'Belum Monitoring';
+            });
         } else {
             $data = Monitoring::with(['guru', 'industri'])->get();
         }
@@ -109,9 +116,9 @@ class HasilMonitoringController extends Controller
         $validated = $request->validate([
             'monitoring_id' => 'required|string',
             'data.*.siswa_id' => 'required|string',
-            'data.*.kedisiplinan' => 'required|string',
-            'data.*.sikap' => 'required|string',
-            'data.*.kerjasama' => 'required|string',
+            'data.*.hadir' => 'required|string',
+            'data.*.izin' => 'required|string',
+            'data.*.alpa' => 'required|string',
             'data.*.catatan' => 'required|string',
         ]);
 
@@ -125,9 +132,9 @@ class HasilMonitoringController extends Controller
             HasilMonitoring::updateOrCreate([
                     'monitoring_id' => $monitoring_id,
                     'siswa_id' => $data['siswa_id'],
-                    'kedisiplinan' => $data['kedisiplinan'],
-                    'sikap' => $data['sikap'],
-                    'kerjasama' => $data['kerjasama'],
+                    'hadir' => $data['hadir'],
+                    'izin' => $data['izin'],
+                    'alpa' => $data['alpa'],
                     'catatan' => $data['catatan'],
                 ],
             );

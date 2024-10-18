@@ -13,9 +13,9 @@ class HasilMonitoring extends Model
     protected $fillable = [
         'monitoring_id',
         'siswa_id',
-        'kedisiplinan',
-        'sikap',
-        'kerjasama',
+        'hadir',
+        'izin',
+        'alpa',
         'catatan'
     ];
 

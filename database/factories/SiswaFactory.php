@@ -38,7 +38,7 @@ class SiswaFactory extends Factory
         // Mengembalikan data siswa dengan user_id yang sesuai
         return [
             'nis' => $this->faker->unique()->numerify('##########'), // 10 digit
-            'nama' => $namaSiswa, // Nama siswa yang sama dengan nama user
+            'nama_lengkap' => $namaSiswa, // Nama siswa yang sama dengan nama user
             'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
             'kelas_id' => Kelas::inRandomOrder()->first()->id,
             'user_id' => $user->id,

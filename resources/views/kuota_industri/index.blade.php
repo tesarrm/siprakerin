@@ -1,13 +1,15 @@
 
 <x-layout.default>
-
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
+    <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
 
+    {{-- atur data --}}
     @php
         $items = [];
         $allJurusan = $jurusan->pluck('singkatan');
 
-        // Mengelompokkan jurusan berdasarkan jenis kelamin untuk heading tabel
+        // buat heading
         $jurusanLakiLaki = $allJurusan->filter(function($singkatan) use ($data) {
             return $data->filter(function($d) use ($singkatan) {
                 return $d->kuotaIndustri->where('jenis_kelamin', 'Laki-laki')->where('jurusan.singkatan', $singkatan);
@@ -19,6 +21,7 @@
             });
         });
 
+        // buat data
        foreach ($data as $d) {
             $row = [
                 'nama' => $d->nama,
@@ -36,13 +39,6 @@
                 $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
                 $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
                 $row[$formattedKey] = $kuota->kuota;
-
-                // Tambahkan kuota laki-laki dan perempuan ke total
-                if ($jenisKelamin == 'L') {
-                    $totalLakiLaki += $kuota->kuota;
-                } else {
-                    $totalPerempuan += $kuota->kuota;
-                }
             }
 
             // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
@@ -57,11 +53,8 @@
         }
     @endphp
 
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
-    <script src="/assets/js/swiper-bundle.min.js"></script>
-
     <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
-        <div x-data="penempatan">
+        <div x-data="dataList">
             <div class="invoice-table">
                 <table id="myTable" class="whitespace-nowrap">
                     <thead>
@@ -96,6 +89,10 @@
         </div>
     </div>
 
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
     {{-- alert toast --}}
     @if(session('status'))
         <script>
@@ -123,6 +120,10 @@
     @endif
 
     <script>
+        /*************
+         * atur posisi header table 
+         */
+
         document.addEventListener('DOMContentLoaded', function() {
             const thead = document.querySelector('#myTable thead');
             const rows = Array.from(thead.querySelectorAll('tr'));
@@ -133,12 +134,13 @@
                 thead.insertBefore(rows[1], rows[0]); // Move last row before the new first row
             }
         });
-    </script>
 
-    {{-- script untuk datatable --}}
-    <script>
+        /*************
+         * datatable 
+         */
+
         document.addEventListener("alpine:init", () => {
-            Alpine.data('penempatan', () => ({
+            Alpine.data('dataList', () => ({
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',

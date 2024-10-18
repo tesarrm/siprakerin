@@ -8,10 +8,14 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
+    <script src="/assets/js/highlight.min.js"></script>
 
 
     <div>
-
         @if($libur)
         <div
             class="relative flex items-center mb-4 border p-3.5 rounded before:inline-block before:absolute before:top-1/2 ltr:before:right-0 rtl:before:left-0 rtl:before:rotate-180 before:-mt-2 before:border-r-8 before:border-t-8 before:border-b-8 before:border-t-transparent before:border-b-transparent before:border-r-inherit text-danger bg-danger-light border-danger ltr:border-r-[64px] rtl:border-l-[64px] dark:bg-danger-dark-light  ltr:xl:mr-6 rtl:xl:ml-6">
@@ -27,7 +31,7 @@
                 </svg>
             </span>
             <div class="w-full flex justify-between">
-                <span class="ltr:pr-2 rtl:pl-2"><strong class="ltr:mr-1 rtl:ml-1">Peringatan!</strong>Lorem Ipsum
+                <span class="ltr:pr-2 rtl:pl-2"><strong class="ltr:mr-1 rtl:ml-1">Peringatan!</strong>
                     Hari ini libur di industri Anda. 
                 </span>
                 <span>
@@ -47,6 +51,8 @@
                             <input type="checkbox" id="toggle-checkbox" onclick="toggleForms()" class="form-checkbox" />
                             <span>Izin Tidak Masuk</span>
                         </div>
+
+                        {{-- form jurnal --}}
                         <form action="{{ url('jurnal') }}" method="POST" enctype="multipart/form-data" id="form1">
                             @csrf
                             <div class=" px-4">
@@ -130,6 +136,8 @@
                                 </div>
                             </div>
                         </form>
+
+                        {{-- form izin --}}
                         <form action="{{ url('izin') }}" method="POST" enctype="multipart/form-data" id="form2" style="display: none;">
                             @csrf
                             <div class="px-4"  >
@@ -207,19 +215,15 @@
         </div>
     </div>
 
-    <!-- start hightlight js -->
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
-    <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
 
     <script>
-        // JavaScript to toggle forms based on checkbox
+        /*************
+         * checkbox izin tidak masuk 
+         */
+
         function toggleForms() {
             const checkbox = document.getElementById('toggle-checkbox');
             const form1 = document.getElementById('form1');
@@ -233,6 +237,11 @@
                 form2.style.display = 'none';
             }
         }
+
+        /*************
+         * checkbox libur 
+         */
+
         const form3 = document.getElementById('form3');
         if(@json($libur)){
             form3.style.display = 'none';
@@ -247,9 +256,11 @@
                 form3.style.display = 'none';
             }
         }
-    </script>
 
-    <script>
+        /*************
+         * gambar filepond 
+         */
+
         FilePond.registerPlugin(FilePondPluginImagePreview)
 
         const inputElement = document.querySelector('input[type="file"]');
@@ -284,10 +295,11 @@
                 });
             }
         });
-    </script>
 
-    {{-- date input --}}
-    <script>
+        /*************
+         * tanggal jurnal 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("tanggal", () => ({
                 date1: '', // Inisialisasi kosong, akan diisi di init()
@@ -305,6 +317,10 @@
                 }
             }));
         });
+
+        /*************
+         * tanggal izin 
+         */
 
         document.addEventListener("alpine:init", () => {
             Alpine.data("tanggal1", () => ({
@@ -324,7 +340,10 @@
             }));
         });
 
-        // time
+        /*************
+         * time start jurnal 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("time_start", () => ({
                 date4: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }), 
@@ -338,6 +357,11 @@
                 }
             }));
         });
+
+        /*************
+         * time end jurnal 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("time_end", () => ({
                 date4: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }), 
@@ -351,75 +375,83 @@
                 }
             }));
         });
-    </script>
 
-    <script>
-      $('#summernote').summernote({
-        placeholder: 'Complete toolbar example',
-        tabsize: 2,
-        height: 300,  // Mengatur tinggi editor
-        toolbar: [
-          // Style group
-          ['style', ['style', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-          // Font group
-          ['font', ['fontname', 'fontsize', 'fontsizeunit', 'color', 'forecolor', 'backcolor']],
-          // Font style group
-          ['fontstyle', ['bold', 'italic', 'underline', 'strikethrough']],
-          // Font case group
-          ['case', ['superscript', 'subscript']],
-          // Paragraph group
-          ['para', ['ul', 'ol', 'paragraph', 'height']],
-          // Insert group
-          ['insert', ['link', 'picture', 'video', 'hr']],
-          // Table group
-          ['table', ['table']],
-          // View group
-          ['view', ['fullscreen', 'codeview', 'help']],
-          // Misc group
-          ['misc', ['undo', 'redo']]
-        ],
-        fontNames: ['Arial', 'Courier New', 'Helvetica', 'Times New Roman', 'Verdana'],  // Font yang tersedia
-        fontNamesIgnoreCheck: ['Comic Sans MS'],  // Font tambahan meski tidak ada di sistem
-        lineHeights: ['1', '1.5', '2', '2.5', '3'],  // Opsi tinggi baris
-        fontsizeUnits: ['px', 'pt'],  // Satuan ukuran font
-        codeviewFilter: true,  // Memfilter HTML yang berbahaya
-        codeviewIframeFilter: true  // Memfilter konten iframe berbahaya
-      });
-    </script>
-    <script>
-      $('#summernote1').summernote({
-        placeholder: 'Complete toolbar example',
-        tabsize: 2,
-        height: 200,  // Mengatur tinggi editor
-        toolbar: [
-          // Style group
-          ['style', ['style', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
-          // Font group
-          ['font', ['fontname', 'fontsize', 'fontsizeunit', 'color', 'forecolor', 'backcolor']],
-          // Font style group
-          ['fontstyle', ['bold', 'italic', 'underline', 'strikethrough']],
-          // Font case group
-          ['case', ['superscript', 'subscript']],
-          // Paragraph group
-          ['para', ['ul', 'ol', 'paragraph', 'height']],
-          // Insert group
-          ['insert', ['link', 'picture', 'video', 'hr']],
-          // Table group
-          ['table', ['table']],
-          // View group
-          ['view', ['fullscreen', 'codeview', 'help']],
-          // Misc group
-          ['misc', ['undo', 'redo']]
-        ],
-        fontNames: ['Arial', 'Courier New', 'Helvetica', 'Times New Roman', 'Verdana'],  // Font yang tersedia
-        fontNamesIgnoreCheck: ['Comic Sans MS'],  // Font tambahan meski tidak ada di sistem
-        lineHeights: ['1', '1.5', '2', '2.5', '3'],  // Opsi tinggi baris
-        fontsizeUnits: ['px', 'pt'],  // Satuan ukuran font
-        codeviewFilter: true,  // Memfilter HTML yang berbahaya
-        codeviewIframeFilter: true  // Memfilter konten iframe berbahaya
-      });
-    </script>
-    <script>
+        /*************
+         * summernote kegiatan 
+         */
+
+        $('#summernote').summernote({
+            placeholder: 'Complete toolbar example',
+            tabsize: 2,
+            height: 300,  // Mengatur tinggi editor
+            toolbar: [
+            // Style group
+            ['style', ['style', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+            // Font group
+            ['font', ['fontname', 'fontsize', 'fontsizeunit', 'color', 'forecolor', 'backcolor']],
+            // Font style group
+            ['fontstyle', ['bold', 'italic', 'underline', 'strikethrough']],
+            // Font case group
+            ['case', ['superscript', 'subscript']],
+            // Paragraph group
+            ['para', ['ul', 'ol', 'paragraph', 'height']],
+            // Insert group
+            ['insert', ['link', 'picture', 'video', 'hr']],
+            // Table group
+            ['table', ['table']],
+            // View group
+            ['view', ['fullscreen', 'codeview', 'help']],
+            // Misc group
+            ['misc', ['undo', 'redo']]
+            ],
+            fontNames: ['Arial', 'Courier New', 'Helvetica', 'Times New Roman', 'Verdana'],  // Font yang tersedia
+            fontNamesIgnoreCheck: ['Comic Sans MS'],  // Font tambahan meski tidak ada di sistem
+            lineHeights: ['1', '1.5', '2', '2.5', '3'],  // Opsi tinggi baris
+            fontsizeUnits: ['px', 'pt'],  // Satuan ukuran font
+            codeviewFilter: true,  // Memfilter HTML yang berbahaya
+            codeviewIframeFilter: true  // Memfilter konten iframe berbahaya
+        });
+
+        /*************
+         * summernote keterangan 
+         */
+
+        $('#summernote1').summernote({
+            placeholder: 'Complete toolbar example',
+            tabsize: 2,
+            height: 200,  // Mengatur tinggi editor
+            toolbar: [
+            // Style group
+            ['style', ['style', 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'clear']],
+            // Font group
+            ['font', ['fontname', 'fontsize', 'fontsizeunit', 'color', 'forecolor', 'backcolor']],
+            // Font style group
+            ['fontstyle', ['bold', 'italic', 'underline', 'strikethrough']],
+            // Font case group
+            ['case', ['superscript', 'subscript']],
+            // Paragraph group
+            ['para', ['ul', 'ol', 'paragraph', 'height']],
+            // Insert group
+            ['insert', ['link', 'picture', 'video', 'hr']],
+            // Table group
+            ['table', ['table']],
+            // View group
+            ['view', ['fullscreen', 'codeview', 'help']],
+            // Misc group
+            ['misc', ['undo', 'redo']]
+            ],
+            fontNames: ['Arial', 'Courier New', 'Helvetica', 'Times New Roman', 'Verdana'],  // Font yang tersedia
+            fontNamesIgnoreCheck: ['Comic Sans MS'],  // Font tambahan meski tidak ada di sistem
+            lineHeights: ['1', '1.5', '2', '2.5', '3'],  // Opsi tinggi baris
+            fontsizeUnits: ['px', 'pt'],  // Satuan ukuran font
+            codeviewFilter: true,  // Memfilter HTML yang berbahaya
+            codeviewIframeFilter: true  // Memfilter konten iframe berbahaya
+        });
+
+        /*************
+         * summernote submit 
+         */
+
         $(document).ready(function() {
             $('form').on('submit', function() {
                 $('#kegiatan').val($('#summernote').summernote('code'));
@@ -427,5 +459,4 @@
             });
         });
     </script>
-
 </x-layout.default>

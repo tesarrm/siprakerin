@@ -4,6 +4,9 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
     <script src="/assets/js/nouislider.min.js"></script>
 
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
+    <script src="/assets/js/highlight.min.js"></script>
+
     <div>
         <form action="{{ url('capaian') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -16,33 +19,31 @@
                             <input class="hidden" type="text" name="jurusan_id" value="{{ $jurusan->id }}" />
 
                             <!-- Wrapper for dynamic textarea inputs -->
-                            
-<div id="textarea-wrapper" class="grid grid-cols-1 gap-4">
-    @foreach($jurusan->capaianPembelajaran as $index => $capaian)
-        <div class="capaian-container">
-            <label for="capaian_pembelajaran_{{ $index + 1 }}" class="text-base">
-                Capaian Pembelajaran {{ $index + 1 }}
-            </label>
-            <textarea id="capaian_pembelajaran_{{ $index + 1 }}" rows="5" name="capaian_pembelajaran[]" class="form-textarea" required>{{ old('capaian_pembelajaran.' . $index, $capaian->nama) }}</textarea>
-            <div id="tujuan-wrapper-{{ $index + 1 }}" class="grid grid-cols-1 gap-4 mt-4 ml-6 tujuan-container">
-                @foreach($capaian->tujuanPembelajaran as $tujuanIndex => $tujuan)
-                    <div>
-                        <label for="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}">
-                            Tujuan Pembelajaran {{ $tujuanIndex + 1 }}
-                        </label>
-                        <textarea id="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}" rows="3" name="tujuan_pembelajaran[{{ $index + 1 }}][]" class="form-textarea" required>{{ old('tujuan_pembelajaran.' . $index . '.' . $tujuanIndex, $tujuan->nama) }}</textarea>
-                    </div>
-                @endforeach
-            </div>
+                            <div id="textarea-wrapper" class="grid grid-cols-1 gap-4">
+                                @foreach($jurusan->capaianPembelajaran as $index => $capaian)
+                                    <div class="capaian-container">
+                                        <label for="capaian_pembelajaran_{{ $index + 1 }}" class="text-base">
+                                            Capaian Pembelajaran {{ $index + 1 }}
+                                        </label>
+                                        <textarea id="capaian_pembelajaran_{{ $index + 1 }}" rows="5" name="capaian_pembelajaran[]" class="form-textarea" required>{{ old('capaian_pembelajaran.' . $index, $capaian->nama) }}</textarea>
+                                        <div id="tujuan-wrapper-{{ $index + 1 }}" class="grid grid-cols-1 gap-4 mt-4 ml-6 tujuan-container">
+                                            @foreach($capaian->tujuanPembelajaran as $tujuanIndex => $tujuan)
+                                                <div>
+                                                    <label for="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}">
+                                                        Tujuan Pembelajaran {{ $tujuanIndex + 1 }}
+                                                    </label>
+                                                    <textarea id="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}" rows="3" name="tujuan_pembelajaran[{{ $index + 1 }}][]" class="form-textarea" required>{{ old('tujuan_pembelajaran.' . $index . '.' . $tujuanIndex, $tujuan->nama) }}</textarea>
+                                                </div>
+                                            @endforeach
+                                        </div>
 
-            <div class="flex gap-4 ml-6 mt-2">
-                <button type="button" class="btn btn-primary mt-2" onclick="addTujuan({{ $index + 1 }})">Add Tujuan</button>
-                <button type="button" class="btn btn-danger mt-2" onclick="removeTujuan({{ $index + 1 }})">Remove Tujuan</button>
-            </div>
-        </div>
-    @endforeach
-</div>
-
+                                        <div class="flex gap-4 ml-6 mt-2">
+                                            <button type="button" class="btn btn-primary mt-2" onclick="addTujuan({{ $index + 1 }})">Add Tujuan</button>
+                                            <button type="button" class="btn btn-danger mt-2" onclick="removeTujuan({{ $index + 1 }})">Remove Tujuan</button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
                         </div>
 
                         <!-- Buttons to add and remove textarea -->
@@ -132,7 +133,4 @@
             }
         }
     </script>
-
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
-    <script src="/assets/js/highlight.min.js"></script>
 </x-layout.default>

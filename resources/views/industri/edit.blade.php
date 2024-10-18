@@ -143,15 +143,18 @@
         </form>
     </div>
 
-    <!-- start hightlight js -->
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
     <script>
+        /*************
+         * tanggal awal 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("tanggal_awal", () => ({
                 date1: @json($data->tanggal_awal), // Inisialisasi kosong, akan diisi di init()
@@ -169,6 +172,11 @@
                 }
             }));
         });
+
+        /*************
+         * tanggal akhir 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("tanggal_akhir", () => ({
                 date1: @json($data->tanggal_akhir), // Inisialisasi kosong, akan diisi di init()

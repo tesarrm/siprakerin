@@ -1,7 +1,9 @@
 <x-layout.default>
-    <div>
-        <script src="/assets/js/simple-datatables.js"></script>
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
+    <script src="/assets/js/highlight.min.js"></script>
+    <script src="/assets/js/simple-datatables.js"></script>
 
+    <div>
         <form action="{{ url('hasilmonitoring') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="flex xl:flex-row flex-col gap-2.5">
@@ -42,9 +44,9 @@
                                                     <th class="px-4 py-5">Nama Siswa</th>
                                                     <th class="px-4 py-5">Jenis Kelamin</th>
                                                     <th class="px-4 py-5">Kelas</th>
-                                                    <th class="px-4 py-5">Kedisiplinan</th>
-                                                    <th class="px-4 py-5">Sikap</th>
-                                                    <th class="px-4 py-5">Kerjasama</th>
+                                                    <th class="px-4 py-5">Hadir</th>
+                                                    <th class="px-4 py-5">Izin</th>
+                                                    <th class="px-4 py-5">Alpa</th>
                                                     <th class="px-4 py-5">Catatan</th>
                                                 </tr>
                                             </thead>
@@ -65,17 +67,17 @@
                                                         </td>
                                                         <td class="px-4 py-2">
                                                             <div style="width: 80px;">
-                                                                <input type="text" :name="'data['+index+'][kedisiplinan]'" x-model="row.kedisiplinan" class="form-input w-full" />
+                                                                <input type="text" :name="'data['+index+'][hadir]'" x-model="row.hadir" class="form-input w-full" />
                                                             </div>
                                                         </td>
                                                         <td class="px-4 py-2">
                                                             <div style="width: 80px;">
-                                                                <input type="text" :name="'data['+index+'][sikap]'" x-model="row.sikap" class="form-input w-full" />
+                                                                <input type="text" :name="'data['+index+'][izin]'" x-model="row.izin" class="form-input w-full" />
                                                             </div>
                                                         </td>
                                                         <td class="px-4 py-2">
                                                             <div style="width: 80px;">
-                                                                <input type="text" :name="'data['+index+'][kerjasama]'" x-model="row.kerjasama" class="form-input w-full" />
+                                                                <input type="text" :name="'data['+index+'][alpa]'" x-model="row.alpa" class="form-input w-full" />
                                                             </div>
                                                         </td>
                                                         <td class="px-4 py-2">
@@ -131,45 +133,25 @@
         </form>
     </div>
 
-    <!-- start hightlight js -->
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
-    <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-
     <script>
-        console.log(@json($hasil_monitoring))
         document.addEventListener("alpine:init", () => {
             Alpine.data("form", () => ({
-                // tableData: @json($penempatan).map(penempatan => ({
-                //     siswa_id: penempatan.siswa.id,
-                //     nama: penempatan.siswa.nama,
-                //     jenis_kelamin: penempatan.siswa.jenis_kelamin,
-                //     kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan + " " + penempatan.siswa.kelas.klasifikasi,
-                //     kedisiplinan: penempatan.kedisiplinan,
-                //     sikap: penempatan.sikap,
-                //     kerjasama: penempatan.kerjasama,
-                //     catatan: penempatan.catatan,
-                // })),
+                tableData: @json($penempatan).map(penempatan => {
+                    // Temukan data hasil monitoring berdasarkan siswa_id
+                    let monitoring = @json($hasil_monitoring).find(m => m.siswa_id === penempatan.siswa.id);
 
-            tableData: @json($penempatan).map(penempatan => {
-                // Temukan data hasil monitoring berdasarkan siswa_id
-                let monitoring = @json($hasil_monitoring).find(m => m.siswa_id === penempatan.siswa.id);
-
-                // Jika data monitoring ditemukan, gunakan nilainya, jika tidak gunakan nilai dari penempatan
-                return {
-                    siswa_id: penempatan.siswa.id,
-                    nama: penempatan.siswa.nama,
-                    jenis_kelamin: penempatan.siswa.jenis_kelamin,
-                    kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan + " " + penempatan.siswa.kelas.klasifikasi,
-                    kedisiplinan: monitoring ? monitoring.kedisiplinan : penempatan.kedisiplinan,
-                    sikap: monitoring ? monitoring.sikap : penempatan.sikap,
-                    kerjasama: monitoring ? monitoring.kerjasama : penempatan.kerjasama,
-                    catatan: monitoring ? monitoring.catatan : penempatan.catatan,
-                }
-            }),
+                    // Jika data monitoring ditemukan, gunakan nilainya, jika tidak gunakan nilai dari penempatan
+                    return {
+                        siswa_id: penempatan.siswa.id,
+                        nama: penempatan.siswa.nama,
+                        jenis_kelamin: penempatan.siswa.jenis_kelamin,
+                        kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan + " " + penempatan.siswa.kelas.klasifikasi,
+                        hadir: monitoring ? monitoring.hadir : penempatan.hadir,
+                        izin: monitoring ? monitoring.izin : penempatan.izin,
+                        alpa: monitoring ? monitoring.alpa : penempatan.alpa,
+                        catatan: monitoring ? monitoring.catatan : penempatan.catatan,
+                    }
+                }),
 
                 initialize() {
                     this.tableData.forEach((row, index) => {
@@ -185,5 +167,4 @@
             }));
         });
     </script>
-
 </x-layout.default>

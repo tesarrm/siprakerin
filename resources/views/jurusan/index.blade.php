@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
 
-    <div x-data="invoiceList">
+    <div x-data="dataList">
         <script src="/assets/js/simple-datatables.js"></script>
 
         <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
@@ -116,6 +116,10 @@
         </div>
     </div>
 
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
     {{-- alert toast --}}
     @if(session('status'))
         <script>
@@ -142,23 +146,26 @@
         </script>
     @endif
 
-    {{-- data untuk datatable --}}
+    {{-- data datatable --}}
     @php
-    $items = [];
-    foreach ($data as $d) {
-        $items[] = [
-            'id' => $d->id,
-            'nama' => $d->nama,
-            'bidang_keahlian' => $d->bidangKeahlian->nama,
-            'action' => $d->id, // Gunakan ID ini untuk aksi
-        ];
-    }
+        $items = [];
+        foreach ($data as $d) {
+            $items[] = [
+                'id' => $d->id ?? '-',
+                'nama' => $d->nama,
+                'bidang_keahlian' => $d->bidangKeahlian->nama ?? '-',
+                'action' => $d->id ?? '-',
+            ];
+        }
     @endphp
 
-    {{-- script untuk datatable --}}
     <script>
+        /*************
+         * datatable 
+         */
+
         document.addEventListener("alpine:init", () => {
-            Alpine.data('invoiceList', () => ({
+            Alpine.data('dataList', () => ({
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',
@@ -169,14 +176,10 @@
                     this.setTableData();
                     this.initializeTable();
                     this.$watch('items', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
+                        this.refreshTable();
                     });
                     this.$watch('selectedRows', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
+                        this.refreshTable();
                     });
                 },
 
@@ -228,7 +231,7 @@
                                                         ></path>
                                                     </svg>
                                                 </a>
-                                                <a href="#" class="hover:text-danger" onclick="confirmDelete('${data}')">
+                                                <a href="#" class="hover:text-danger" @click="deleteSingleRow('${data}')">
                                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                                                         <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
                                                         <path
@@ -265,6 +268,12 @@
                             bottom: "{info}{select}{pager}",
                         },
                     });
+                },
+
+                refreshTable() {
+                    this.datatable.destroy();
+                    this.setTableData();
+                    this.initializeTable();
                 },
 
                 checkAllCheckbox() {
@@ -321,7 +330,7 @@
                             customClass: 'sweet-alerts'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                fetch('/guru/delete-multiple', {
+                                fetch('/jurusan/delete-multiple', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',
@@ -369,63 +378,61 @@
                             customClass: 'sweet-alerts'
                         });
                     }
-                }
+                },
 
+                deleteSingleRow(id) {
+                    window.Swal.fire({
+                        icon: 'warning',
+                        title: 'Apakah Anda yakin?',
+                        text: "Data yang dihapus tidak dapat dikembalikan!",
+                        showCancelButton: true,
+                        confirmButtonText: 'Hapus',
+                        cancelButtonText: 'Batal',
+                        padding: '2em',
+                        customClass: 'sweet-alerts'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/jurusan/${id}/delete`, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.Swal.fire({
+                                        title: 'Dihapus!',
+                                        text: 'Data berhasil dihapus.',
+                                        icon: 'success',
+                                        customClass: 'sweet-alerts'
+                                    });
+                                    this.items = this.items.filter(item => item.id != id);
+                                } else {
+                                    window.Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Terjadi kesalahan saat menghapus data.',
+                                        icon: 'error',
+                                        customClass: 'sweet-alerts'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                window.Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Terjadi kesalahan saat menghapus data.',
+                                    icon: 'error',
+                                    customClass: 'sweet-alerts'
+                                });
+                            });
+                        }
+                    });
+                }
 
             }))
         })
-
-        function confirmDelete(id) {
-            window.Swal.fire({
-                icon: 'warning',
-                title: 'Apakah Anda yakin?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
-                showCancelButton: true,
-                confirmButtonText: 'Hapus',
-                cancelButtonText: 'Batal',
-                padding: '2em',
-                customClass: 'sweet-alerts'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/jurusan/${id}/delete`, {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.Swal.fire({
-                                title: 'Dihapus!',
-                                text: 'Data berhasil dihapus.',
-                                icon: 'success',
-                                customClass: 'sweet-alerts'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            window.Swal.fire({
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat menghapus data.',
-                                icon: 'error',
-                                customClass: 'sweet-alerts'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        window.Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat menghapus data.',
-                            icon: 'error',
-                            customClass: 'sweet-alerts'
-                        });
-                    });
-                }
-            });
-        }
     </script>
 
 </x-layout.default>

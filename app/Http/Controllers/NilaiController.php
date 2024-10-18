@@ -48,107 +48,6 @@ class NilaiController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function _edit($industri_id)
-    {
-        $penempatan = PenempatanIndustri::where('industri_id', $industri_id)->with(['siswa.kelas.jurusan', 'industri'])->get();
-        $item_penempatan = $penempatan->first();
-        $industri = $item_penempatan->industri->nama;
-
-        $capaian = CapaianPembelajaran::get()->groupBy('jurusan_id');
-
-
-        $penempatan = [
-            [
-                'siswa' => [
-                    'id' => 1,
-                    'nama' => 'Siswa 1',
-                    'jenis_kelamin' => 'Laki-laki',
-                    'kelas' => [
-                        'nama' => 'Kelas 10',
-                        'jurusan' => [
-                            'nama' => 'Jurusan Teknik',
-                            'singkatan' => 'TK',
-                        ],
-                    ],
-                ],
-                'capaian' => [
-                    [
-                        'nama' => 'ini adalah judul materi',
-                        'tujuan' => [
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                        ],
-                    ],
-                    [
-                        'nama' => 'ini adalah judul materi',
-                        'tujuan' => [
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'siswa' => [
-                    'id' => 2,
-                    'nama' => 'Siswa 2',
-                    'jenis_kelamin' => 'Perempuan',
-                    'kelas' => [
-                        'nama' => 'Kelas 11',
-                        'jurusan' => [
-                            'nama' => 'Jurusan Akuntansi',
-                            'singkatan' => 'AK',
-                        ],
-                    ],
-                ],
-                'capaian' => [
-                    [
-                        'nama' => 'ini adalah judul materi',
-                        'tujuan' => [
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                        ],
-                    ],
-                    [
-                        'nama' => 'ini adalah judul materi',
-                        'tujuan' => [
-                            [
-                                'nama' => 'Lorem inpusmaljflasjfd laskjf lsajf lsajf lsadjfC aslkjflsajf lsajflsa flksajf lsajf lsajf lsajf lsajflds alksjf lasjf lsajf saljf sa;ljf ;lsajflsjf saljf lsakjf lsad jf;ldsa jf;lsa jflsa jflsajf lsajf lksajflksa jfjs flks jf;ldsj fa flsa jfdapaian',
-                            ], 
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        return view('nilai.edit', [
-            'penempatan' => $penempatan,
-            'industri' => $industri,
-            // 'capaian' => $capaian,
-        ]);
-    }
-
     public function edit($industri_id) 
     {
         $urutan = null;
@@ -196,12 +95,21 @@ class NilaiController extends Controller
                 'capaian' => $capaianForJurusan->map(function($capaian) use ($urutan) {
                     return [
                         'nama' => $capaian->nama,
+                        // 'tujuan' => $capaian->tujuanPembelajaran->map(function($tujuan) use ($urutan) {
+                        //     $nilai = $tujuan->nilai->where('urutan', $urutan)->first()->nilai;
+                        //     return [
+                        //         'id' => $tujuan->id,
+                        //         'nama' => $tujuan->nama,
+                        //         'nilai' => $nilai,
+                        //     ];
+                        // })->toArray(),
                         'tujuan' => $capaian->tujuanPembelajaran->map(function($tujuan) use ($urutan) {
-                            $nilai = $tujuan->nilai->where('urutan', $urutan)->first()->nilai;
+                            $nilaiObj = $tujuan->nilai->where('urutan', $urutan)->first();
+                            $nilai = $nilaiObj ? $nilaiObj->nilai : null; // Cek apakah objeknya null
                             return [
                                 'id' => $tujuan->id,
                                 'nama' => $tujuan->nama,
-                                'nilai' => $nilai,
+                                'nilai' => $nilai, // Nilai null jika tidak ditemukan
                             ];
                         })->toArray(),
                     ];
@@ -223,6 +131,7 @@ class NilaiController extends Controller
         ]);
 
     }
+
     /**
      * Update the specified resource in storage.
      */
@@ -239,58 +148,58 @@ class NilaiController extends Controller
         //
     }
 
-public function storeOrUpdate(Request $request)
-{
-    // Validasi input data
-    $request->validate([
-        'data.*.siswa_id' => 'required|exists:siswas,id',
-        'data.*.capaian.*.tujuan.*' => 'required',
-    ]);
+    public function storeOrUpdate(Request $request)
+    {
+        // Validasi input data
+        $request->validate([
+            'data.*.siswa_id' => 'required|exists:siswas,id',
+            'data.*.capaian.*.tujuan.*' => 'required',
+        ]);
 
-    $urutan = null;
-    $currentMonth = Carbon::now()->format('m');
+        $urutan = null;
+        $currentMonth = Carbon::now()->format('m');
 
-    if ($currentMonth == '4' || $currentMonth == '5' || $currentMonth == '6') {
-        $urutan = 1;
-    } else if ($currentMonth == '10' || $currentMonth == '11' || $currentMonth == '12') {
-        $urutan = 2;
-    }
+        if ($currentMonth == '4' || $currentMonth == '5' || $currentMonth == '6') {
+            $urutan = 1;
+        } else if ($currentMonth == '10' || $currentMonth == '11' || $currentMonth == '12') {
+            $urutan = 2;
+        }
 
-    $siswa_id = $request['data'][0]['siswa_id'];
-    Nilai::where([
-        'siswa_id' => $siswa_id, 
-        'urutan' => $urutan
-        ])->delete();
+        $siswa_id = $request['data'][0]['siswa_id'];
+        Nilai::where([
+            'siswa_id' => $siswa_id, 
+            'urutan' => $urutan
+            ])->delete();
 
-    // Iterasi setiap baris data siswa
-    foreach ($request->input('data') as $dataSiswa) {
-        $siswaId = $dataSiswa['siswa_id'];
+        // Iterasi setiap baris data siswa
+        foreach ($request->input('data') as $dataSiswa) {
+            $siswaId = $dataSiswa['siswa_id'];
 
-        // Iterasi capaian
-        foreach ($dataSiswa['capaian'] as $capaian) {
-            foreach ($capaian['tujuan'] as $tujuanIndex => $nilaiTujuan) {
-                // Cek jika nilai tujuan tidak kosong
-                if (isset($nilaiTujuan)) {
-                    $tujuanPembelajaranId = $capaian['tujuan'][$tujuanIndex]['id'];
+            // Iterasi capaian
+            foreach ($dataSiswa['capaian'] as $capaian) {
+                foreach ($capaian['tujuan'] as $tujuanIndex => $nilaiTujuan) {
+                    // Cek jika nilai tujuan tidak kosong
+                    if (isset($nilaiTujuan)) {
+                        $tujuanPembelajaranId = $capaian['tujuan'][$tujuanIndex]['id'];
 
-                    // Update atau buat data nilai
-                    Nilai::updateOrCreate(
-                        [
-                            'siswa_id' => $siswaId,
-                            'tujuan_pembelajaran_id' => $tujuanPembelajaranId,
-                            'urutan' => $urutan,
-                        ],
-                        [
-                            'nilai' => $nilaiTujuan['nilai'],
-                            'urutan' => $urutan,
-                        ]
-                    );
+                        // Update atau buat data nilai
+                        Nilai::updateOrCreate(
+                            [
+                                'siswa_id' => $siswaId,
+                                'tujuan_pembelajaran_id' => $tujuanPembelajaranId,
+                                'urutan' => $urutan,
+                            ],
+                            [
+                                'nilai' => $nilaiTujuan['nilai'],
+                                'urutan' => $urutan,
+                            ]
+                        );
+                    }
                 }
             }
         }
-    }
 
-    return redirect()->back()->with('success', 'Nilai berhasil disimpan atau diperbarui.');
-}
+        return redirect()->back()->with('success', 'Nilai berhasil disimpan atau diperbarui.');
+    }
 
 }

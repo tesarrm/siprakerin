@@ -1,6 +1,9 @@
 <x-layout.default>
-    <div x-data="invoiceAdd">
-        <form action="{{ url('guru/'.$guru->id) }}" method="POST">
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
+    <div>
+        <form action="{{ url('guru/'. $data->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method("PUT")
             <div class="flex xl:flex-row flex-col gap-2.5">
@@ -12,100 +15,184 @@
                         </div>
                     </div>
                 </div>
-                <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
-                    <div class=" px-4">
-                        <div class="flex justify-between lg:flex-row flex-col">
-                            <div class="lg:w-1/2 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="text-lg font-semibold">Data Guru</div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">NIP<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input value="{{ $guru->nip }}" required id="reciever-name" type="text" name="nip" class="form-input w-full" 
-                                            placeholder="Isi NIP" />
-                                        @error('nip')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama Guru<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input value="{{ $guru->nama_guru }}" required id="reciever-name" type="text" name="nama_guru" class="form-input w-full"
-                                            placeholder="Isi Nama Guru" />
-                                        @error('nama_guru')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="flex items-center mt-4">
-                                    <label for="jenis_kelamin" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Jenis Kelamin<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="jenis_kelamin" name="jenis_kelamin" class="form-select w-full">
-                                            <option value="">Pilih Jenis Kelamin</option>
-                                            <option value="Laki-laki" @selected($guru->jenis_kelamin == 'Laki-laki')>Laki-laki</option>
-                                            <option value="Perempuan" @selected($guru->jenis_kelamin == 'Perempuan')>Perempuan</option>
-                                        </select>
-                                        @error('jenis_kelamin')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div> 
-                                <div class="flex items-center mt-4">
-                                    <label for="peran" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Peran<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="peran" name="peran" class="form-select w-full">
-                                            <option value="">Pilih Peran</option>
-                                            <option value="Admin" @selected($guru->peran== 'Admin')>Admin</option>
-                                        </select>
-                                        @error('peran')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div> 
-                                <div class="flex items-center mt-4">
-                                    <label for="wali_kelas" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Wali Kelas</label>
-                                    <div class="flex-1">
-                                        <select id="wali_kelas" name="wali_kelas" class="form-select w-full">
-                                            <option value="">Pilih Kelas</option>
-                                            <option value="X RPL A" @selected($guru->wali_kelas == 'X RPL A')>X RPL A</option>
-                                            <option value="X RPL B" @selected($guru->wali_kelas == 'X RPL B')>X RPL B</option>
-                                        </select>
-                                        @error('wali_kelas')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div> 
+                <div class="panel space-y-5 px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
+                    <div class="px-4">
+                        <div class="text-lg font-semibold">Informasi Umum</div>
+                        <div class="grid grid-cols-1 mt-4 mb-6 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nip">NIP<span class="text-danger">*</span></label>
+                                <input value="{{$data->nip}}" required id="nip" type="text" name="nip" class="form-input w-full" 
+                                    placeholder="Isi NIP" />
+                                @error('nip')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <div class="lg:w-1/2 w-full">
-                                <div class="flex items-center mt-11">
-                                    <label for="acno" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Username<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input value="{{ $guru->username }}" required id="acno" type="text" name="username" class="form-input w-full"
-                                            placeholder="Isi Username" />
-                                        @error('username')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
+                            <div>
+                                <label for="nama">Nama<span class="text-danger">*</span></label>
+                                <input value="{{$data->nama}}" required id="nama" type="text" name="nama" class="form-input w-full"
+                                    placeholder="Isi Nama" />
+                                @error('nama')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="jenis_kelamin">Jenis Kelamin<span class="text-danger">*</span></label>
+                                <select required id="jenis_kelamin" name="jenis_kelamin" class="form-select w-full">
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="Laki-laki" @selected($data->jenis_kelamin == 'Laki-laki')>Laki-laki</option>
+                                    <option value="Perempuan" @selected($data->jenis_kelamin == 'Perempuan')>Perempuan</option>
+                                </select>
+                                @error('jenis_kelamin')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            {{-- <div>
+                                <label for="peran">Peran<span class="text-danger">*</span></label>
+                                <div class="mt-3">
+                                    <input name="peran_admin" type="checkbox" class="form-checkbox mb-1" /> Admin
+                                    <input name="peran_kabeng" type="checkbox" class="form-checkbox mb-1 ml-3" /> Kabeng 
+                                    <input name="peran_ortu" type="checkbox" class="form-checkbox mb-1 ml-3" /> Ortu 
                                 </div>
-                                <div class="flex items-center mt-4">
-                                    <label for="bank-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Password<span class="text-danger">*</span></label>
-                                    <input required id="bank-name" type="password" name="password" class="form-input flex-1"
-                                        placeholder="Isi Password" />
-                                </div>
-                                <div class="flex items-center mt-4">
-                                    <label for="swift-code" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Konfirmasi Password<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input required id="swift-code" type="password" name="konfirmasi_password" class="form-input w-full"
-                                            placeholder="Isi Konfirmasi Password" />
-                                        @error('password')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+                                @error('peran_admin')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                                @error('peran_kabeng')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                                @error('peran_ortu')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div> --}}
+                            <div>
+                                <label for="email">Email<span class="text-danger">*</span></label>
+                                <input value="{{$data->user->email}}" required id="email" type="text" name="email" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly
+                                    placeholder="Isi Email" />
+                                @error('email')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
-                    <div class="mt-8 px-4">
+                    <hr>
+                    <div class="px-4">
+                        <div class="text-lg font-semibold mt-4">Detail</div>
+                        <div class="grid grid-cols-1 mt-4 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="no_ktp">No KTP</label>
+                                <input value="{{$data->no_ktp}}" id="no_ktp" type="text" name="no_ktp" class="form-input w-full" 
+                                    placeholder="Isi No KTP" />
+                                @error('no_ktp')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="tempat_lahir">Tempat Lahir</label>
+                                <input value="{{$data->tempat_lahir}}" id="tempat_lahir" type="text" name="tempat_lahir" class="form-input w-full" 
+                                    placeholder="Isi Tempat Lahir" />
+                                @error('tempat_lahir')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="tanggal_lahir">Tanggal Lahir</label>
+                                <input value="{{$data->tanggal_lahir}}" id="tanggal_lahir" type="text" name="tanggal_lahir" class="form-input w-full" 
+                                    placeholder="Isi Tanggal Lahir" />
+                                @error('tanggal_lahir')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="golongan_darah">Golongan Darah</label>
+                                <select required id="golongan_darah" name="golongan_darah" class="form-select w-full">
+                                    <option value="">Pilih Golongan Darah</option>
+                                    <option @selected($data->golongan_darah == 'A+') value="A+">A+</option>
+                                    <option @selected($data->golongan_darah == 'B+') value="B+">B+</option>
+                                    <option @selected($data->golongan_darah == 'AB+') value="AB+">AB+</option>
+                                    <option @selected($data->golongan_darah == 'O+') value="O+">O+</option>
+                                    <option @selected($data->golongan_darah == 'A-') value="A-">A-</option>
+                                    <option @selected($data->golongan_darah == 'B-') value="B-">B-</option>
+                                    <option @selected($data->golongan_darah == 'AB-') value="AB-">AB-</option>
+                                    <option @selected($data->golongan_darah == 'O-') value="O-">O-</option>
+                                </select>
+                                @error('golongan_darah')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="kecamatan">Kecamatan</label>
+                                <input value="{{$data->kecamatan}}" id="kecamatan" type="text" name="kecamatan" class="form-input w-full" 
+                                    placeholder="Isi Kecamatan" />
+                                @error('kecamatan')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="alamat">Alamat</label>
+                                <input value="{{$data->alamat}}" id="alamat" type="text" name="alamat" class="form-input w-full" 
+                                    placeholder="Isi Alamat" />
+                                @error('alamat')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="rt">RT</label>
+                                <input value="{{$data->rt}}" id="rt" type="number" name="rt" class="form-input w-full" 
+                                    placeholder="Isi RT" />
+                                @error('rt')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="rw">RW</label>
+                                <input value="{{$data->rw}}" id="rw" type="number" name="rw" class="form-input w-full" 
+                                    placeholder="Isi RW" />
+                                @error('rw')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="kode_pos">Kode Pos</label>
+                                <input value="{{$data->kode_pos}}" id="kode_pos" type="number" name="kode_pos" class="form-input w-full" 
+                                    placeholder="Isi Kode Pos" />
+                                @error('kode_pos')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="no_telp">No Telp</label>
+                                <input value="{{$data->no_telp}}" id="no_telp" type="text" name="no_telp" class="form-input w-full" 
+                                    placeholder="Isi No Telp" />
+                                @error('no_telp')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="no_hp">No HP</label>
+                                <input value="{{$data->no_hp}}" id="no_hp" type="text" name="no_hp" class="form-input w-full" 
+                                    placeholder="Isi No HP" />
+                                @error('no_hp')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="agama">Agama</label>
+                                <select required id="agama" name="agama" class="form-select w-full">
+                                    <option value="">Pilih Agama</option>
+                                    <option @selected($data->agama == 'Islam') value="Islam">Islam</option>
+                                    <option @selected($data->agama == 'Kristen') value="Kristen">Kristen</option>
+                                    <option @selected($data->agama == 'Katolik') value="Katolik">Katolik</option>
+                                    <option @selected($data->agama == 'Hindu') value="Hindu">Hindu</option>
+                                    <option @selected($data->agama == 'Buddha') value="Buddha">Buddha</option>
+                                    <option @selected($data->agama == 'Konghuchu') value="Konghuchu">Konghuchu</option>
+                                </select>
+                                @error('agama')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                    {{-- button --}}
+                    <div class="px-4">
                         <div class="flex justify-end items-center mt-8 gap-4">
                             <button type="submit" class="btn btn-success gap-2">
 
@@ -143,98 +230,21 @@
         </form>
     </div>
 
-    <script>
-        document.addEventListener("alpine:init", () => {
-            Alpine.data('invoiceAdd', () => ({
-                items: [],
-                selectedFile: null,
-                params: {
-                    title: '',
-                    invoiceNo: '',
-                    to: {
-                        name: '',
-                        email: '',
-                        address: '',
-                        phone: ''
-                    },
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
 
-                    invoiceDate: '',
-                    dueDate: '',
-                    bankInfo: {
-                        no: '',
-                        name: '',
-                        swiftCode: '',
-                        country: '',
-                        ibanNo: ''
-                    },
-                    notes: '',
-                },
-                currencyList: [
-                    'USD - US Dollar',
-                    'GBP - British Pound',
-                    'IDR - Indonesian Rupiah',
-                    'INR - Indian Rupee',
-                    'BRL - Brazilian Real',
-                    'EUR - Germany (Euro)',
-                    'TRY - Turkish Lira',
-                ],
-                selectedCurrency: 'USD - US Dollar',
-                tax: null,
-                discount: null,
-                shippingCharge: null,
-                paymentMethod: '',
-
-                init() {
-                    //set default data
-                    this.items.push({
-                        id: 1,
-                        title: '',
-                        description: '',
-                        rate: 0,
-                        quantity: 0,
-                        amount: 0
-                    });
-                },
-
-                addItem() {
-                    let maxId = 0;
-                    if (this.items && this.items.length) {
-                        maxId = this.items.reduce((max, character) => (character.id > max ? character
-                            .id : max), this.items[0].id);
-                    }
-                    this.items.push({
-                        id: maxId + 1,
-                        title: '',
-                        description: '',
-                        rate: 0,
-                        quantity: 0,
-                        amount: 0
-                    });
-                },
-
-                removeItem(item) {
-                    this.items = this.items.filter((d) => d.id != item.id);
-                }
-            }));
-        });
-    </script>
-
-    <!-- start hightlight js -->
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
 
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-
-    {{-- filepond --}}
     <script>
+        /*************
+         * gambar filepond 
+         */
+
         FilePond.registerPlugin(FilePondPluginImagePreview)
 
-        // Get a reference to the file input element
         const inputElement = document.querySelector('input[type="file"]');
-
-        // Create a FilePond instance
         const pond = FilePond.create(inputElement);
 
         FilePond.setOptions({
@@ -247,20 +257,6 @@
             }
         });
 
-        // // Listen for page unload (when user navigates away from the page)
-        // window.addEventListener('beforeunload', function(event) {
-        //     // Check if there is a file in FilePond
-        //     if (pond.getFiles().length > 0) {
-        //         // Trigger revert for each file
-        //         pond.getFiles().forEach(fileItem => {
-        //             pond.removeFile(fileItem.id, {
-        //                 revert: true
-        //             });
-        //         });
-        //     }
-        // });
-
-        // Buat variabel untuk mengecek jika tombol submit ditekan
         let isSubmit = false;
 
         // Tambahkan event listener pada tombol submit
@@ -282,8 +278,8 @@
         });
 
         // If there is an existing image, load it into FilePond
-        @if($guru->gambar)
-        pond.addFile("{{ asset('storage/posts/' . $guru->gambar) }}")
+        @if($data->gambar)
+        pond.addFile("{{ asset('storage/posts/' . $data->gambar) }}")
             .then(file => {
                 console.log('Existing file loaded', file);
             })
@@ -292,5 +288,4 @@
             });
         @endif
     </script>
-
 </x-layout.default>

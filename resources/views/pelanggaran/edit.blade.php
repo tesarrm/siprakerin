@@ -4,14 +4,17 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
     <script src="/assets/js/nouislider.min.js"></script>
 
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
+    <script src="/assets/js/highlight.min.js"></script>
+
     <div>
         <form action="{{ url('pelanggaran/' . $data->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="flex xl:flex-row flex-col gap-2.5">
-                <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
+                <div class="panel xl:w-[600px] px-0 w-full xl:mt-0 mt-6">
                     <div class="px-4">
-                        <div class="text-lg font-semibold mb-4">Data Kelas</div>
+                        <div class="text-lg font-semibold mb-4">Data Pelanggaran</div>
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="tanggal">Tanggal<span class="text-danger">*</span></label>
@@ -86,25 +89,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="xl:w-96 w-full xl:mt-0 mt-6">
-                </div>
-                <div class="xl:w-96 w-full xl:mt-0 mt-6">
+                <div class="flex-1 py-6">
                 </div>
             </div>
         </form>
     </div>
 
-    <!-- start hightlight js -->
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
-    <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-
-
     <script>
-
         document.addEventListener("alpine:init", () => {
             Alpine.data("tanggal", () => ({
                 date1: @json($data->tanggal), // Inisialisasi kosong, akan diisi di init()

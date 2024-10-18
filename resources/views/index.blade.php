@@ -3,6 +3,15 @@
         @can('r_dashadmin')
             <h1>admin</h1>
         @endcan
+        @can('r_dashpembimbing')
+            <h1>pembimbing</h1>
+        @endcan
+        @can('r_dashkoordinator')
+            <h1>koordinator</h1>
+        @endcan
+        @can('r_dashwalikelas')
+            <h1>walikelas</h1>
+        @endcan
         @can('r_dashguru')
             <h1>guru</h1>
         @endcan

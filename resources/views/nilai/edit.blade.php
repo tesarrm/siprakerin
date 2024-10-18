@@ -1,7 +1,35 @@
 <x-layout.default>
-    <div>
-        <script src="/assets/js/simple-datatables.js"></script>
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
+    <script src="/assets/js/highlight.min.js"></script>
+    <script src="/assets/js/simple-datatables.js"></script>
 
+    <style>
+        .ordered-list {
+            list-style-type: none; /* Menghilangkan bullet default */
+            padding-left: 0; /* Menghilangkan padding */
+        }
+        .ordered-list li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Align input to the right */
+            margin-bottom: 8px; /* Space between list items */
+            gap: 5px;
+        }
+        .ordered-list li span {
+            display: block; /* Setiap tujuan sebagai blok */
+            padding-left: 20px; /* Indentasi kiri untuk tujuan */
+            text-indent: -15px; /* Menggeser angka keluar */
+            position: relative;
+        }
+        .ordered-list li span::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            text-align: right;
+        }
+    </style>
+
+    <div>
         <form action="{{ url('nilai') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="flex xl:flex-row flex-col gap-2.5">
@@ -98,10 +126,15 @@
         </form>
     </div>
 
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
-    <script src="/assets/js/highlight.min.js"></script>
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
 
     <script>
+        /*************
+         * datatable 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("form", () => ({
                 tableData: @json($penempatan).map(penempatan => {
@@ -111,7 +144,7 @@
                         jenis_kelamin: penempatan.siswa.jenis_kelamin,
                         kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan,
                         jurusan: penempatan.siswa.kelas.jurusan.nama,
-                        capaian: penempatan.capaian,
+                        capaian: penempatan.capaian ? penempatan.capaian : '',
                     }
                 }),
 
@@ -128,30 +161,4 @@
             }));
         });
     </script>
-
-    <style>
-        .ordered-list {
-            list-style-type: none; /* Menghilangkan bullet default */
-            padding-left: 0; /* Menghilangkan padding */
-        }
-        .ordered-list li {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* Align input to the right */
-            margin-bottom: 8px; /* Space between list items */
-            gap: 5px;
-        }
-        .ordered-list li span {
-            display: block; /* Setiap tujuan sebagai blok */
-            padding-left: 20px; /* Indentasi kiri untuk tujuan */
-            text-indent: -15px; /* Menggeser angka keluar */
-            position: relative;
-        }
-        .ordered-list li span::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            text-align: right;
-        }
-    </style>
 </x-layout.default>

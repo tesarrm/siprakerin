@@ -4,48 +4,37 @@
             @csrf
             @method('PUT')
             <div class="flex xl:flex-row flex-col gap-2.5">
-                <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
+                <div class="panel xl:w-[600px] px-0 w-full xl:mt-0 mt-6">
                     <div class=" px-4">
-                        <div class="flex justify-between lg:flex-row flex-col">
-                            <div class="lg:w-1/2 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="text-lg font-semibold">Data Bidang Keahlian</div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input value="{{ $data->nama }}" required id="reciever-name" type="text" name="nama" class="form-input w-full" 
-                                            placeholder="Isi Nama" />
-                                        @error('nama')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="singkatan" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Singkatan<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input value="{{ $data->singkatan }}" required id="singkatan" type="text" name="singkatan" class="form-input w-full" 
-                                            placeholder="Isi Singkatan" />
-                                        @error('singkatan')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="flex items-center mt-4">
-                                    <label for="bidang_keahlian" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Bidang Keahlian<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="bidang_keahlian" name="bidang_keahlian_id" class="form-select w-full">
-                                            <option value="">Pilih Bidang Keahlian</option>
-                                            @foreach($bk as $item)
-                                                <option value="{{ $item->id }}" @selected($data->bidang_keahlian_id == $item->id)>{{ $item->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('bidang_keahlian')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
+                        <div class="text-lg font-semibold mb-4">Data Jurusan</div>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label for="nama">Nama<span class="text-danger">*</span></label>
+                                <input value="{{$data->nama}}" required id="nama" type="text" name="nama" class="form-input w-full" 
+                                placeholder="Isi Nama"/>
+                                @error('nama')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
-                            <div class="lg:w-1/2 w-full">
+                            <div>
+                                <label for="singkatan">Singkatan<span class="text-danger">*</span></label>
+                                <input value="{{$data->singkatan}}" required id="singkatan" type="text" name="singkatan" class="form-input w-full" 
+                                placeholder="Isi Singkatan"/>
+                                @error('singkatan')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="bidang_keahlian_id">Bidang Keahlian<span class="text-danger">*</span></label>
+                                <select required id="bidang_keahlian_id" name="bidang_keahlian_id" class="form-select w-full">
+                                    <option value="">Pilih Bidang Keahlian</option>
+                                    @foreach($bk as $item)
+                                        <option value="{{ $item->id }}" @selected($data->bidang_keahlian_id == $item->id)>{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('bidang_keahlian_id')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -82,6 +71,8 @@
                                 Kembali </button>
                         </div>
                     </div>
+                </div>
+                <div class="flex-1 py-6">
                 </div>
             </div>
         </form>

@@ -1,26 +1,23 @@
 <x-layout.default>
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
     <div>
-        <form action="{{ url('bidang-keahlian/' . $data->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ url('bidangkeahlian/' . $data->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
             <div class="flex xl:flex-row flex-col gap-2.5">
-                <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
+                <div class="panel xl:w-[600px] px-0 w-full xl:mt-0 mt-6">
                     <div class=" px-4">
-                        <div class="flex justify-between lg:flex-row flex-col">
-                            <div class="lg:w-1/2 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="text-lg font-semibold">Data Bidang Keahlian</div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input value="{{ $data->nama }}" required id="reciever-name" type="text" name="nama" class="form-input w-full" 
-                                            placeholder="Isi Nama" />
-                                        @error('nama')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lg:w-1/2 w-full">
+                        <div class="text-lg font-semibold mb-4">Data Bidang Keahlian</div>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label for="nama">Nama<span class="text-danger">*</span></label>
+                                <input value="{{$data->nama}}" required id="nama" type="text" name="nama" class="form-input w-full" 
+                                placeholder="Isi Nama"/>
+                                @error('nama')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
                         </div>
                     </div>
@@ -58,15 +55,13 @@
                         </div>
                     </div>
                 </div>
+                <div class="flex-1 py-6">
+                </div>
             </div>
         </form>
     </div>
 
-    <!-- start hightlight js -->
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
 
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 </x-layout.default>

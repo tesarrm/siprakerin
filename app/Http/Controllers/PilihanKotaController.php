@@ -187,7 +187,7 @@ public function index()
         $user_id = auth()->user()->id;
         $siswa = Siswa::where('user_id', $user_id)->first();
         $data = PilihanKota::where('siswa_id', $siswa->id)->first();
-
+        
         if (!$data) {
             $data = new PilihanKota(); // Jika data tidak ada, buat instance kosong
             $data->kota_id_1 = '';

@@ -98,7 +98,15 @@
         </form>
     </div>
 
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
     <script>
+        /*************
+         * tanggal, time start, time end jurnal 
+         */
+
         document.addEventListener('alpine:init', () => {
             Alpine.data('tanggal', () => ({
                 date1: @json($data['tanggal']),
@@ -143,6 +151,10 @@
                 }
             }));
         });
+
+        /*************
+         * summernote kegiatan dan keterangan 
+         */
 
         $(document).ready(function() {
             $('#summernote').summernote({
@@ -201,8 +213,11 @@
                 }
             });
         });
-    </script>
-    <script>
+
+        /*************
+         * summernote submit 
+         */
+
         $(document).ready(function() {
             $('form').on('submit', function() {
                 $('#kegiatan').val($('#summernote').summernote('code'));

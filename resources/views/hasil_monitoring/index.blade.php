@@ -1,6 +1,5 @@
 
 <x-layout.default>
-
     <style>
         .tab-content {
             display: none;
@@ -14,11 +13,10 @@
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
 
-
     <div class="panel">
 
+            @if(!auth()->user()->hasRole('siswa'))
 
-@if(!auth()->user()->hasRole('siswa'))
         <div id="tabs" x-data="{ tab: 'jadwal'}">
             <ul class="flex flex-wrap mb-5 border-b border-white-light dark:border-[#191e3a]">
                 <li class="tab active">
@@ -67,7 +65,7 @@
             </div>
             <div class="tab-content">
 
-@endif
+                @endif
 
                 <div x-data="hasil">
                     <div class="invoice-table">
@@ -75,14 +73,18 @@
                     </div>
                 </div>
 
-@if(!auth()->user()->hasRole('siswa'))
+                @if(!auth()->user()->hasRole('siswa'))
 
             </div>
         </div>
-@endif
+
+            @endif
 
     </div>
 
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
 
     {{-- alert toast --}}
     @if(session('status'))
@@ -110,51 +112,54 @@
         </script>
     @endif
 
-    {{-- data untuk datatable --}}
+    {{-- data datatable --}}
     @php
-    $items = [];
-    foreach ($data as $d) {
-        $items[] = [
-            'nama_guru' => $d->guru->nama,
-            'nama_industri' => $d->industri->nama,
-            'tanggal' => $d->tanggal,
-            'status' => $d->status,
-            'action' => $d->id,
-        ];
-    }
-    @endphp
-
-    @php
-    $dHasil = [];
-
-    if(auth()->user()->hasRole('siswa')){
-        foreach ($hasil as $d) {
-            $dHasil[] = [
-                'nama_guru' => $d->monitoring->guru->nama,
-                'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi,
-                'kedisiplinan' => $d->kedisiplinan,
-                'sikap' => $d->sikap,
-                'kerjasama' => $d->kerjasama,
-                'catatan' => $d->catatan,
+        $items = [];
+        foreach ($data as $d) {
+            $items[] = [
+                'nama_guru' => $d->guru->nama ?? '-',
+                'nama_industri' => $d->industri->nama ?? '-',
+                'tanggal' => $d->tanggal ?? '-',
+                'status' => $d->status ?? '-',
+                'action' => $d->id ?? '-',
             ];
         }
-    } else {
-        foreach ($hasil as $d) {
-            $dHasil[] = [
-                'nama_siswa' => $d->siswa->nama,
-                'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi,
-                'kedisiplinan' => $d->kedisiplinan,
-                'sikap' => $d->sikap,
-                'kerjasama' => $d->kerjasama,
-                'catatan' => $d->catatan,
-            ];
-        }
-    }
-
     @endphp
 
-    {{-- tab --}}
+    {{-- data datatable hasil --}}
+    @php
+        $dHasil = [];
+
+        if(auth()->user()->hasRole('siswa')){
+            foreach ($hasil as $d) {
+                $dHasil[] = [
+                    'nama_guru' => $d->monitoring->guru->nama ?? '-',
+                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                    'hadir' => $d->hadir ?? '-',
+                    'izin' => $d->izin ?? '-',
+                    'alpa' => $d->alpa ?? '-',
+                    'catatan' => $d->catatan ?? '-',
+                ];
+            }
+        } else {
+            foreach ($hasil as $d) {
+                $dHasil[] = [
+                    'nama_siswa' => $d->siswa->nama ?? '-',
+                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                    'hadir' => $d->hadir ?? '-',
+                    'izin' => $d->izin ?? '-',
+                    'alpa' => $d->alpa ?? '-',
+                    'catatan' => $d->catatan ?? '-',
+                ];
+            }
+        }
+    @endphp
+
     <script>
+        /*************
+         * tab
+         */
+
         function showTab(index) {
             const tabs = document.querySelectorAll('.tab');
             const contents = document.querySelectorAll('.tab-content');
@@ -167,10 +172,11 @@
             tabs[index].classList.add('active');
             contents[index].classList.add('show');
         }
-    </script>
 
-    {{-- script untuk datatable --}}
-    <script>
+        /*************
+         * datatable hasil
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data('invoiceList', () => ({
                 selectedRows: [],
@@ -255,24 +261,6 @@
                     });
                 },
 
-                checkAllCheckbox() {
-                    if (this.items.length && this.selectedRows.length === this.items.length) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                },
-
-                checkAll(isChecked) {
-                    if (isChecked) {
-                        this.selectedRows = this.items.map((d) => {
-                            return d.id;
-                        });
-                    } else {
-                        this.selectedRows = [];
-                    }
-                },
-
                 setTableData() {
                     this.dataArr = [];
                     for (let i = 0; i < this.items.length; i++) {
@@ -298,26 +286,27 @@
             }))
         })
 
+        /*************
+         * datatable 
+         */
 
-    </script>
-    <script>
         let headings
         if(@json(auth()->user()->hasRole('siswa'))){
             headings = [
                 "Pemonitoring",
                 "Kelas",
-                "Kedisiplinan",
-                "Sikap",
-                "Kerjasama",
+                "Hadir",
+                "Izin",
+                "Alpa",
                 "Catatan",
             ];
         } else {
             headings = [
                 "Nama Siswa",
                 "Kelas",
-                "Kedisiplinan",
-                "Sikap",
-                "Kerjasama",
+                "Hadir",
+                "Izin",
+                "Alpa",
                 "Catatan",
             ];
         }
@@ -395,8 +384,5 @@
                 },
             }))
         })
-
-
     </script>
-
 </x-layout.default>

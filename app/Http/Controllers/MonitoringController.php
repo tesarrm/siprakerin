@@ -27,6 +27,13 @@ class MonitoringController extends Controller
     {
         $data = Monitoring::with(['guru', 'industri'])->get();
 
+        // $guru = Guru::with('user')->findOrFail(1);
+        ///dd($guru->user->getRoleNames());
+
+        
+        // dd(auth()->user()->getRoleNames());
+        // dd(auth()->user()->getAllPermissions());
+
         return view('monitoring.index', [
             'data' => $data
         ]);
@@ -57,8 +64,12 @@ class MonitoringController extends Controller
             'tanggal' => 'required',
         ]);
 
-        $create = collect($validatedData);
+        // assign role
+        $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
+        $guru->user->assignRole('pembimbing');
 
+        // create 
+        $create = collect($validatedData);
         $this->model->create($create->toArray());
 
         return redirect('monitoring')->with('status', 'Data berhasil ditambah!');
@@ -92,7 +103,7 @@ class MonitoringController extends Controller
      */
     public function update($id, Request $request)
     {
-        $data = $this->model->findOrFail($id);
+        $data = Monitoring::with('guru.user')->findOrFail($id);
 
         $validatedData = $request->validate([
             'guru_id' => 'required',
@@ -100,8 +111,15 @@ class MonitoringController extends Controller
             'tanggal' => 'required',
         ]);
 
-        $update = collect($validatedData);
+        // remove role
+        $data->guru->user->removeRole('pembimbing');
 
+        // assign role
+        $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
+        $guru->user->assignRole('pembimbing');
+
+        // update 
+        $update = collect($validatedData);
         $data->update($update->toArray());
 
         return redirect('monitoring')->with('status', 'Data berhasil ditambah!');

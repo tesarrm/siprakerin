@@ -83,4 +83,18 @@ class JurusanController extends Controller
         $data->delete();
         return response()->json(['success' => true]);
     }
+
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        // Ambil semua data guru berdasarkan ID yang dipilih
+        $datas = Jurusan::whereIn('id', $ids)->get();
+
+        foreach ($datas as $data) {
+            $data->delete();
+        }
+
+        return response()->json(['success' => true]);
+    }
 }

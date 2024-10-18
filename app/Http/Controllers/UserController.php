@@ -244,4 +244,35 @@ class UserController extends Controller
 
         return redirect('profile')->with('status', 'Data berhasil ditambah!');
     }
+
+    public function role($id, Request $request)
+    {
+        $user = User::findOrFail($id);
+
+        $roles = [];
+
+        if ($request->admin) {
+            $roles[] = 'admin';
+        }
+        if ($request->pembimbing) {
+            $roles[] = 'pembimbing';
+        }
+        if ($request->guru) {
+            $roles[] = 'guru';
+        }
+        if ($request->koordinator) {
+            $roles[] = 'koordinator';
+        }
+        if ($request->wali_kelas) {
+            $roles[] = 'wali_kelas';
+        }
+        if ($request->siswa) {
+            $roles[] = 'siswa';
+        }
+
+        $user->syncRoles($roles);
+
+        return redirect('user')->with('status', 'Data berhasil diperbarui!');
+    }
+
 }

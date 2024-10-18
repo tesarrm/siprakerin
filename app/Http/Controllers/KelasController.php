@@ -56,7 +56,7 @@ class KelasController extends Controller
 
         $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
         $user = User::findOrFail($guru->user->id);
-        $user->assignRole('wali_siswa');
+        $user->assignRole('wali_kelas');
 
         $create = collect($validatedData);
 
@@ -96,11 +96,11 @@ class KelasController extends Controller
         $kelas = Kelas::findOrFail($id);
         $oldGuru = Guru::with('user')->findOrFail($kelas->guru_id);
         $oldUser = User::findOrFail($oldGuru->user->id);
-        $oldUser->removeRole('wali_siswa');
+        $oldUser->removeRole('wali_kelas');
 
         $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
         $user = User::findOrFail($guru->user->id);
-        $user->assignRole('wali_siswa');
+        $user->assignRole('wali_kelas');
 
         $update = collect($validatedData);
 
@@ -140,5 +140,18 @@ class KelasController extends Controller
         } else {
             return response()->json(['success' => false]);
         }
+    }
+
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        $datas = Kelas::whereIn('id', $ids)->get();
+
+        foreach ($datas as $data) {
+            $data->delete();
+        }
+
+        return response()->json(['success' => true]);
     }
 }

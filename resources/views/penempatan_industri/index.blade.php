@@ -1,6 +1,10 @@
 
 <x-layout.default>
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
+    <script src="/assets/js/swiper-bundle.min.js"></script>
+    <script src="/assets/js/simple-datatables.js"></script>
 
+    {{-- style tab --}}
     <style>
         .tab-content {
             display: none;
@@ -10,11 +14,12 @@
         }
     </style>
 
+    {{-- atur data --}}
     @php
         $items = [];
         $allJurusan = $jurusan->pluck('singkatan');
 
-        // Mengelompokkan jurusan berdasarkan jenis kelamin untuk heading tabel
+        // buat heading
         $jurusanLakiLaki = $allJurusan->filter(function($singkatan) use ($data) {
             return $data->filter(function($d) use ($singkatan) {
                 return $d->kuotaIndustri->where('jenis_kelamin', 'Laki-laki')->where('jurusan.singkatan', $singkatan);
@@ -26,6 +31,7 @@
             });
         });
 
+        // buat data
         foreach ($data as $d) {
             $row = [
                 'nama' => $d->nama,
@@ -57,7 +63,6 @@
                 $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
             }
 
-            // Hitung total kuota untuk laki-laki + perempuan
             $row['total_kuota'] = $totalLakiLaki + $totalPerempuan;
             $row['terisi'] = $d->total_terisi;
             $row['status'] = $row['terisi'] == 0
@@ -71,13 +76,10 @@
         }
     @endphp
 
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
-    <script src="/assets/js/swiper-bundle.min.js"></script>
-    <script src="/assets/js/simple-datatables.js"></script>
-
     <div class="panel">
 
-@if(!auth()->user()->hasRole('wali_siswa'))
+        @if(!auth()->user()->hasRole('wali_kelas'))
+
         <div id="tabs" x-data="{ tab: 'guru'}">
             <ul class="flex flex-wrap mb-5 border-b border-white-light dark:border-[#191e3a]">
                 <li class="tab active">
@@ -116,7 +118,7 @@
         <div id="tab-content">
             <div class="tab-content show">
 
-                <div x-data="invoiceList">
+                <div x-data="dataList">
                     <div class="invoice-table">
                         <table id="myTable" class="whitespace-nowrap">
                             <thead>
@@ -166,19 +168,26 @@
 
             </div>
             <div class="tab-content">
-@endif
-    
+
+                @endif
+
                 <div x-data="siswa">
                     <div class="invoice-table">
                         <table id="table_siswa" class="whitespace-nowrap"></table>
                     </div>
                 </div>
 
-@if(!auth()->user()->hasRole('wali_siswa'))
+                    @if(!auth()->user()->hasRole('wali_kelas'))
+
             </div>
         </div>
+
+        @endif
     </div>
-@endif
+
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
 
     {{-- alert toast --}}
     @if(session('status'))
@@ -206,7 +215,28 @@
         </script>
     @endif
 
+    {{-- penempatan datatable --}}
+    @php
+        $dSiswa = [];
+        foreach ($penempatan as $d) {
+            $dSiswa[] = [
+                'nis' => $d->siswa->nis ?? '-',
+                'nama' => $d->siswa->nama ?? '-',
+                'jenis_kelamin' => $d->siswa->jenis_kelamin ?? '-',
+                'kelas' => $d->siswa->kelas->nama ?? '-' . " " . $d->siswa->kelas->jurusan->singkatan ?? '-' . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                'tahun_ajaran' => $d->tahun_ajaran ?? "-",
+                'industri' => $d->industri->nama ?? '-',
+                'kota' => $d->industri->kota->nama ?? '-',
+                'action' => $d->id ?? '-', 
+            ];
+        }
+    @endphp
+
     <script>
+        /*************
+         * atur posisi header table 
+         */
+
         document.addEventListener('DOMContentLoaded', function() {
             const thead = document.querySelector('#myTable thead');
             const rows = Array.from(thead.querySelectorAll('tr'));
@@ -217,9 +247,11 @@
                 thead.insertBefore(rows[1], rows[0]); // Move last row before the new first row
             }
         });
-    </script>
 
-    <script>
+        /*************
+         * tab 
+         */
+
         function showTab(index) {
             const tabs = document.querySelectorAll('.tab');
             const contents = document.querySelectorAll('.tab-content');
@@ -232,12 +264,13 @@
             tabs[index].classList.add('active');
             contents[index].classList.add('show');
         }
-    </script>
 
-    <script>
-        // datatable
+        /*************
+         * datatable 
+         */
+
         document.addEventListener("alpine:init", () => {
-            Alpine.data('invoiceList', () => ({
+            Alpine.data('dataList', () => ({
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',
@@ -357,30 +390,16 @@
 
             }))
         })
-    </script>
 
-    {{-- data untuk datatable --}}
-    @php
-    $items = [];
-    foreach ($penempatan as $d) {
-        $items[] = [
-            'nis' => $d->siswa->nis,
-            'nama' => $d->siswa->nama,
-            'jenis_kelamin' => $d->siswa->jenis_kelamin,
-            'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
-            'tahun_ajaran' => $d->tahun_ajaran ?? "-",
-            'industri' => $d->industri->nama,
-            'kota' => $d->industri->kota->nama,
-            'action' => $d->id, // Gunakan ID ini untuk aksi
-        ];
-    }
-    @endphp
 
-    <script>
+        /*************
+         * penempatan siswa datatable
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data('siswa', () => ({
                 selectedRows: [],
-                items: @json($items),
+                items: @json($dSiswa),
                 searchText: '',
                 datatable: null,
                 dataArr: [],
@@ -419,7 +438,7 @@
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
-                                select: this.dataArr[0].length - 1,
+                                select: 7,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const rowId = `row-${data}`; 
@@ -501,7 +520,5 @@
                 },
             }))
         })
-
     </script>
-
 </x-layout.default>

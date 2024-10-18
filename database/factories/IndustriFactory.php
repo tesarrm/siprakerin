@@ -22,6 +22,8 @@ class IndustriFactory extends Factory
             'alamat' => $this->faker->name(),
             'kota_id' => Kota::inRandomOrder()->first()->id,
             'tahun_ajaran' => '2024/2025',
+            'tanggal_awal' => '11 Oktober 2024',
+            'tanggal_akhir' => '31 Oktober 2024',
         ];
     }
 }

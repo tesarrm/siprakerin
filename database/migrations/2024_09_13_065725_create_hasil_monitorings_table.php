@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('monitoring_id')->constrained('monitorings')->onDelete('cascade');
             $table->foreignId('siswa_id')->constrained('siswas')->onDelete('cascade');
-            $table->float('kedisiplinan')->nullable();
-            $table->float('sikap')->nullable();
-            $table->float('kerjasama')->nullable();
+            $table->float('hadir')->nullable();
+            $table->float('izin')->nullable();
+            $table->float('alpa')->nullable();
             $table->longText('catatan')->nullable();
             $table->timestamps();
         });

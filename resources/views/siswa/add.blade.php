@@ -1,4 +1,7 @@
 <x-layout.default>
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
     <div>
         <form action="{{ url('siswa') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -143,62 +146,6 @@
                             </div>
                         </div>
                     </div>
-                            {{-- table input --}}
-                            {{-- <div x-data="form" x-init="initialize()">
-                                <table class="table-auto w-full">
-                                    <thead>
-                                        <tr>
-                                            <th class="px-4 py-5">Email</th>
-                                            <th class="px-4 py-5">Nama Ortu</th>
-                                            <th class="px-4 py-5">Jenis Kelamin</th>
-                                            <th class="px-4 py-5">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <template x-for="(row, index) in tableData" :key="index">
-                                            <tr>
-                                                <td class="px-4 py-2">
-                                                    <input type="text" x-model="row.email" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <select :name="'data['+index+'][ortu_id]'" x-model="row.ortu_id" @change="updateOrtu(row.ortu_id, index)" class="form-input w-full" style="border:none; padding: 5px; padding-right: 30px;">
-                                                        <option value="">Pilih Ortu</option>
-                                                        <template x-for="ortu in ortuData" :key="ortu.id">
-                                                            <option :value="ortu.id" x-text="ortu.nama"></option>
-                                                        </template>
-                                                    </select>
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="text" x-model="row.jenis_kelamin" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                                </td>
-                                                <td class="px-4 py-2 text-center">
-                                                    <a href="javascript:;" x-tooltip="Delete" @click="removeRow(index)" >
-
-                                                        <svg width="24" height="24" viewBox="0 0 24 24"
-                                                            fill="none" xmlns="http://www.w3.org/2000/svg"
-                                                            class="w-5 h-5 text-danger">
-                                                            <circle opacity="0.5" cx="12" cy="12"
-                                                                r="10" stroke="currentColor"
-                                                                stroke-width="1.5" />
-                                                            <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
-                                                                stroke="currentColor" stroke-width="1.5"
-                                                                stroke-linecap="round" />
-                                                        </svg>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                                <div class="flex mr-6">
-                                    <button type="button" @click="addRow" class="btn btn-dark w-10 h-10 p-0 rounded-full ml-auto">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div> --}}
 
                     {{-- button --}}
                     <div class="px-4">
@@ -239,15 +186,18 @@
         </form>
     </div>
 
-    <!-- start hightlight js -->
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
     <script>
+        /*************
+         * gambar filepond 
+         */
+
         FilePond.registerPlugin(FilePondPluginImagePreview)
 
         const inputElement = document.querySelector('input[type="file"]');
@@ -283,40 +233,4 @@
             }
         });
     </script>
-
-    {{-- <script>
-        document.addEventListener("alpine:init", () => {
-            Alpine.data("form", () => ({
-                tableData: @json($siswa_ortu->ortus).map(ortu=> ({
-                    ortu_id: ortu.id,
-                    email: ortu.user?.email,
-                    jenis_kelamin: ortu.jenis_kelamin,
-                })),
-                ortuData: @json($ortu),
-
-                initialize() {
-                    this.tableData.forEach((row, index) => {
-                        this.$nextTick(() => {
-                            let selectElement = document.querySelector(`select[name="data[${index}][ortu_id]"]`);
-                            if (selectElement) {
-                                selectElement.value = row.ortu_id;
-                            }
-                        });
-                    });
-                },
-
-                addRow() {
-                    this.tableData.push({ email: '', jenis_kelamin: '' });
-                },
-
-                removeRow(index) {
-                    this.tableData.splice(index, 1);
-                },
-
-                updateOrtu(id, index) {
-                    const selectedOrtu = this.ortuData.find(s => s.id == id);
-                }
-            }));
-        });
-    </script> --}}
 </x-layout.default>

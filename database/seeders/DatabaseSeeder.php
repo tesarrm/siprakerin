@@ -47,30 +47,22 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AuthSeeder::class,
         ]);
-        \App\Models\Guru::factory()->count(3)->create();
         \App\Models\Pengaturan::factory()->count(1)->create();
+        \App\Models\Ortu::factory()->count(5)->create();
+
+        \App\Models\Guru::factory()->count(3)->create();
         \App\Models\BidangKeahlian::factory()->count(3)->create();
         \App\Models\Jurusan::factory()->count(3)->create();
         \App\Models\Kelas::factory()->count(3)->create();
         \App\Models\Kota::factory()->count(5)->create();
         \App\Models\Industri::factory()->count(5)->create();
-        \App\Models\Ortu::factory()->count(5)->create();
-        // \App\Models\Siswa::factory()->count(5)->create();
         // siswa dan pilihan kota
         \App\Models\PilihanKota::factory()->count(5)->create();
-        \App\Models\Monitoring::factory()->count(3)->create();
-        \App\Models\Jurnal::factory()->count(5)->create();
-        // \App\Models\KuotaIndustri::factory()->create();
 
         // Buat data kuota industri
-        // Ambil semua data industri dan jurusan
         $industris = Industri::all();
         $jurusans = Jurusan::all();
-        
-        // Tentukan jenis kelamin yang akan digunakan
         $jenisKelamin = ['Laki-laki', 'Perempuan'];
-
-        // Loop melalui setiap industri, jenis kelamin, dan jurusan untuk menghasilkan data
         foreach ($industris as $industri) {
             foreach ($jenisKelamin as $kelamin) {
                 foreach ($jurusans as $jurusan) {
@@ -85,6 +77,10 @@ class DatabaseSeeder extends Seeder
                 }
             }
         }
+
+        \App\Models\Monitoring::factory()->count(3)->create();
+        \App\Models\Jurnal::factory()->count(5)->create();
+        // \App\Models\KuotaIndustri::factory()->create();
 
     }
 }

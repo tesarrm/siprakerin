@@ -21,16 +21,16 @@ class PenempatanIndustriController extends Controller
     {
         $this->model = $a;
 
-        $this->middleware('can:c_penempatan_prakerin')->only(['create', 'store']);
-        $this->middleware('can:r_penempatan_prakerin')->only(['index', 'show']);
-        $this->middleware('can:u_penempatan_prakerin')->only(['edit', 'update']);
-        $this->middleware('can:d_penempatan_prakerin')->only('destroy');
+        $this->middleware('can:c_penempatan_industri')->only(['create', 'store']);
+        $this->middleware('can:r_penempatan_industri')->only(['index', 'show']);
+        $this->middleware('can:u_penempatan_industri')->only(['edit', 'update']);
+        $this->middleware('can:d_penempatan_industri')->only('destroy');
     }
 
 
     public function index()
     {
-        if(auth()->user()->hasRole('wali_siswa')){
+        if(auth()->user()->hasRole('wali_kelas')){
             $guru = Guru::where('user_id', auth()->user()->id)->first();
             $kelas = Kelas::where('guru_id', $guru->id)->first();
 
@@ -41,10 +41,11 @@ class PenempatanIndustriController extends Controller
         } else {
             $penempatan = PenempatanIndustri::with(['siswa.kelas', 'industri.kota'])->get();
         }
-        $data = Industri::with(['kuotaIndustri', 'kuotaIndustri.jurusan'])
+        $data = Industri::where('aktif', 1)->with(['kuotaIndustri', 'kuotaIndustri.jurusan'])
             ->withCount(['penempatanIndustri as total_terisi' => function($query) {
                 $query->select(DB::raw('count(*)'));
             }])->get();
+
 
         $jurusan = Jurusan::get();
         return view('penempatan_industri.index', [
@@ -185,14 +186,16 @@ class PenempatanIndustriController extends Controller
                     ->where('tahun_ajaran', $tahun_ajaran)
                     ->delete();
 
-        foreach ($validated['data'] as $data) {
-            PenempatanIndustri::updateOrCreate([
-                    'industri_id' => $industri_id,
-                    'siswa_id' => $data['id_siswa'],
-                    'pilihan' => $validated['pilihan'],
-                    'tahun_ajaran' => $validated['tahun_ajaran']
-                ],
-            );
+        if(isset($validated['data'])) {
+            foreach ($validated['data'] as $data) {
+                PenempatanIndustri::updateOrCreate([
+                        'industri_id' => $industri_id,
+                        'siswa_id' => $data['id_siswa'],
+                        'pilihan' => $validated['pilihan'],
+                        'tahun_ajaran' => $validated['tahun_ajaran']
+                    ],
+                );
+            }
         }
 
         return redirect('penempatan')->with('status', 'Data berhasil diubah!');

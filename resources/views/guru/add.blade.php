@@ -1,5 +1,8 @@
 <x-layout.default>
-    <div x-data="invoiceAdd">
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
+    <div>
         <form action="{{ url('guru') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="flex xl:flex-row flex-col gap-2.5">
@@ -236,91 +239,18 @@
         </form>
     </div>
 
-    <script>
-        document.addEventListener("alpine:init", () => {
-            Alpine.data('invoiceAdd', () => ({
-                items: [],
-                selectedFile: null,
-                params: {
-                    title: '',
-                    invoiceNo: '',
-                    to: {
-                        name: '',
-                        email: '',
-                        address: '',
-                        phone: ''
-                    },
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
 
-                    invoiceDate: '',
-                    dueDate: '',
-                    bankInfo: {
-                        no: '',
-                        name: '',
-                        swiftCode: '',
-                        country: '',
-                        ibanNo: ''
-                    },
-                    notes: '',
-                },
-                currencyList: [
-                    'USD - US Dollar',
-                    'GBP - British Pound',
-                    'IDR - Indonesian Rupiah',
-                    'INR - Indian Rupee',
-                    'BRL - Brazilian Real',
-                    'EUR - Germany (Euro)',
-                    'TRY - Turkish Lira',
-                ],
-                selectedCurrency: 'USD - US Dollar',
-                tax: null,
-                discount: null,
-                shippingCharge: null,
-                paymentMethod: '',
-
-                init() {
-                    //set default data
-                    this.items.push({
-                        id: 1,
-                        title: '',
-                        description: '',
-                        rate: 0,
-                        quantity: 0,
-                        amount: 0
-                    });
-                },
-
-                addItem() {
-                    let maxId = 0;
-                    if (this.items && this.items.length) {
-                        maxId = this.items.reduce((max, character) => (character.id > max ? character
-                            .id : max), this.items[0].id);
-                    }
-                    this.items.push({
-                        id: maxId + 1,
-                        title: '',
-                        description: '',
-                        rate: 0,
-                        quantity: 0,
-                        amount: 0
-                    });
-                },
-
-                removeItem(item) {
-                    this.items = this.items.filter((d) => d.id != item.id);
-                }
-            }));
-        });
-    </script>
-
-    <!-- start hightlight js -->
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
     <script>
+        /*************
+         * gambar filepond 
+         */
+
         FilePond.registerPlugin(FilePondPluginImagePreview)
 
         const inputElement = document.querySelector('input[type="file"]');

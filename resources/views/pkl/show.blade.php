@@ -277,8 +277,27 @@
         </div>
     </div>
 
-    {{-- tab --}}
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
+    {{-- data datatable --}}
+    @php
+        $items = [];
+        foreach ($pelanggaran as $d) {
+            $items[] = [
+                'tanggal' => $d->tanggal,
+                'pelanggaran' => $d->pelanggaran,
+                'solusi' => $d->solusi,
+            ];
+        }
+    @endphp
+
     <script>
+        /*************
+         * tab 
+         */
+
         function showTab(index) {
             const tabs = document.querySelectorAll('.tab');
             const contents = document.querySelectorAll('.tab-content');
@@ -291,8 +310,11 @@
             tabs[index].classList.add('active');
             contents[index].classList.add('show');
         }
-    </script>
-    <script>
+
+        /*************
+         * calendar 
+         */
+
         let calendar;
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -343,20 +365,11 @@
 
             calendar.render();
         });
-    </script>
 
-    @php
-    $items = [];
-    foreach ($pelanggaran as $d) {
-        $items[] = [
-            'tanggal' => $d->tanggal,
-            'pelanggaran' => $d->pelanggaran,
-            'solusi' => $d->solusi,
-        ];
-    }
-    @endphp
+        /*************
+         * datatable 
+         */
 
-    <script>
         document.addEventListener("alpine:init", () => {
             Alpine.data('pelanggaran', () => ({
                 selectedRows: [],

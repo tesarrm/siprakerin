@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Guru;
-use App\Models\Industri;
 use App\Models\Izin;
 use App\Models\Jurnal;
 use App\Models\Kelas;
@@ -43,58 +42,7 @@ class JurnalController extends Controller
 
     public function index()
     {
-        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
-        $penempatan = PenempatanIndustri::with('industri.libur')->where('siswa_id', $siswa->id)->first();
-        $dIzin = Izin::with('siswa.kelas.jurusan')->where('siswa_id', $siswa->id)->get();
-        $attendances = Attendance::where('siswa_id', $siswa->id)->get();
-        $hadir = Attendance::where([
-            'siswa_id' => $siswa->id, 
-            'status' => 'hadir'
-            ])->get();
-        $izin = Attendance::where([
-            'siswa_id' => $siswa->id, 
-            'status' => 'izin'
-            ])->get();
-        $libur = Attendance::where([
-            'siswa_id' => $siswa->id, 
-            'status' => 'libur'
-            ])->get();
-        $alpa = Attendance::where([
-            'siswa_id' => $siswa->id, 
-            'status' => 'alpa'
-            ])->get();
-
-        $months = [
-            'Januari' => 'January',
-            'Februari' => 'February',
-            'Maret' => 'March',
-            'April' => 'April',
-            'Mei' => 'May',
-            'Juni' => 'June',
-            'Juli' => 'July',
-            'Agustus' => 'August',
-            'September' => 'September',
-            'Oktober' => 'October',
-            'November' => 'November',
-            'Desember' => 'December',
-        ];
-
-        // Ganti nama bulan dalam string tanggal_akhir
-        $tanggalAwal = strtr($penempatan->industri->tanggal_awal, $months);
-        $tanggalAkhir = strtr($penempatan->industri->tanggal_akhir, $months);
-
-        // Mengubah string ke objek Carbon
-        $tanggalAwal = Carbon::createFromFormat('j F Y', $tanggalAwal);
-        $tanggalAkhir = Carbon::createFromFormat('j F Y', $tanggalAkhir);
-
-        // Mengambil tanggal hari ini
-        $tanggalHariIni = Carbon::now();
-
-        // Hitung selisih hari
-        $selisihHariSampaiHariIni = $tanggalHariIni->diffInDays($tanggalAwal);
-        $selisihHariDariHariIni = $tanggalHariIni->diffInDays($tanggalAkhir);
-
-        if(auth()->user()->hasRole('wali_siswa')){
+        if(auth()->user()->hasRole('wali_kelas')){
             $guru = Guru::where('user_id', auth()->user()->id)->first();
             $kelas = Kelas::where('guru_id', $guru->id)->first();
 
@@ -102,24 +50,83 @@ class JurnalController extends Controller
             $data = Jurnal::whereHas('siswa.kelas', function ($query) use ($kelas) {
                 $query->where('kelas.id', $kelas->id);
             })->with('siswa.kelas')->get();
+
+            return view('jurnal.index', [
+                'data' => $data,
+            ]);
         } else if(auth()->user()->hasRole('siswa')) {
+            $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+            $penempatan = PenempatanIndustri::with('industri.libur')->where('siswa_id', $siswa->id)->first();
+            $dIzin = Izin::with('siswa.kelas.jurusan')->where('siswa_id', $siswa->id)->get();
+            $attendances = Attendance::where('siswa_id', $siswa->id)->get();
+            $hadir = Attendance::where([
+                'siswa_id' => $siswa->id, 
+                'status' => 'hadir'
+                ])->get();
+            $izin = Attendance::where([
+                'siswa_id' => $siswa->id, 
+                'status' => 'izin'
+                ])->get();
+            $libur = Attendance::where([
+                'siswa_id' => $siswa->id, 
+                'status' => 'libur'
+                ])->get();
+            $alpa = Attendance::where([
+                'siswa_id' => $siswa->id, 
+                'status' => 'alpa'
+                ])->get();
+
+            $months = [
+                'Januari' => 'January',
+                'Februari' => 'February',
+                'Maret' => 'March',
+                'April' => 'April',
+                'Mei' => 'May',
+                'Juni' => 'June',
+                'Juli' => 'July',
+                'Agustus' => 'August',
+                'September' => 'September',
+                'Oktober' => 'October',
+                'November' => 'November',
+                'Desember' => 'December',
+            ];
+
+            // Ganti nama bulan dalam string tanggal_akhir
+            $tanggalAwal = strtr($penempatan->industri->tanggal_awal, $months);
+            $tanggalAkhir = strtr($penempatan->industri->tanggal_akhir, $months);
+
+            // Mengubah string ke objek Carbon
+            $tanggalAwal = Carbon::createFromFormat('j F Y', $tanggalAwal);
+            $tanggalAkhir = Carbon::createFromFormat('j F Y', $tanggalAkhir);
+
+            // Mengambil tanggal hari ini
+            $tanggalHariIni = Carbon::now();
+
+            // Hitung selisih hari
+            $selisihHariSampaiHariIni = $tanggalHariIni->diffInDays($tanggalAwal);
+            $selisihHariDariHariIni = $tanggalHariIni->diffInDays($tanggalAkhir);
+
             $data = Jurnal::with('siswa.kelas')->where('siswa_id', $siswa->id)->get();
+
+            return view('jurnal.index', [
+                'data' => $data,
+                'sisa_hari' => $selisihHariDariHariIni,
+                'attendances' => $attendances,
+                'dataIzin' => $dIzin,
+                'hadir' => $hadir,
+                'izin' => $izin,
+                'libur' => $libur,
+                'alpa' => $alpa,
+            ]);
         } else {
             $data = Jurnal::with('siswa.kelas')->get();
+
+            return view('jurnal.index', [
+                'data' => $data,
+            ]);
         }
 
-        return view('jurnal.index', [
-            'data' => $data,
-            'sisa_hari' => $selisihHariDariHariIni,
-            'attendances' => $attendances,
-            'dataIzin' => $dIzin,
-            'hadir' => $hadir,
-            'izin' => $izin,
-            'libur' => $libur,
-            'alpa' => $alpa,
-        ]);
     }
-
 
     public function _index()
     {
@@ -128,7 +135,7 @@ class JurnalController extends Controller
         $penempatan = PenempatanIndustri::with('industri.libur')->where('siswa_id', $siswa->id)->first();
         $attendances = Attendance::all();
 
-        if(auth()->user()->hasRole('wali_siswa')){
+        if(auth()->user()->hasRole('wali_kelas')){
             $guru = Guru::where('user_id', auth()->user()->id)->first();
             $kelas = Kelas::where('guru_id', $guru->id)->first();
 
@@ -311,91 +318,45 @@ class JurnalController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    // public function create()
-    // {
-    //     $siswa = Siswa::where('user_id', auth()->user()->id)->first();
-    //     $penempatan = PenempatanIndustri::with(['industri.libur'])->where('siswa_id', $siswa->id)->first();
+    public function create()
+    {
+        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+        $penempatan = PenempatanIndustri::with(['industri.libur'])->where('siswa_id', $siswa->id)->first();
 
-    //     dd($penempatan->industri->libur);
+        // Cek apakah hari libur mingguan
+        $hariLibur = $penempatan->industri->libur ?? [];
+        $hariIni = Carbon::now();
+        $dayName = strtolower($hariIni->locale('id')->dayName);
 
-    //     return view('jurnal.add', compact(['penempatan']));
-
-    // }
-    
-// public function create()
-// {
-//     // Ambil data siswa berdasarkan user yang login
-//     $siswa = Siswa::where('user_id', auth()->user()->id)->first();
-//     $penempatan = PenempatanIndustri::with(['industri.libur'])->where('siswa_id', $siswa->id)->first();
-
-//     // Ambil hari ini
-//     $hariIni = Carbon::now()->isoFormat('dddd'); // Mendapatkan hari dalam format penuh, misalnya: Senin, Selasa, dll.
-
-//     // Mapping hari ke dalam bahasa Inggris yang sesuai dengan field database
-//     $hariMapping = [
-//         'Monday' => 'senin',
-//         'Tuesday' => 'selasa',
-//         'Wednesday' => 'rabu',
-//         'Thursday' => 'kamis',
-//         'Friday' => 'jumat',
-//         'Saturday' => 'sabtu',
-//         'Sunday' => 'minggu',
-//     ];
-
-//     // Ambil libur hari ini berdasarkan mapping
-//     $hariField = $hariMapping[$hariIni] ?? null; // Jika hari tidak ada di mapping, set null
-
-//     // Deteksi apakah hari ini libur
-//     $libur = ($hariField && $penempatan->industri->libur->{$hariField} === 'on') ? true : false;
-
-//     return view('jurnal.add', compact(['penempatan', 'libur']));
-// }
-
-public function create()
-{
-    $siswa = Siswa::where('user_id', auth()->user()->id)->first();
-    $penempatan = PenempatanIndustri::with(['industri.libur'])->where('siswa_id', $siswa->id)->first();
-
-    // Cek apakah hari libur mingguan
-    $hariLibur = $penempatan->industri->libur ?? [];
-    $hariIni = Carbon::now();
-    $dayName = strtolower($hariIni->locale('id')->dayName);
-
-    $isLM = isset($hariLibur[$dayName]) && $hariLibur[$dayName] === 'on';
+        $isLM = isset($hariLibur[$dayName]) && $hariLibur[$dayName] === 'on';
 
 
-    // Ambil data libur untuk tahun ini
-    $currentYear = Carbon::now()->year;
-    $responseCurrentYear = Http::get('https://api-harilibur.vercel.app/api', [
-        'year' => strval($currentYear),
-    ]);
+        // Ambil data libur untuk tahun ini
+        $currentYear = Carbon::now()->year;
+        $responseCurrentYear = Http::get('https://api-harilibur.vercel.app/api', [
+            'year' => strval($currentYear),
+        ]);
 
-    if ($responseCurrentYear->successful()) {
-        $dataCurrentYear = $responseCurrentYear->json();
-    } else {
-        dd('Error: ' . $responseCurrentYear->status());
-    }
-
-    // Cek apakah tanggal merah
-    $isLT = false;
-    foreach ($dataCurrentYear as $holiday) {
-        if ($holiday['holiday_date'] === $hariIni->toDateString() && $holiday['is_national_holiday']) {
-            $isLT = true;
+        if ($responseCurrentYear->successful()) {
+            $dataCurrentYear = $responseCurrentYear->json();
+        } else {
+            dd('Error: ' . $responseCurrentYear->status());
         }
+
+        // Cek apakah tanggal merah
+        $isLT = false;
+        foreach ($dataCurrentYear as $holiday) {
+            if ($holiday['holiday_date'] === $hariIni->toDateString() && $holiday['is_national_holiday']) {
+                $isLT = true;
+            }
+        }
+
+        // apakah libur atau tanggal merah
+        $libur = $isLM || $isLT;
+
+        return view('jurnal.add', compact(['penempatan', 'libur']));
     }
 
-    // apakah libur atau tanggal merah
-    $libur = $isLM || $isLT;
-
-    return view('jurnal.add', compact(['penempatan', 'libur']));
-}
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -417,55 +378,44 @@ public function create()
         return redirect('jurnal')->with('status', 'Data berhasil ditambah!');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Jurnal $jurnal)
     {
-
         return view('jurusan.edit', [
             'data' => $jurnal,
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    public function edit($id)
+    {
+        // Ambil data berdasarkan ID
+        $data = $this->model->findOrFail($id);
 
-public function edit($id)
-{
-    // Ambil data berdasarkan ID
-    $data = $this->model->findOrFail($id);
+        // Misalkan 'tanggal_waktu' adalah field yang menyimpan data dalam format "14 September 2024 08:11 - 08:11"
+        $tanggalWaktu = $data->tanggal_waktu;
 
-    // Misalkan 'tanggal_waktu' adalah field yang menyimpan data dalam format "14 September 2024 08:11 - 08:11"
-    $tanggalWaktu = $data->tanggal_waktu;
+        // Pisahkan tanggal dan waktu
+        $parts = explode(' ', $tanggalWaktu);
 
-    // Pisahkan tanggal dan waktu
-    $parts = explode(' ', $tanggalWaktu);
+        // Misalkan format yang benar adalah "14 September 2024 08:11 - 08:11"
+        $tanggal = implode(' ', array_slice($parts, 0, 3)); // Mengambil "14 September 2024"
+        $timeStart = $parts[3]; // Mengambil "08:11"
+        $timeEnd = explode(' - ', $parts[5])[0]; // Mengambil "08:11"
 
-    // Misalkan format yang benar adalah "14 September 2024 08:11 - 08:11"
-    $tanggal = implode(' ', array_slice($parts, 0, 3)); // Mengambil "14 September 2024"
-    $timeStart = $parts[3]; // Mengambil "08:11"
-    $timeEnd = explode(' - ', $parts[5])[0]; // Mengambil "08:11"
+        // Siapkan data untuk dikirim ke view
+        $data = [
+            'id' => $data->id,
+            'tanggal' => $tanggal,
+            'time_start' => $timeStart,
+            'time_end' => $timeEnd,
+            'kegiatan' => $data->kegiatan,
+            'keterangan' => $data->keterangan,
+        ];
 
-    // Siapkan data untuk dikirim ke view
-    $data = [
-        'id' => $data->id,
-        'tanggal' => $tanggal,
-        'time_start' => $timeStart,
-        'time_end' => $timeEnd,
-        'kegiatan' => $data->kegiatan,
-        'keterangan' => $data->keterangan,
-    ];
+        return view('jurnal.edit', [
+            'data' => $data,
+        ]);
+    }
 
-    return view('jurnal.edit', [
-        'data' => $data,
-    ]);
-}
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update($id, Request $request)
     {
         $data = $this->model->findOrFail($id);
@@ -490,24 +440,10 @@ public function edit($id)
         return redirect('jurnal')->with('status', 'Data berhasil ditambah!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $data = $this->model->findOrFail($id);
         $data->delete();
         return response()->json(['success' => true]);
-    }
-
-    public function show2($id, Jurnal $jurnal)
-    {
-        $siswa = Siswa::where('user_id', auth()->user()->id)->first();
-        $izin = Izin::with('siswa.kelas.jurusan')->findOrFail($id);
-
-
-        return view('jurnal.show2', [
-            'izin' => $izin,
-        ]);
     }
 }

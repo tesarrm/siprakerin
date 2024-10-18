@@ -69,8 +69,20 @@ class KotaController extends Controller
 
     public function destroy($id)
     {
-        $data = $this->bModel->findOrFail($id);
+        $data = Kota::findOrFail($id);
         $data->delete();
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+        $datas = Kota::whereIn('id', $ids)->get();
+
+        foreach ($datas as $data) {
+            $data->delete();
+        }
+
         return response()->json(['success' => true]);
     }
 }

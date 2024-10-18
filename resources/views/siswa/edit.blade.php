@@ -1,4 +1,7 @@
 <x-layout.default>
+    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
+
     <div>
         <form action="{{ url('siswa/' . $data->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -73,7 +76,7 @@
                             </div>
                             <div>
                                 <label for="email">Email<span class="text-danger">*</span></label>
-                                <input value="{{ $data->user->email }}" required id="email" type="text" name="email" class="form-input w-full"
+                                <input value="{{$data->user->email}}" required id="email" type="text" name="email" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly
                                     placeholder="Isi Email" />
                                 @error('email')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
@@ -195,6 +198,10 @@
                                 </div>
                             </div>
 
+                            @error('data')
+                                <div class="mt-2 text-danger">{{ $message }}</div>
+                            @enderror
+
                         </div>
                     </div>
                     {{-- button --}}
@@ -236,15 +243,18 @@
         </form>
     </div>
 
-    <!-- start hightlight js -->
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
 
     <script>
+        /*************
+         * gambar filepond 
+         */
+
         FilePond.registerPlugin(FilePondPluginImagePreview)
 
         const inputElement = document.querySelector('input[type="file"]');
@@ -279,9 +289,22 @@
                 });
             }
         });
-    </script>
 
-    <script>
+        // If there is an existing image, load it into FilePond
+        @if($data->gambar)
+        pond.addFile("{{ asset('storage/posts/' . $data->gambar) }}")
+            .then(file => {
+                console.log('Existing file loaded', file);
+            })
+            .catch(error => {
+                console.error('Failed to load existing file', error);
+            });
+        @endif
+
+        /*************
+         * ortu datatable 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("form", () => ({
                 tableData: @json($siswa_ortu->ortus).map(ortu=> ({

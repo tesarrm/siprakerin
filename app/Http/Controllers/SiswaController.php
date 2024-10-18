@@ -194,14 +194,16 @@ class SiswaController extends Controller
             $update->put('gambar', null);
         }
 
-        OrtuSiswa::where('siswa_id', $id)
-                    ->delete();
-        foreach ($validatedData['data'] as $item) {
-            OrtuSiswa::updateOrCreate([
-                    'siswa_id' => $id,
-                    'ortu_id' => $item['ortu_id'],
-                ],
-            );
+        if(isset($validatedData['data'])) {
+            OrtuSiswa::where('siswa_id', $id)
+                        ->delete();
+            foreach ($validatedData['data'] as $item) {
+                OrtuSiswa::updateOrCreate([
+                        'siswa_id' => $id,
+                        'ortu_id' => $item['ortu_id'],
+                    ],
+                );
+            }
         }
 
         $data->update($update->toArray());

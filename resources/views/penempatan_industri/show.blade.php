@@ -1,86 +1,87 @@
 <x-layout.default>
-
     <script src="/assets/js/simple-datatables.js"></script>
 
+    {{-- atur data info --}}
     @php
-    $items = [];
-    $allJurusan = $jurusan->pluck('singkatan'); 
+        $items = [];
+        $allJurusan = $jurusan->pluck('singkatan'); 
 
-    // Mengelompokkan jurusan berdasarkan jenis kelamin
-    $jurusanLakiLaki = $allJurusan->filter(function($singkatan) use ($data) {
-        return $data->filter(function($d) use ($singkatan) {
-            return $d->kuotaIndustri->where('jenis_kelamin', 'Laki-laki')->where('jurusan.singkatan', $singkatan);
+        // buat heading
+        $jurusanLakiLaki = $allJurusan->filter(function($singkatan) use ($data) {
+            return $data->filter(function($d) use ($singkatan) {
+                return $d->kuotaIndustri->where('jenis_kelamin', 'Laki-laki')->where('jurusan.singkatan', $singkatan);
+            });
         });
-    });
 
-    $jurusanPerempuan = $allJurusan->filter(function($singkatan) use ($data) {
-        return $data->filter(function($d) use ($singkatan) {
-            return $d->kuotaIndustri->where('jenis_kelamin', 'Perempuan')->where('jurusan.singkatan', $singkatan);
+        $jurusanPerempuan = $allJurusan->filter(function($singkatan) use ($data) {
+            return $data->filter(function($d) use ($singkatan) {
+                return $d->kuotaIndustri->where('jenis_kelamin', 'Perempuan')->where('jurusan.singkatan', $singkatan);
+            });
         });
-    });
 
-    foreach ($data as $d) {
-        $row = [
-        ];
+        // buat data
+        foreach ($data as $d) {
+            $row = [
+            ];
 
-        $totalLakiLaki = 0;
-        $totalPerempuan = 0;
+            $totalLakiLaki = 0;
+            $totalPerempuan = 0;
 
-        foreach ($d->kuotaIndustri as $kuota) {
-            $jurusanSingkatan = $kuota->jurusan->singkatan;
-            $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
-            $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
-            $row[$formattedKey] = $kuota->kuota;
+            foreach ($d->kuotaIndustri as $kuota) {
+                $jurusanSingkatan = $kuota->jurusan->singkatan;
+                $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
+                $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
+                $row[$formattedKey] = $kuota->kuota;
 
-            // Tambahkan kuota laki-laki dan perempuan ke total
-            if ($jenisKelamin == 'L') {
-                $totalLakiLaki += $kuota->kuota;
-            } else {
-                $totalPerempuan += $kuota->kuota;
+                // Tambahkan kuota laki-laki dan perempuan ke total
+                if ($jenisKelamin == 'L') {
+                    $totalLakiLaki += $kuota->kuota;
+                } else {
+                    $totalPerempuan += $kuota->kuota;
+                }
             }
-        }
 
-        // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
-        foreach ($allJurusan as $jurusanSingkatan) {
-            $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
-            $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
-        }
+            // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
+            foreach ($allJurusan as $jurusanSingkatan) {
+                $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
+                $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
+            }
 
-        $items[] = $row;
-    }
+            $items[] = $row;
+        }
     @endphp
 
+    {{-- atur data output --}}
     @php
-    $output = [
-        "laki-laki" => [],
-        "perempuan" => []
-    ];
+        $output = [
+            "laki-laki" => [],
+            "perempuan" => []
+        ];
 
-    // Mengambil singkatan jurusan dari koleksi $jurusan
-    $allJurusan = $jurusan->pluck('singkatan'); 
+        // Mengambil singkatan jurusan dari koleksi $jurusan
+        $allJurusan = $jurusan->pluck('singkatan'); 
 
-    // Memproses data untuk setiap kuota industri
-    foreach ($data as $d) {
-        foreach ($d->kuotaIndustri as $kuota) {
-            $jurusanId = $kuota->jurusan->id; // ID jurusan
-            $jenisKelamin = strtolower($kuota->jenis_kelamin); // Jenis kelamin (laki-laki atau perempuan)
-            $kuotaValue = $kuota->kuota; // Nilai kuota
+        // Memproses data untuk setiap kuota industri
+        foreach ($data as $d) {
+            foreach ($d->kuotaIndustri as $kuota) {
+                $jurusanId = $kuota->jurusan->id; // ID jurusan
+                $jenisKelamin = strtolower($kuota->jenis_kelamin); // Jenis kelamin (laki-laki atau perempuan)
+                $kuotaValue = $kuota->kuota; // Nilai kuota
 
-            // Memasukkan data ke dalam array berdasarkan jenis kelamin dan id jurusan
-            if ($jenisKelamin == 'laki-laki') {
-                if (!isset($output['laki-laki'][$jurusanId])) {
-                    $output['laki-laki'][$jurusanId] = 0; // Inisialisasi jika belum ada
+                // Memasukkan data ke dalam array berdasarkan jenis kelamin dan id jurusan
+                if ($jenisKelamin == 'laki-laki') {
+                    if (!isset($output['laki-laki'][$jurusanId])) {
+                        $output['laki-laki'][$jurusanId] = 0; // Inisialisasi jika belum ada
+                    }
+                    $output['laki-laki'][$jurusanId] += $kuotaValue;
+                } elseif ($jenisKelamin == 'perempuan') {
+                    if (!isset($output['perempuan'][$jurusanId])) {
+                        $output['perempuan'][$jurusanId] = 0; // Inisialisasi jika belum ada
+                    }
+                    $output['perempuan'][$jurusanId] += $kuotaValue;
                 }
-                $output['laki-laki'][$jurusanId] += $kuotaValue;
-            } elseif ($jenisKelamin == 'perempuan') {
-                if (!isset($output['perempuan'][$jurusanId])) {
-                    $output['perempuan'][$jurusanId] = 0; // Inisialisasi jika belum ada
-                }
-                $output['perempuan'][$jurusanId] += $kuotaValue;
             }
         }
-    }
-
     @endphp
 
     <div>
@@ -93,23 +94,18 @@
                         <div class="flex justify-between lg:flex-row flex-col">
                             <div class="w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
                                 <input type="hidden" name="industri_id" value="{{ $industri->id }}">
-
-                                <!-- Nama Input -->
                                 <div class="mt-4 flex items-center">
                                     <label for="nama" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama</span></label>
                                     <div class="flex-1">
                                         <input value="{{ $industri->nama }}" required id="nama" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Nama" />
                                     </div>
                                 </div>
-
-                                <!-- Alamat Input -->
                                 <div class="mt-4 flex items-center">
                                     <label for="kota_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Kota</span></label>
                                     <div class="flex-1">
                                         <input value="{{ $industri->kota->nama }}" required id="kota_id" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Kota" />
                                     </div>
                                 </div>
-
                                 <div class="mt-4 flex items-center">
                                     <label for="alamat" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Alamat</span></label>
                                     <div class="flex-1">
@@ -179,7 +175,15 @@
         </form>
     </div>
 
+    {{-- =========================== --}}
+    {{-- BOTTOM --}}
+    {{-- =========================== --}}
+
     <script>
+        /*************
+         * datatable
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("form", () => ({
                 tableData: @json($siswaTerfilter).map(siswa => ({
@@ -267,10 +271,4 @@
             }));
         });
     </script>
-
-
-
-
-
-
 </x-layout.default>

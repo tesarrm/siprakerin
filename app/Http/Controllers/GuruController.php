@@ -77,6 +77,7 @@ class GuruController extends Controller
             'no_telp' => 'nullable|string',
             'no_hp' => 'nullable|string',
             'agama' => 'nullable|string',
+
             'email' => 'required|string|unique:users,email|max:255',
             'password' => 'required',
         ]);
@@ -136,26 +137,34 @@ class GuruController extends Controller
 
     public function edit(Guru $guru)
     {
-        //
         return view('guru.edit', [
-            'guru' => $guru
+            'data' => $guru
         ]);
     }
 
 
     public function update($id, Request $request)
     {
-        $guru = $this->model->findOrFail($id);
+        $guru = Guru::with('user')->findOrFail($id);
 
         $validatedData = $request->validate([
+            'aktif' => 'nullable|string',
             'gambar' => 'nullable|string',
-            'nip' => 'required|unique:gurus,nip,' . $id,
-            'nama_guru' => 'required|string|max:255',
+            'nip' => 'required|unique:gurus,nip',
+            'no_ktp' => 'nullable|string',
+            'nama' => 'required|string|max:255',
+            'tempat_lahir' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|string',
             'jenis_kelamin' => 'required',
-            'peran' => 'required|string|max:50',
-            'wali_kelas' => 'nullable|string|max:50',
-            'username' => 'required|string|unique:gurus,username,' . $id,
-            'password' => 'required',
+            'golongan_darah' => 'nullable|string',
+            'kecamatan' => 'nullable|string',
+            'alamat' => 'nullable|string',
+            'rt' => 'nullable|string',
+            'rw' => 'nullable|string',
+            'kode_pos' => 'nullable|string',
+            'no_telp' => 'nullable|string',
+            'no_hp' => 'nullable|string',
+            'agama' => 'nullable|string',
         ]);
 
         $update = collect($validatedData);

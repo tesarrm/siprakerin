@@ -9,55 +9,7 @@
             @csrf
             @method('PUT')
             <div class="flex xl:flex-row flex-col gap-2.5">
-                <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
-                    {{-- <div class=" px-4">
-                        <div class="flex justify-between lg:flex-row flex-col">
-                            <div class="lg:w-1/2 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="text-lg font-semibold">Data Bidang Keahlian</div>
-                                <div class="flex items-center mt-4">
-                                    <label for="guru_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama Guru<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="guru_id" name="guru_id" class="form-select w-full">
-                                            <option value="">Pilih Guru</option>
-                                            @foreach($guru as $item)
-                                                <option value="{{ $item->id }}" @selected($data->guru_id == $item->id)>{{ $item->nama_guru }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('guru_id')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="flex items-center mt-4">
-                                    <label for="industri_id" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama Industri<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="industri_id" name="industri_id" class="form-select w-full">
-                                            <option value="">Pilih Industri</option>
-                                            @foreach($industri as $item)
-                                                <option value="{{ $item->id }}" @selected($data->industri_id == $item->id)>{{ $item->nama }}</option>
-                                            @endforeach
-                                        </select>
-                                        @error('industri_id')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="mt-4 flex items-center">
-                                    <label for="tanggal" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Tanggal<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <div x-data="tanggal">
-                                            <input value="{{ $data->tanggal }}" id="basic" x-model="date1" name="tanggal" class="form-input" />
-                                        </div>
-                                        @error('tanggal')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="lg:w-1/2 w-full">
-                            </div>
-                        </div>
-                    </div> --}}
+                <div class="panel xl:w-[600px] px-0 w-full xl:mt-0 mt-6">
                     <div class="px-4">
                         <div class="text-lg font-semibold mb-4">Data Jadwal Monitoring</div>
                         <div class="grid grid-cols-1 gap-4">
@@ -130,21 +82,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="xl:w-[60%] w-full xl:mt-0 mt-6">
+                <div class="flex-1 py-6">
                 </div>
             </div>
         </form>
     </div>
 
-    <!-- start hightlight js -->
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
-    <script src="/assets/js/highlight.min.js"></script>
-    <!-- end hightlight js -->
-
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-
     <script>
+        /*************
+         * tanggal 
+         */
+
         document.addEventListener("alpine:init", () => {
             Alpine.data("tanggal", () => ({
                 date1: @json($data['tanggal']), 

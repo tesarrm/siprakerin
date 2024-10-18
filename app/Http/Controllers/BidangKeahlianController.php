@@ -11,6 +11,11 @@ class BidangKeahlianController extends Controller
     public function __construct(BidangKeahlian $b)
     {
         $this->bModel = $b;
+
+        $this->middleware('can:c_bidang_keahlian')->only(['create', 'store']);
+        $this->middleware('can:r_bidang_keahlian')->only(['index', 'show']);
+        $this->middleware('can:u_bidang_keahlian')->only(['edit', 'update']);
+        $this->middleware('can:d_bidang_keahlian')->only('destroy');
     }
 
     /**
@@ -40,13 +45,14 @@ class BidangKeahlianController extends Controller
 
         $this->bModel->create($create->toArray());
 
-        return redirect('bidang-keahlian')->with('status', 'Data berhasil ditambah!');
+        return redirect('bidangkeahlian')->with('status', 'Data berhasil ditambah!');
     }
 
-    public function edit(BidangKeahlian $bidang_keahlian)
+    public function edit($id)
     {
+        $data = BidangKeahlian::findOrFail($id);
         return view('bidang_keahlian.edit', [
-            'data' => $bidang_keahlian
+            'data' => $data,
         ]);
     }
 
@@ -62,13 +68,27 @@ class BidangKeahlianController extends Controller
 
         $data->update($update->toArray());
 
-        return redirect('bidang-keahlian')->with('status', 'Data berhasil ditambah!');
+        return redirect('bidangkeahlian')->with('status', 'Data berhasil ditambah!');
     }
 
     public function destroy($id)
     {
         $data = $this->bModel->findOrFail($id);
         $data->delete();
+        return response()->json(['success' => true]);
+    }
+
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        // Ambil semua data guru berdasarkan ID yang dipilih
+        $datas = BidangKeahlian::whereIn('id', $ids)->get();
+
+        foreach ($datas as $data) {
+            $data->delete();
+        }
+
         return response()->json(['success' => true]);
     }
 }
