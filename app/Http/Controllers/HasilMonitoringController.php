@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\HasilMonitoring;
+use App\Models\Industri;
+use App\Models\Kelas;
 use App\Models\Monitoring;
 use App\Models\PenempatanIndustri;
 use App\Models\Siswa;
+use App\Models\TemporaryFile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class HasilMonitoringController extends Controller
 {
@@ -39,14 +43,55 @@ class HasilMonitoringController extends Controller
         if(auth()->user()->hasRole('siswa')) {
             $siswa = Siswa::where('user_id', auth()->user()->id)->first();
             $siswa_id = $siswa->id;
-            $hasil = HasilMonitoring::where('siswa_id', $siswa_id)->with(['siswa.kelas.jurusan', 'monitoring.guru'])->get();
+            $hasil = HasilMonitoring::where('siswa_id', $siswa_id)
+                ->with([
+                    'siswa.kelas.jurusan', 
+                    'monitoring.guru',
+                    'siswa.penempatan.industri',
+                    ])
+                ->get();
+        } else if (auth()->user()->hasRole('koordinator')) {
+            $hasil = HasilMonitoring::with([
+                    'siswa.kelas.jurusan', 
+                    'monitoring.guru',
+                    'siswa.penempatan.industri',
+                    ])
+                ->get();
+
+        } else if (auth()->user()->hasRole('wali_kelas')) {
+            $guru = Guru::where('user_id', auth()->user()->id)
+                ->with('hoKelas')  // Ambil kelas yang berelasi dengan guru
+                ->first();
+
+            // Ambil ID kelas yang berelasi dengan guru
+            $kelasId = $guru->hoKelas->id;
+
+            $hasil = HasilMonitoring::with([
+                    'siswa.kelas.jurusan', 
+                    'monitoring.guru',
+                    'siswa.penempatan.industri',
+                    ])
+                ->whereHas('siswa.kelas', function ($query) use ($kelasId) {
+                    $query->where('id', $kelasId);
+                })
+                ->get();
         } else {
-            $hasil = HasilMonitoring::with(['siswa.kelas.jurusan', 'monitoring.guru'])->get();
+            $hasil = HasilMonitoring::with([
+                'siswa.kelas.jurusan', 
+                'monitoring.guru',
+                'siswa.penempatan.industri',
+                ])
+                ->get();
         }
+
+        $kelas = Kelas::where('aktif', 1)->get();
+        $industri = Industri::where('aktif', 1)->get();
 
         return view('hasil_monitoring.index', [
             'data' => $data,
             'hasil' => $hasil,
+            'kelas' => $kelas,
+            'industri' => $industri,
         ]);
     }
 
@@ -115,6 +160,7 @@ class HasilMonitoringController extends Controller
     {
         $validated = $request->validate([
             'monitoring_id' => 'required|string',
+            'gambar' => 'required|string',
             'data.*.siswa_id' => 'required|string',
             'data.*.hadir' => 'required|string',
             'data.*.izin' => 'required|string',
@@ -124,6 +170,26 @@ class HasilMonitoringController extends Controller
 
         $monitoring_id = $validated['monitoring_id'];
 
+        // kondisi cek gambar
+        if (!empty($validated['gambar'])) {
+            $tmp_file = TemporaryFile::where('folder', $validated['gambar'])->first();
+
+            if ($tmp_file) {
+                Storage::copy('posts/tmp/' . $tmp_file->folder . '/'.$tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
+
+                // $create->put('gambar', $tmp_file->folder . '/' . $tmp_file->file);
+                $path_gambar = $tmp_file->folder . '/' . $tmp_file->file;
+
+                // update gambar di monitoring
+                $monitoring = Monitoring::findOrFail($validated['monitoring_id']);
+                $monitoring->update([
+                    'gambar' => $path_gambar
+                ]);
+
+                Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
+                $tmp_file->delete();
+            } 
+        }
 
         HasilMonitoring::where('monitoring_id', $monitoring_id)
                     ->delete();

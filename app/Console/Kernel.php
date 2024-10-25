@@ -25,7 +25,8 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             AttendanceController::storeCron();
-        })->dailyAt('01:00'); 
+        // })->dailyAt('01:00'); 
+        })->everyMinute();
     }
 
     /**

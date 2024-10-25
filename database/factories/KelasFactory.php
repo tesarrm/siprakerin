@@ -20,14 +20,14 @@ class KelasFactory extends Factory
         $user->assignRole('wali_kelas');
 
         return [
-            'nama' => $this->faker->unique()->randomElement([
+            'nama' => $this->faker->randomElement([
                 'X', 
                 'XI', 
                 'XII', 
             ]),
             'tahun_ajaran' => "2024/2025",
             'jurusan_id' => \App\Models\Jurusan::inRandomOrder()->first()->id, 
-            'klasifikasi' => $this->faker->randomElement(['A', 'B', 'C']),
+            'klasifikasi' => $this->faker->randomElement(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']),
             'guru_id' => \App\Models\Guru::inRandomOrder()->first()->id, 
         ];
     }

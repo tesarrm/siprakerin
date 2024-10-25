@@ -1,9 +1,9 @@
 <x-layout.default>
+    <!-- Include necessary styles and scripts -->
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/flatpickr.min.css') }}">
     <script src="/assets/js/flatpickr.js"></script>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
     <script src="/assets/js/nouislider.min.js"></script>
-
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
 
@@ -25,14 +25,15 @@
                                         <label for="capaian_pembelajaran_{{ $index + 1 }}" class="text-base">
                                             Capaian Pembelajaran {{ $index + 1 }}
                                         </label>
-                                        <textarea id="capaian_pembelajaran_{{ $index + 1 }}" rows="5" name="capaian_pembelajaran[]" class="form-textarea" required>{{ old('capaian_pembelajaran.' . $index, $capaian->nama) }}</textarea>
+                                        <textarea id="capaian_pembelajaran_{{ $index + 1 }}" rows="5" name="capaian_pembelajaran[{{ $index }}][nama]" class="form-textarea" required>{{ old('capaian_pembelajaran.' . $index . '.nama', $capaian->nama) }}</textarea>
+
                                         <div id="tujuan-wrapper-{{ $index + 1 }}" class="grid grid-cols-1 gap-4 mt-4 ml-6 tujuan-container">
                                             @foreach($capaian->tujuanPembelajaran as $tujuanIndex => $tujuan)
                                                 <div>
                                                     <label for="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}">
                                                         Tujuan Pembelajaran {{ $tujuanIndex + 1 }}
                                                     </label>
-                                                    <textarea id="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}" rows="3" name="tujuan_pembelajaran[{{ $index + 1 }}][]" class="form-textarea" required>{{ old('tujuan_pembelajaran.' . $index . '.' . $tujuanIndex, $tujuan->nama) }}</textarea>
+                                                    <textarea id="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}" rows="3" name="capaian_pembelajaran[{{ $index }}][tujuan_pembelajaran][]" class="form-textarea" required>{{ old('capaian_pembelajaran.' . $index . '.tujuan_pembelajaran.' . $tujuanIndex, $tujuan->nama) }}</textarea>
                                                 </div>
                                             @endforeach
                                         </div>
@@ -80,21 +81,21 @@
             const wrapper = document.getElementById('textarea-wrapper');
             const newCapaian = `
                 <div class="capaian-container">
-                    <label class="text-base mt-2" for="capaian_pembelajaran_${capaianCounter}">Capaian Pembelajaran ${capaianCounter}</label>
-                    <textarea id="capaian_pembelajaran_${capaianCounter}" rows="5" name="capaian_pembelajaran[]" class="form-textarea" 
-                        placeholder="Isi capaian pembelajaran ${capaianCounter}" required></textarea>
+                    <label class="text-base mt-2" for="capaian_pembelajaran_${capaianCounter}">Capaian Pembelajaran ${capaianCounter + 1}</label>
+                    <textarea id="capaian_pembelajaran_${capaianCounter}" rows="5" name="capaian_pembelajaran[${capaianCounter}][nama]" class="form-textarea" 
+                        placeholder="Isi capaian pembelajaran ${capaianCounter + 1}" required></textarea>
 
-                    <div id="tujuan-wrapper-${capaianCounter + 1}" class="grid grid-cols-1 gap-4 mt-4 ml-6 tujuan-container">
+                    <div id="tujuan-wrapper-${capaianCounter}" class="grid grid-cols-1 gap-4 mt-4 ml-6 tujuan-container">
                         <div>
                             <label for="tujuan_pembelajaran_${capaianCounter}_1">Tujuan Pembelajaran 1</label>
-                            <textarea id="tujuan_pembelajaran_${capaianCounter}_1" rows="3" name="tujuan_pembelajaran[${capaianCounter}][]" class="form-textarea"
+                            <textarea id="tujuan_pembelajaran_${capaianCounter}_1" rows="3" name="capaian_pembelajaran[${capaianCounter}][tujuan_pembelajaran][]" class="form-textarea"
                                 placeholder="Isi Tujuan Pembelajaran 1" required></textarea>
                         </div>
                     </div>
                     <!-- Button to add tujuan -->
                     <div class="flex gap-4 ml-6 mt-2">
-                        <button type="button" class="btn btn-primary mt-2" onclick="addTujuan(${capaianCounter + 1})">Add Tujuan</button>
-                        <button type="button" class="btn btn-danger mt-2" onclick="removeTujuan(${capaianCounter + 1})">Remove Tujuan</button>
+                        <button type="button" class="btn btn-primary mt-2" onclick="addTujuan(${capaianCounter})">Add Tujuan</button>
+                        <button type="button" class="btn btn-danger mt-2" onclick="removeTujuan(${capaianCounter})">Remove Tujuan</button>
                     </div>
                 </div>
             `;
@@ -118,7 +119,7 @@
             const newTujuan = `
                 <div>
                     <label for="tujuan_pembelajaran_${capaianIndex}_${tujuanCount}">Tujuan Pembelajaran ${tujuanCount}</label>
-                    <textarea id="tujuan_pembelajaran_${capaianIndex}_${tujuanCount}" rows="3" name="tujuan_pembelajaran[${capaianIndex}][]" class="form-textarea"
+                    <textarea id="tujuan_pembelajaran_${capaianIndex}_${tujuanCount}" rows="3" name="capaian_pembelajaran[${capaianIndex}][tujuan_pembelajaran][]" class="form-textarea"
                         placeholder="Isi Tujuan Pembelajaran ${tujuanCount}" required></textarea>
                 </div>
             `;
@@ -129,7 +130,6 @@
             const tujuanWrapper = document.getElementById(`tujuan-wrapper-${capaianIndex}`);
             if (tujuanWrapper.children.length > 1) {
                 tujuanWrapper.removeChild(tujuanWrapper.lastElementChild);
-                const tujuanCount = tujuanWrapper.children.length - 1;
             }
         }
     </script>

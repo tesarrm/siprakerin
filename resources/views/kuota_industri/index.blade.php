@@ -22,7 +22,7 @@
         });
 
         // buat data
-       foreach ($data as $d) {
+        foreach ($data as $d) {
             $row = [
                 'nama' => $d->nama,
                 'alamat' => $d->alamat,
@@ -250,12 +250,10 @@
 
                 searchInvoice() {
                     return this.items.filter((d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
-                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
-                        (d.status && d.status.toLowerCase().includes(this.searchText))
+                        (d.nama && d.nama.toLowerCase().includes(this.searchText)) ||
+                        (d.alamat && d.alamat.toLowerCase().includes(this.searchText)) ||
+                        (d.kota && d.kota.toLowerCase().includes(this.searchText)) ||
+                        (d.tahun_ajaran && d.tahun_ajaran.toLowerCase().includes(this.searchText))
                     );
                 },
             }))

@@ -37,6 +37,7 @@ class PengaturanController extends Controller
     {
         $validatedData = $request->validate([
             'tahun_ajaran' => 'required|string',
+            'penilaian_2' => 'nullable',
         ]);
 
         $data = $this->pModel->first();

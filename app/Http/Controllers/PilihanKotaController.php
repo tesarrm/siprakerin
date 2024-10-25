@@ -185,6 +185,7 @@ public function index()
     public function buat()
     {
         $user_id = auth()->user()->id;
+        // dd($user_id);
         $siswa = Siswa::where('user_id', $user_id)->first();
         $data = PilihanKota::where('siswa_id', $siswa->id)->first();
         

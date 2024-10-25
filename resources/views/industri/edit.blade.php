@@ -162,7 +162,7 @@
                     // Membuat instance Date dan mengonversinya ke format 'd F Y'
                     let today = new Date();
                     let options = { day: 'numeric', month: 'long', year: 'numeric' }; // Format: d F Y (contoh: 13 September 2024)
-                    this.date1 = today.toLocaleDateString('id-ID', options);
+                    // this.date1 = today.toLocaleDateString('id-ID', options);
 
                     flatpickr(document.getElementById('tanggal_awal'), {
                         dateFormat: 'd F Y', // Format sesuai keinginan
@@ -184,7 +184,7 @@
                     // Membuat instance Date dan mengonversinya ke format 'd F Y'
                     let today = new Date();
                     let options = { day: 'numeric', month: 'long', year: 'numeric' }; // Format: d F Y (contoh: 13 September 2024)
-                    this.date1 = today.toLocaleDateString('id-ID', options);
+                    // this.date1 = today.toLocaleDateString('id-ID', options);
 
                     flatpickr(document.getElementById('tanggal_akhir'), {
                         dateFormat: 'd F Y', // Format sesuai keinginan

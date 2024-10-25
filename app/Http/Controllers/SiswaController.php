@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\SiswaExport;
+use App\Imports\SiswaImport;
 use App\Models\Kelas;
 use App\Models\Ortu;
 use App\Models\OrtuSiswa;
@@ -9,9 +11,14 @@ use App\Models\Pengaturan;
 use App\Models\Siswa;
 use App\Models\TemporaryFile;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SiswaController extends Controller
 {
@@ -28,11 +35,13 @@ class SiswaController extends Controller
 
     public function index()
     {
-        $data = $this->model->with(['kelas', 'user'])->where('aktif', 1)->get();
+        $data = $this->model->with(['kelas', 'user'])->where('aktif', 1)->paginate(250);
         $pengaturan = Pengaturan::first();
+        $kelas = Kelas::with('jurusan')->get();
 
         return view('siswa.index', [
             'data' => $data,
+            'kelas' => $kelas,
             'pengaturan' => $pengaturan
         ]);
     }
@@ -69,6 +78,7 @@ class SiswaController extends Controller
             'agama' => 'nullable|string',
             'alamat' => 'nullable|string',
             'no_telp' => 'nullable|string',
+
             'email' => 'required|string|unique:users,email|max:255',
             'password' => 'required',
         ]);
@@ -289,4 +299,87 @@ class SiswaController extends Controller
         }
     }
 
+    public function import(Request $request){
+        try {
+            Excel::import(new SiswaImport, $request->file('excel'));
+            return redirect()->back()->with('status', 'Data berhasil diimpor!');
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors()->getMessages();
+
+            return redirect()->back()->withErrors($errors)->withInput();
+        }
+    }
+
+    public function export() 
+    {
+        return (new SiswaExport)->download('siswa-'.Carbon::now()->timestamp.'.xlsx');
+    }
+
+    public function downloadTemplate()
+    {
+        $filePath = public_path('files/siswa.xlsx'); 
+        return Response::download($filePath);
+    }
+
+    public function filter(Request $request)
+    {
+        $kelas = $request->kelas; // Ambil parameter kelas dari request
+        
+
+        // // Jika kelas tidak kosong, tambahkan kondisi filter
+        // if (!empty($kelas)) {
+        //     $query->whereHas('kelas', function($q) use ($kelas) {
+        //         $q->where(DB::raw("CONCAT(kelas.nama, ' ', jurusan.singkatan, ' ', kelas.klasifikasi)"), $kelas);
+        //     });
+        // }
+
+        $kelas = Kelas::with('jurusan.bidangKeahlian')
+            ->get()
+            ->first(function ($k) use ($kelas) {
+                // Gabungkan nama kelas dengan jurusan dan klasifikasi untuk dibandingkan
+                $nama = $k->nama . " " . $k->jurusan->singkatan . " " . $k->klasifikasi;
+                return $kelas == $nama; // Bandingkan nama yang sudah dibentuk dengan row
+            });
+
+        // saya ingin filter siswa dari kelas id
+        $siswa = Siswa::with(['kelas', 'user'])
+            ->where('aktif', 1)
+            ->where('kelas_id', $kelas->id) 
+            ->get();
+
+        $items = [];
+        foreach ($siswa as $d) {
+            $items[] = [
+                'id' => $d->id ?? '-',
+                'nis' => $d->nis ?? '-',
+                'nama' => $d->nama ?? '-',
+                'jenis_kelamin' => $d->jenis_kelamin ?? '-',
+                'agama' => $d->agama ?? '-',
+                'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
+                'tahun_ajaran' => Pengaturan::first()->tahun_ajaran ?? '-', // Tambahkan jika diperlukan
+                'email' => $d->user->email ?? '-',
+                'gambar' => $d->gambar, 
+                'action' => $d->id ?? '-', 
+
+                '_user_id' => $d->user_id ?? '-', 
+                '_kelas_id' => $d->kelas->nama ?? '-',
+                '_aktif' => $d->aktif ?? '-',
+                '_gambar' => $d->gambar,
+                '_nis' => $d->nis ?? '-',
+                '_nisn' => $d->nisn ?? '-',
+                '_nama_lengkap' => $d->nama_lengkap ?? '-',
+                '_nama' => $d->nama ?? '-',
+                '_tempat_lahir' => $d->tempat_lahir ?? '-',
+                '_tanggal_lahir' => $d->tanggal_lahir ?? '-',
+                '_jenis_kelamin' => $d->jenis_kelamin ?? '-', 
+                '_agama' => $d->agama ?? '-',
+                '_alamat' => $d->alamat ?? '-',
+                '_no_telp' => $d->no_telp ?? '-',
+                '_email' => $d->user->email ?? '-',
+            ];
+        }
+
+        // Return data dalam format JSON untuk di-render oleh simple-datatables
+        return response()->json($items);
+    }
 }

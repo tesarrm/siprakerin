@@ -15,7 +15,11 @@
 
     <div class="panel">
 
-            @if(!auth()->user()->hasRole('siswa'))
+            @if(
+                !auth()->user()->hasRole('siswa') && 
+                !auth()->user()->hasRole('wali_kelas') && 
+                !auth()->user()->hasRole('koordinator')
+                )
 
         <div id="tabs" x-data="{ tab: 'jadwal'}">
             <ul class="flex flex-wrap mb-5 border-b border-white-light dark:border-[#191e3a]">
@@ -57,6 +61,26 @@
             <div class="tab-content show">
 
                 <div x-data="invoiceList">
+
+                    <div class="px-5">
+                        <div class="md:absolute">
+                            <div class="flex items-center gap-2 mb-5">
+
+                                <div class="" style="width: 150px">
+                                    <select id="filterIndustri" x-model="selectedIndustri" @change="filterByIndustri" class="form-input">
+                                        <option value="">Pilih Industri</option>
+                                        @foreach($industri as $item)
+                                            <option value="{{ $item->nama }}">
+                                                {{ $item->nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="invoice-table">
                         <table id="myTable" class="whitespace-nowrap"></table>
                     </div>
@@ -68,12 +92,41 @@
                 @endif
 
                 <div x-data="hasil">
+
+                    @if(
+                        !auth()->user()->hasRole('wali_kelas') &&
+                        !auth()->user()->hasRole('siswa')
+                    ) 
+                    <div class="px-5">
+                        <div class="md:absolute">
+                            <div class="flex items-center gap-2 mb-5">
+
+                                <div class="" style="width: 150px">
+                                    <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
+                                        <option value="">Pilih Kelas</option>
+                                        @foreach($kelas as $item)
+                                            <option value="{{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}">
+                                                {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="invoice-table">
                         <table id="table_hasil" class="whitespace-nowrap"></table>
                     </div>
                 </div>
 
-                @if(!auth()->user()->hasRole('siswa'))
+                @if(
+                    !auth()->user()->hasRole('siswa') && 
+                    !auth()->user()->hasRole('wali_kelas') && 
+                    !auth()->user()->hasRole('koordinator')
+                    )
 
             </div>
         </div>
@@ -130,11 +183,30 @@
     @php
         $dHasil = [];
 
-        if(auth()->user()->hasRole('siswa')){
+        if(
+            auth()->user()->hasRole('wali_kelas') || 
+            auth()->user()->hasRole('koordinator')
+        ){
             foreach ($hasil as $d) {
                 $dHasil[] = [
-                    'nama_guru' => $d->monitoring->guru->nama ?? '-',
+                    'nama' => $d->monitoring->guru->nama ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                    'industri' => $d->siswa->penempatan->industri->nama?? '-',
+                    'tanggal' => $d->monitoring->tanggal?? '-',
+                    'hadir' => $d->hadir ?? '-',
+                    'izin' => $d->izin ?? '-',
+                    'alpa' => $d->alpa ?? '-',
+                    'catatan' => $d->catatan ?? '-',
+                ];
+            }
+        } else if (
+            auth()->user()->hasRole('siswa') 
+        ) {
+            foreach ($hasil as $d) {
+                $dHasil[] = [
+                    'nama' => $d->monitoring->guru->nama ?? '-',
+                    'industri' => $d->siswa->penempatan->industri->nama?? '-',
+                    'tanggal' => $d->monitoring->tanggal?? '-',
                     'hadir' => $d->hadir ?? '-',
                     'izin' => $d->izin ?? '-',
                     'alpa' => $d->alpa ?? '-',
@@ -144,8 +216,10 @@
         } else {
             foreach ($hasil as $d) {
                 $dHasil[] = [
-                    'nama_siswa' => $d->siswa->nama ?? '-',
+                    'nama' => $d->siswa->nama ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                    'industri' => $d->siswa->penempatan->industri->nama?? '-',
+                    'tanggal' => $d->monitoring->tanggal?? '-',
                     'hadir' => $d->hadir ?? '-',
                     'izin' => $d->izin ?? '-',
                     'alpa' => $d->alpa ?? '-',
@@ -182,6 +256,7 @@
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',
+                selectedIndustri: '',
                 datatable: null,
                 dataArr: [],
 
@@ -262,24 +337,40 @@
                 },
 
                 setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
-                    }
+                    // this.dataArr = [];
+                    // for (let i = 0; i < this.items.length; i++) {
+                    //     this.dataArr[i] = [];
+                    //     for (let p in this.items[i]) {
+                    //         if (this.items[i].hasOwnProperty(p)) {
+                    //             this.dataArr[i].push(this.items[i][p]);
+                    //         }
+                    //     }
+                    // }
+
+                    this.dataArr = this.items
+                        .filter(item => {
+                            // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                            return this.selectedIndustri === '' || item.nama_industri === this.selectedIndustri;
+                        })
+                        .map(item => {
+                            return Object.values(item); // Mengonversi setiap item ke array data
+                        });
                 },
+
+        refreshTable() {
+            this.datatable.destroy();
+            this.setTableData();
+            this.initializeTable();
+        },
+
+        filterByIndustri() {
+            this.refreshTable(); 
+        },
 
                 searchInvoice() {
                     return this.items.filter((d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
-                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
+                        (d.nama_industri && d.nama_industri.toLowerCase().includes(this.searchText)) ||
+                        (d.tanggal && d.tanggal.toLowerCase().includes(this.searchText)) ||
                         (d.status && d.status.toLowerCase().includes(this.searchText))
                     );
                 },
@@ -291,10 +382,27 @@
          */
 
         let headings
-        if(@json(auth()->user()->hasRole('siswa'))){
+        if(
+            @json(auth()->user()->hasRole('wali_kelas')) || 
+            @json(auth()->user()->hasRole('koordinator'))
+        ){
             headings = [
                 "Pemonitoring",
                 "Kelas",
+                "Industri",
+                "Tanggal",
+                "Hadir",
+                "Izin",
+                "Alpa",
+                "Catatan",
+            ];
+        } else if (
+            @json(auth()->user()->hasRole('siswa')) 
+        ) {
+            headings = [
+                "Pemonitoring",
+                "Industri",
+                "Tanggal",
                 "Hadir",
                 "Izin",
                 "Alpa",
@@ -304,6 +412,8 @@
             headings = [
                 "Nama Siswa",
                 "Kelas",
+                "Industri",
+                "Tanggal",
                 "Hadir",
                 "Izin",
                 "Alpa",
@@ -316,6 +426,7 @@
                 selectedRows: [],
                 items: @json($dHasil),
                 searchText: '',
+                selectedKelas: '',
                 datatable: null,
                 dataArr: [],
 
@@ -361,25 +472,44 @@
                 },
 
                 setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
-                    }
+                    // this.dataArr = [];
+                    // for (let i = 0; i < this.items.length; i++) {
+                    //     this.dataArr[i] = [];
+                    //     for (let p in this.items[i]) {
+                    //         if (this.items[i].hasOwnProperty(p)) {
+                    //             this.dataArr[i].push(this.items[i][p]);
+                    //         }
+                    //     }
+                    // }
+
+                    this.dataArr = this.items
+                        .filter(item => {
+                            // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                            return this.selectedKelas === '' || item.kelas === this.selectedKelas;
+                        })
+                        .map(item => {
+                            return Object.values(item); 
+                        });
+                },
+
+                refreshTable() {
+                    this.datatable.destroy();
+                    this.setTableData();
+                    this.initializeTable();
+                },
+
+                filterByKelas() {
+                    this.refreshTable(); 
                 },
 
                 searchInvoice() {
                     return this.items.filter((d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
-                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
-                        (d.status && d.status.toLowerCase().includes(this.searchText))
+                        (d.nama && d.nama.toLowerCase().includes(this.searchText)) ||
+                        (d.kelas && d.kelas.toLowerCase().includes(this.searchText)) ||
+                        (d.hadir && d.hadir.toLowerCase().includes(this.searchText)) ||
+                        (d.izin && d.izin.toLowerCase().includes(this.searchText)) ||
+                        (d.alpa && d.alpa.toLowerCase().includes(this.searchText)) ||
+                        (d.catatan && d.catatan.toLowerCase().includes(this.searchText))
                     );
                 },
             }))

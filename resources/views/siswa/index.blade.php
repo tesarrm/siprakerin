@@ -51,7 +51,7 @@
                                     <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
                                         class="ltr:right-0 rtl:left-0 whitespace-nowrap">
                                         <li><a href="javascript:;" @click="$dispatch('open-modal')">Import</a></li>
-                                        <li><a href="/guru-export" @click="toggle">Export</a></li>
+                                        <li><a href="/siswa-export" @click="toggle">Export</a></li>
                                     </ul>
                                 </div>
                             </div>
@@ -73,11 +73,11 @@
                                             </button>
                                         </div>
                                         <div class="p-5">
-                                            <form action="/guru-import" method="POST" enctype="multipart/form-data">
+                                            <form action="/siswa-import" method="POST" enctype="multipart/form-data">
                                                 @csrf
                                                 <div>
                                                     <label for="ctnFile">Unduh Template</label>
-                                                    <button type="button" class="btn btn-danger">
+                                                    <a href="{{ url('siswa-template')}}" class="flex max-w-max btn btn-danger">
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                             xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                                                             <path opacity="0.5"
@@ -88,7 +88,7 @@
                                                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                                         </svg>
                                                         &nbsp;&nbsp;Excel
-                                                    </button>
+                                                    </a>
                                                     <span class="text-white-dark text-xs">Jangan ubah bagian header!</span>
                                                 </div>
                                                 <div class="mt-6">
@@ -105,12 +105,73 @@
                                 </div>
                             </div>
                         </div>
+                        {{-- select kelas --}}
+                        <div class="" style="width: 150px">
+                            <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
+                                <option value="">Pilih Kelas</option>
+                                @foreach($kelas as $item)
+                                    <option value="{{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}">
+                                        {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="invoice-table">
                 <table id="myTable" class="whitespace-nowrap"></table>
             </div>
+
+            {{-- pagination max 250 --}}
+            @if($data->total() > 250)
+                <div id="pageplus" class="flex justify-center mt-3">
+                    <ul class="flex items-center m-auto">
+                        {{-- @if ($data->currentpage() > 1) --}}
+                            <li>
+                                <a href="{{ $data->previouspageurl() }}"  
+                                    class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+
+                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                        <path d="m13 19l7 12l13 5" stroke="currentcolor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path opacity="0.5" d="m16.9998 19l10.9998 12l16.9998 5"
+                                            stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </li>
+                        {{-- @endif --}}
+                        @for ($i = 1; $i <= $data->lastpage(); $i++)
+                            <li>
+                                <a href="{{ $data->url($i) }}"
+                                    class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                        {{ ($data->currentpage() == $i) ? 
+                                            'bg-primary text-white dark:text-white-light dark:bg-primary' : 
+                                            'bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary'
+                                        }}">{{ $i * 250 }}</a>
+                            </li>
+                        @endfor
+                        {{-- @if ($data->hasmorepages()) --}}
+                            <li>
+                                <a href="{{ $data->nextpageurl() }}" 
+                                    class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+
+                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                        <path d="m11 19l17 12l11 5" stroke="currentcolor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path opacity="0.5" d="m6.99976 19l12.9998 12l6.99976 5"
+                                            stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </li>
+                        {{-- @endif --}}
+                    </ul>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -144,6 +205,40 @@
         </script>
     @endif
 
+    {{-- alert toast import excel error --}}
+    @if($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const errors = @json($errors->all());
+                displayAlerts(errors);
+            });
+
+            async function displayAlerts(errors) {
+                for (const error of errors) {
+                    await showAlert(error);
+                }
+            }
+
+            async function showAlert(message) {
+                const toast = window.Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+
+                await toast.fire({
+                    icon: 'error',
+                    title: message,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+            }
+        </script>
+    @endif
+
     {{-- data datatable --}}
     @php
         $items = [];
@@ -154,7 +249,7 @@
                 'nama' => $d->nama ?? '-',
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                 'agama' => $d->agama ?? '-',
-                'kelas' => $d->kelas->nama ?? '-',
+                'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
                 'tahun_ajaran' => $pengaturan->tahun_ajaran ?? '-',
                 'email' => $d->user->email ?? '-',
                 'gambar' => $d->gambar, 
@@ -179,6 +274,42 @@
         }
     @endphp
 
+    {{-- <script>
+        document.getElementById('filterKelas').addEventListener('change', function() {
+            let selectedKelas = this.value;
+            fetchFilteredData(selectedKelas);
+        });
+
+        function fetchFilteredData(kelas) {
+            // Kirimkan request ke controller melalui Ajax
+            fetch(`{{ route('siswa.filter') }}?kelas=${kelas}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Render ulang tabel dengan data baru
+                let table = simpleDatatables.init({ data: data }); // Inisialisasi ulang tabel dengan data baru
+                // Update data pada tabel
+            })
+            .catch(error => console.error('Error fetching data:', error));
+        }
+    </script> --}}
+
+    <script>
+        document.getElementById('filterKelas').addEventListener('change', function() {
+            let selectedKelas = this.value;
+            if(selectedKelas) {
+                document.getElementById('pagePlus').style.display = 'none';
+            } else {
+                document.getElementById('pagePlus').style.display = 'flex';
+            }
+        });
+    </script>
+    
     <script>
         /*************
          * detail
@@ -203,6 +334,7 @@
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',
+                selectedKelas: '', // Tambahkan untuk pilihan kelas
                 datatable: null,
                 dataArr: [],
 
@@ -250,8 +382,8 @@
                             ],
                             data: this.dataArr
                         },
-                        perPage: 10,
-                        perPageSelect: [10, 20, 30, 50, 100],
+                        perPage: this.perPage || 10,
+                        perPageSelect: [10, 20, 30, 50, 100, 250],
                         columns: [
                             {
                                 select: [10, 11,12,13,14,15,16,17,18,19,20,21,22,23,24],
@@ -419,10 +551,6 @@
 
                                             </div>`;
                                 },
-                                // {
-                                //     select: [11,12,13,14,15,16,17,18,19,20,21,22,23,24],
-                                //     hidden: true,
-                                // },
                             }
                         ],
                         firstLast: true,
@@ -439,9 +567,13 @@
                             bottom: "{info}{select}{pager}",
                         },
                     });
+
+                    this.perPage = this.datatable.options.perPage;
                 },
 
                 refreshTable() {
+                    this.perPage = this.datatable.options.perPageSelect.find(select => select == this.datatable.options.perPage) || 10; 
+
                     this.datatable.destroy();
                     this.setTableData();
                     this.initializeTable();
@@ -477,14 +609,31 @@
                     }
                 },
 
+                // setTableData() {
+                //     this.dataArr = this.items
+                //         .filter(item => {
+                //             // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                //             return this.selectedKelas === '' || item.kelas === this.selectedKelas;
+                //         })
+                //         .map(item => {
+                //             return Object.values(item); // Mengonversi setiap item ke array data
+                //         });
+                // },
+
+                // filterByKelas() {
+                //     this.refreshTable(); // Muat ulang tabel ketika filter berubah
+                // },
+
                 searchInvoice() {
                     return this.items.filter((d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
+                        (d.nis && d.nis.toLowerCase().includes(this.searchText)) ||
+                        (d.nama && d.nama.toLowerCase().includes(this.searchText)) ||
+                        (d.jenis_kelamin && d.jenis_kelamin.toLowerCase().includes(this.searchText)) ||
+                        (d.agama && d.agama.toLowerCase().includes(this.searchText)) ||
+                        (d.kelas && d.kelas.toLowerCase().includes(this.searchText)) ||
+                        (d.tahun_ajaran && d.tahun_ajaran.toLowerCase().includes(this.searchText)) ||
                         (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
-                        (d.status && d.status.toLowerCase().includes(this.searchText))
+                        (d.gambar && d.gambar.toLowerCase().includes(this.searchText))
                     );
                 },
 
@@ -651,66 +800,83 @@
                             });
                         }
                     });
+                },
+
+                filterByKelas() {
+                    if(this.selectedKelas){
+                        fetch(`{{ route('siswa.filter') }}`, {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Pastikan CSRF token disertakan
+                            },
+                            body: JSON.stringify({
+                                kelas: this.selectedKelas // Mengambil nilai dari selectedKelas
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            this.items = data; // Menyimpan data dari server
+                            this.refreshTable();  // Memperbarui tabel
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                    }else{
+                        this.items = @json($items);
+                    }
+                },
+
+                resetPassword(user_id) {
+                    window.Swal.fire({
+                        icon: 'warning',
+                        title: 'Apakah Anda yakin?',
+                        text: "Data akan direset password!",
+                        showCancelButton: true,
+                        confirmButtonText: 'Reset',
+                        cancelButtonText: 'Batal',
+                        padding: '2em',
+                        customClass: 'sweet-alerts'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/siswa/${user_id}/reset`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.Swal.fire({
+                                        title: 'Direset Password!',
+                                        text: 'Data berhasil direset password.',
+                                        icon: 'success',
+                                        customClass: 'sweet-alerts'
+                                    });
+                                } else {
+                                    window.Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Terjadi kesalahan saat mereset password data.',
+                                        icon: 'error',
+                                        customClass: 'sweet-alerts'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                window.Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Terjadi kesalahan saat mereset password data.',
+                                    icon: 'error',
+                                    customClass: 'sweet-alerts'
+                                });
+                            });
+                        }
+                    });
                 }
             }))
         })
-        
-        /*************
-         * reset password datatable
-         */
-
-        function resetPassword(user_id) {
-            window.Swal.fire({
-                icon: 'warning',
-                title: 'Apakah Anda yakin?',
-                text: "Data akan direset password!",
-                showCancelButton: true,
-                confirmButtonText: 'Reset',
-                cancelButtonText: 'Batal',
-                padding: '2em',
-                customClass: 'sweet-alerts'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/siswa/${user_id}/reset`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.Swal.fire({
-                                title: 'Direset Password!',
-                                text: 'Data berhasil direset password.',
-                                icon: 'success',
-                                customClass: 'sweet-alerts'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            window.Swal.fire({
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat mereset password data.',
-                                icon: 'error',
-                                customClass: 'sweet-alerts'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        window.Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat mereset password data.',
-                            icon: 'error',
-                            customClass: 'sweet-alerts'
-                        });
-                    });
-                }
-            });
-        }
-
     </script>
 
 </x-layout.default>

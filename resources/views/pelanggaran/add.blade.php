@@ -24,6 +24,17 @@
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+                            {{-- <div>
+                                <label for="kelas_id">Kelas<span class="text-danger">*</span></label>
+                                <select required id="kelas_id" name="kelas_id" class="form-select w-full">
+                                    <option value="">Pilih Kelas</option>
+                                        @foreach($kelas as $item)
+                                            <option value="{{$item->id}}">
+                                                {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
+                                            </option>
+                                        @endforeach
+                                </select>
+                            </div>
                             <div>
                                 <label for="siswa_id">Siswa<span class="text-danger">*</span></label>
                                 <select required id="siswa_id" name="siswa_id" class="form-select w-full">
@@ -35,7 +46,30 @@
                                 @error('siswa_id')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
+
+<div>
+    <label for="kelas_id">Kelas<span class="text-danger">*</span></label>
+    <select required id="kelas_id" name="kelas_id" class="form-select w-full">
+        <option value="">Pilih Kelas</option>
+        @foreach($kelas as $item)
+            <option value="{{$item->id}}">
+                {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
+            </option>
+        @endforeach
+    </select>
+</div>
+
+<div>
+    <label for="siswa_id">Siswa<span class="text-danger">*</span></label>
+    <select required id="siswa_id" name="siswa_id" class="form-select w-full">
+        <option value="">Pilih Siswa</option>
+        <!-- Opsi siswa akan diisi berdasarkan kelas yang dipilih -->
+    </select>
+    @error('siswa_id')
+        <div class="mt-2 text-danger">{{ $message }}</div>
+    @enderror
+</div>
                             <div>
                                 <label for="pelanggaran">Pelanggaran</label>
                                 <textarea id="pelanggaran" rows="5" name="pelanggaran" class="form-textarea" 
@@ -113,4 +147,67 @@
             }));
         });
     </script>
+
+
+{{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Simpan data siswa dalam bentuk JSON untuk filter
+        let siswa = @json($siswa);
+
+        // Ketika kelas dipilih, filter siswa
+        $('#kelas_id').on('change', function() {
+            let kelasId = $(this).val(); // Dapatkan kelas yang dipilih
+            let siswaOptions = '<option value="">Pilih Siswa</option>'; // Default option
+
+            if(kelasId) {
+                // Filter siswa berdasarkan kelas_id
+                let filteredSiswa = siswa.filter(function(s) {
+                    return s.kelas_id == kelasId;
+                });
+
+                // Loop dan buat opsi siswa
+                $.each(filteredSiswa, function(key, value) {
+                    siswaOptions += '<option value="' + value.id + '">' + value.nama + '</option>';
+                });
+            }
+
+            // Isi select siswa dengan opsi yang difilter
+            $('#siswa_id').html(siswaOptions);
+        });
+    });
+</script> --}}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Simpan data siswa dalam bentuk JSON untuk filter
+        let siswa = @json($siswa);
+
+        // Referensi elemen select kelas dan siswa
+        let kelasSelect = document.getElementById('kelas_id');
+        let siswaSelect = document.getElementById('siswa_id');
+
+        // Ketika kelas dipilih, filter siswa
+        kelasSelect.addEventListener('change', function() {
+            let kelasId = this.value; // Dapatkan kelas yang dipilih
+            let siswaOptions = '<option value="">Pilih Siswa</option>'; // Default option
+
+            if (kelasId) {
+                // Filter siswa berdasarkan kelas_id
+                let filteredSiswa = siswa.filter(function(s) {
+                    return s.kelas_id == kelasId;
+                });
+
+                // Loop dan buat opsi siswa
+                filteredSiswa.forEach(function(value) {
+                    siswaOptions += '<option value="' + value.id + '">' + value.nama_lengkap + '</option>';
+                });
+            }
+
+            // Isi select siswa dengan opsi yang difilter
+            siswaSelect.innerHTML = siswaOptions;
+        });
+    });
+</script>
+
 </x-layout.default>

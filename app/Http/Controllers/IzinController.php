@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Attendance;
 use App\Models\Izin;
 use App\Models\Siswa;
 use App\Models\TemporaryFile;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -60,6 +62,13 @@ class IzinController extends Controller
         $siswa = Siswa::where('user_id', auth()->user()->id)->first();
         $create->put('siswa_id', $siswa->id);
         Izin::create($create->toArray());
+
+        // buat kehadiran hadir
+        Attendance::create([
+            'siswa_id' => $siswa->id,
+            'date' => Carbon::now(),
+            'status' => 'izin',
+        ]);
 
         return redirect('jurnal')->with('status', 'Data berhasil ditambah!');
     }

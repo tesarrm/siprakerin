@@ -45,7 +45,7 @@
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div>
+                            {{-- <div>
                                 <label for="peran">Peran<span class="text-danger">*</span></label>
                                 <div class="mt-3">
                                     <input name="peran_admin" type="checkbox" class="form-checkbox mb-1" /> Admin
@@ -61,7 +61,7 @@
                                 @error('peran_ortu')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
                             <div>
                                 <label for="email">Email<span class="text-danger">*</span></label>
                                 <input required id="email" type="text" name="email" class="form-input w-full"

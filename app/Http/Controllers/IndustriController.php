@@ -125,6 +125,13 @@ public function update($id, Request $request)
     $update = collect($validatedData);
     $industri->update($update->toArray());
 
+    // hapus libur mingguan lama
+    $liburI = LiburMingguan::where('industri_id', $industri->id)->get();
+
+    foreach ($liburI as $data) {
+        $data->delete();
+    }
+
     // Ambil data libur mingguan yang berhubungan dengan industri
     $libur = LiburMingguan::where('industri_id', $industri->id)->first();
 

@@ -13,6 +13,7 @@ class PengaturanFactory extends Factory
     {
         return [
             'tahun_ajaran' => '2024/2025',
+            'penilaian_2' => 'off',
         ];
     }
 }

@@ -20,16 +20,33 @@ class AttendanceController extends Controller
         return view('attendance', compact('attendances'));
     }
 
-    public function getAttendanceData()
+    public function getAttendanceData(Request $request)
     {
-        $attendances = Attendance::all()->map(function ($attendance) {
-            return [
-                'title' => $attendance->status,
-                'start' => $attendance->date,
-            ];
-        });
+        $id = $request->query('id');
 
-        return response()->json($attendances);
+
+
+        if($id) {
+            $attendances = Attendance::where('siswa_id', $id)->get()->map(function ($attendance) {
+                return [
+                    'title' => $attendance->status,
+                    'start' => $attendance->date,
+                ];
+            });
+
+            return response()->json($attendances);
+        } else {
+            $siswa= Siswa::where('user_id', auth()->user()->id)->first();
+
+            $attendances = Attendance::where('siswa_id', $siswa->id)->get()->map(function ($attendance) {
+                return [
+                    'title' => $attendance->status,
+                    'start' => $attendance->date,
+                ];
+            });
+
+            return response()->json($attendances);
+        }
     }
 
 // Masalah Autentikasi: Anda menggunakan auth()->user() dalam fungsi storeCron(), 
@@ -128,13 +145,19 @@ class AttendanceController extends Controller
             dd('Error: ' . $responseCurrentYear->status());
         }
 
+        // biar tnaggal ngga ada 0nya
+        $yesterdayFormatted = $yesterday->format('Y-m-j');
+
+
         // Cek apakah kemarin adalah tanggal merah
         $isYesterdayLT = false;
         foreach ($dataCurrentYear as $holiday) {
-            if ($holiday['holiday_date'] === $yesterday->toDateString() && $holiday['is_national_holiday']) {
+            if ($holiday['holiday_date'] == $yesterdayFormatted && $holiday['is_national_holiday']) {
                 $isYesterdayLT = true;
             }
         }
+
+        // dd($dataCurrentYear);
 
         foreach ($siswas as $siswa) {
             $penempatan = PenempatanIndustri::with('industri.libur')->where('siswa_id', $siswa->id)->first();
@@ -158,12 +181,13 @@ class AttendanceController extends Controller
                 $tanggalAwal = strtr($penempatan->industri->tanggal_awal, $months);
                 $tanggalAkhir = strtr($penempatan->industri->tanggal_akhir, $months);
 
-                $tanggalAwal = Carbon::createFromFormat('j F Y', $tanggalAwal);
-                $tanggalAkhir = Carbon::createFromFormat('j F Y', $tanggalAkhir);
+                $tanggalAwal = Carbon::createFromFormat('j F Y', $tanggalAwal)->subDay();
+                $tanggalAkhir = Carbon::createFromFormat('j F Y', $tanggalAkhir)->addDay();
+
 
                 // Cek apakah kemarin di antara atau sama dengan tanggalAwal dan tanggalAkhir
                 if ($yesterday->isBetween($tanggalAwal, $tanggalAkhir, null, '[]')) { // '[]' berarti inklusif
-      
+
                     $libur = $penempatan->industri->libur ?? [];
 
                     // Cek apakah kemarin hari libur
@@ -192,11 +216,9 @@ class AttendanceController extends Controller
                     Attendance::create([
                         'date' => $yesterday->toDateString(),
                         'status' => $status,
-                        'siswa_id' => $siswa->id, // Pastikan untuk mengaitkan dengan siswa
+                        'siswa_id' => $siswa->id, 
                     ]);
-
                 }
- 
             }
         }
         return response()->json('ok');

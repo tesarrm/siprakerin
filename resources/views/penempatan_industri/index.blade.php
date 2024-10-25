@@ -119,6 +119,26 @@
             <div class="tab-content show">
 
                 <div x-data="dataList">
+
+                    <div class="px-5">
+                        <div class="md:absolute ltr:md:left-5 rtl:md:right-5">
+                            <div class="flex items-center gap-2 mb-5">
+
+                                <div class="" style="width: 225px">
+                                    <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
+                                        <option value="">Pilih Kota</option>
+                                        @foreach($kota as $item)
+                                            <option value="{{ $item->nama}}">
+                                                {{ $item->nama}}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="invoice-table">
                         <table id="myTable" class="whitespace-nowrap">
                             <thead>
@@ -172,6 +192,28 @@
                 @endif
 
                 <div x-data="siswa">
+
+                    @if(!auth()->user()->can('r_dashwalikelas'))
+                    <div class="px-5">
+                        <div class="md:absolute ltr:md:left-5 rtl:md:right-5">
+                            <div class="flex items-center gap-2 mb-5">
+
+                                <div class="" style="width: 225px">
+                                    <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
+                                        <option value="">Pilih Kelas</option>
+                                        @foreach($kelas as $item)
+                                            <option value="{{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}">
+                                                {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
                     <div class="invoice-table">
                         <table id="table_siswa" class="whitespace-nowrap"></table>
                     </div>
@@ -223,7 +265,7 @@
                 'nis' => $d->siswa->nis ?? '-',
                 'nama' => $d->siswa->nama ?? '-',
                 'jenis_kelamin' => $d->siswa->jenis_kelamin ?? '-',
-                'kelas' => $d->siswa->kelas->nama ?? '-' . " " . $d->siswa->kelas->jurusan->singkatan ?? '-' . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                 'tahun_ajaran' => $d->tahun_ajaran ?? "-",
                 'industri' => $d->industri->nama ?? '-',
                 'kota' => $d->industri->kota->nama ?? '-',
@@ -274,6 +316,7 @@
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',
+                selectedKelas: '', // Tambahkan untuk pilihan kelas
                 datatable: null,
                 dataArr: [],
 
@@ -302,7 +345,7 @@
                         columns: [
             
                             {
-                                select: this.dataArr[0].length - 1,
+                                select: @json($jurusanLakiLaki).length + @json($jurusanPerempuan).length + 6,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const rowId = `row-${data}`; 
@@ -365,15 +408,46 @@
                 },
 
                 setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
+                    // this.dataArr = [];
+                    // for (let i = 0; i < this.items.length; i++) {
+                    //     this.dataArr[i] = [];
+                    //     for (let p in this.items[i]) {
+                    //         if (this.items[i].hasOwnProperty(p)) {
+                    //             this.dataArr[i].push(this.items[i][p]);
+                    //         }
+                    //     }
+                    // }
+
+                    this.dataArr = this.items
+                        .filter(item => {
+                            // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                            return this.selectedKelas === '' || item.kota === this.selectedKelas;
+                        })
+                        .map(item => {
+                            return Object.values(item); // Mengonversi setiap item ke array data
+                        });
+                },
+
+                refreshTable() {
+                    this.datatable.destroy();
+                    this.setTableData();
+                    this.initializeTable();
+                },
+
+                updateTableHeader() {
+                    const thead = document.querySelector('#myTable thead');
+                    const rows = Array.from(thead.querySelectorAll('tr'));
+
+                    if (rows.length === 3) {
+                        // Swap rows as needed
+                        thead.appendChild(rows[0]); // Move first row to the end
+                        thead.insertBefore(rows[1], rows[0]); // Move last row before the new first row
                     }
+                },
+
+                filterByKelas() {
+                    this.refreshTable(); 
+                    this.updateTableHeader();
                 },
 
                 searchInvoice() {
@@ -386,8 +460,6 @@
                         (d.status && d.status.toLowerCase().includes(this.searchText))
                     );
                 },
-
-
             }))
         })
 
@@ -402,6 +474,7 @@
                 items: @json($dSiswa),
                 searchText: '',
                 datatable: null,
+                selectedKelas: '', // Tambahkan untuk pilihan kelas
                 dataArr: [],
 
                 init() {
@@ -497,27 +570,46 @@
                 },
 
                 setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
-                    }
+                    // this.dataArr = [];
+                    // for (let i = 0; i < this.items.length; i++) {
+                    //     this.dataArr[i] = [];
+                    //     for (let p in this.items[i]) {
+                    //         if (this.items[i].hasOwnProperty(p)) {
+                    //             this.dataArr[i].push(this.items[i][p]);
+                    //         }
+                    //     }
+                    // }
+                    this.dataArr = this.items
+                        .filter(item => {
+                            // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                            return this.selectedKelas === '' || item.kelas === this.selectedKelas;
+                        })
+                        .map(item => {
+                            return Object.values(item); // Mengonversi setiap item ke array data
+                        });
+                },
+
+                refreshTable() {
+                    this.datatable.destroy();
+                    this.setTableData();
+                    this.initializeTable();
+                },
+
+                filterByKelas() {
+                    this.refreshTable(); 
                 },
 
                 searchInvoice() {
                     return this.items.filter((d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
-                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
+                        (d.nama && d.nama.toLowerCase().includes(this.searchText)) ||
+                        (d.alamat && d.alamat.toLowerCase().includes(this.searchText)) ||
+                        (d.kota && d.kota.toLowerCase().includes(this.searchText)) ||
+                        (d.total_kuota && d.total_kuota.toLowerCase().includes(this.searchText)) ||
+                        (d.terisi && d.terisi.toLowerCase().includes(this.searchText)) ||
                         (d.status && d.status.toLowerCase().includes(this.searchText))
                     );
                 },
+
             }))
         })
     </script>

@@ -26,7 +26,21 @@ class GuruExport implements FromQuery, WithMapping, WithHeadings, WithStyles
     {
         return [
             $guru->nip,
-            $guru->nama_guru,
+            $guru->no_ktp,
+            $guru->nama,
+            $guru->user->email,
+            $guru->tempat_lahir,
+            $guru->tanggal_lahir,
+            $guru->jenis_kelamin,
+            $guru->golongan_darah,
+            $guru->kecamatan,
+            $guru->alamat,
+            $guru->rt,
+            $guru->rw,
+            $guru->kode_pos,
+            $guru->no_telp,
+            $guru->no_hp,
+            $guru->agama,
         ];
     }
 
@@ -34,7 +48,21 @@ class GuruExport implements FromQuery, WithMapping, WithHeadings, WithStyles
     {
         return [
             'NIP',
-            'Nama'
+            'NO_KTP',
+            'NAMA',
+            'EMAIL',
+            'TEMPAT_LAHIR',
+            'TANGGAL_LAHIR',
+            'JENIS_KELAMIN',
+            'GOLONGAN_DARAH',
+            'KECAMATAN',
+            'ALAMAT',
+            'RT',
+            'RW',
+            'KODE_POST',
+            'NO_TELP',
+            'NO_HP',
+            'AGAMA',
         ];
     }
 
@@ -48,7 +76,8 @@ class GuruExport implements FromQuery, WithMapping, WithHeadings, WithStyles
     {
         return [
             // Styling the first row as a header row
-            1 => ['font' => ['bold' => true, 'size' => 12]],
+            // 1 => ['font' => ['bold' => true, 'size' => 12]],
+            1 => ['font' => ['bold' => true]],
         ];
     }
 }

@@ -50,14 +50,14 @@ class DatabaseSeeder extends Seeder
         \App\Models\Pengaturan::factory()->count(1)->create();
         \App\Models\Ortu::factory()->count(5)->create();
 
-        \App\Models\Guru::factory()->count(3)->create();
+        \App\Models\Guru::factory()->count(24)->create();
         \App\Models\BidangKeahlian::factory()->count(3)->create();
-        \App\Models\Jurusan::factory()->count(3)->create();
-        \App\Models\Kelas::factory()->count(3)->create();
+        \App\Models\Jurusan::factory()->count(10)->create();
+        \App\Models\Kelas::factory()->count(24)->create();
         \App\Models\Kota::factory()->count(5)->create();
         \App\Models\Industri::factory()->count(5)->create();
         // siswa dan pilihan kota
-        \App\Models\PilihanKota::factory()->count(5)->create();
+        \App\Models\PilihanKota::factory()->count(200)->create();
 
         // Buat data kuota industri
         $industris = Industri::all();
@@ -79,7 +79,10 @@ class DatabaseSeeder extends Seeder
         }
 
         \App\Models\Monitoring::factory()->count(3)->create();
-        \App\Models\Jurnal::factory()->count(5)->create();
+        \App\Models\Jurnal::factory()->count(3)->create();
+
+
+        
         // \App\Models\KuotaIndustri::factory()->create();
 
     }

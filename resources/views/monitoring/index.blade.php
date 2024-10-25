@@ -35,76 +35,25 @@
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                             Tambah </a>
-                        {{-- menu dropdown --}}
-                        <div class="relative inline-flex align-middle flex-col items-start justify-center">
-                            <div class="relative">
-                                <div x-data="dropdown" @click.outside="open = false" class="dropdown">
-                                    <button type="button" class="btn dropdown-toggle btn-outline-dark"
-                                        @click="toggle">Menu
-
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="w-4 h-4 ltr:ml-2 rtl:mr-2 inline-block shrink-0">
-                                            <path d="M19 9L12 15L5 9" stroke="currentColor" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </button>
-                                    <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
-                                        class="ltr:right-0 rtl:left-0 whitespace-nowrap">
-                                        <li><a href="javascript:;" @click="$dispatch('open-modal')">Import</a></li>
-                                        <li><a href="/guru-export" @click="toggle">Export</a></li>
-                                    </ul>
-                                </div>
-                            </div>
+                        <div class="" style="width: 150px">
+                            <select id="filterGuru" x-model="selectedGuru" @change="filterByGuru" class="form-input">
+                                <option value="">Pilih Guru</option>
+                                @foreach($guru as $item)
+                                    <option value="{{ $item->nama }}">
+                                        {{ $item->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
-                        {{-- isi modal --}}
-                        <div x-data="modal" @open-modal.window="toggle">
-                            <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
-                                <div class="flex items-start justify-center min-h-screen px-4" @click.self="open = false">
-                                    <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden  w-full max-w-sm my-8">
-                                        <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
-                                            <h5 class="font-bold text-lg">Impor Excel</h5>
-                                            <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none"
-                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="w-6 h-6">
-                                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                                </svg>
-                                            </button>
-                                        </div>
-                                        <div class="p-5">
-                                            <form action="/guru-import" method="POST" enctype="multipart/form-data">
-                                                @csrf
-                                                <div>
-                                                    <label for="ctnFile">Unduh Template</label>
-                                                    <button type="button" class="btn btn-danger">
-                                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                                            <path opacity="0.5"
-                                                                d="M3 15C3 17.8284 3 19.2426 3.87868 20.1213C4.75736 21 6.17157 21 9 21H15C17.8284 21 19.2426 21 20.1213 20.1213C21 19.2426 21 17.8284 21 15"
-                                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                                stroke-linejoin="round"></path>
-                                                            <path d="M12 3V16M12 16L16 11.625M12 16L8 11.625" stroke="currentColor"
-                                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
-                                                        </svg>
-                                                        &nbsp;&nbsp;Excel
-                                                    </button>
-                                                    <span class="text-white-dark text-xs">Jangan ubah bagian header!</span>
-                                                </div>
-                                                <div class="mt-6">
-                                                    <label for="ctnFile">Impor Excel</label>
-                                                    <input id="ctnFile" type="file" name="excel" class="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary" required />
-                                                </div>
-                                                <div class="flex justify-end items-center mt-8">
-                                                    <button type="button" class="btn btn-outline-danger" @click="toggle">Discard</button>
-                                                    <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4" @click="toggle">Impor</button>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="" style="width: 150px">
+                            <select id="filterIndustri" x-model="selectedIndustri" @change="filterByIndustri" class="form-input">
+                                <option value="">Pilih Industri</option>
+                                @foreach($industri as $item)
+                                    <option value="{{ $item->nama }}">
+                                        {{ $item->nama }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -161,6 +110,8 @@
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',
+                selectedIndustri: '',
+                selectedGuru: '',
                 datatable: null,
                 dataArr: [],
 
@@ -168,14 +119,10 @@
                     this.setTableData();
                     this.initializeTable();
                     this.$watch('items', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
+                        this.refreshTable();
                     });
                     this.$watch('selectedRows', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
+                        this.refreshTable();
                     });
                 },
 
@@ -191,7 +138,7 @@
                             ],
                             data: this.dataArr
                         },
-                        perPage: 10,
+                        perPage: this.perPage || 10,
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
@@ -265,6 +212,8 @@
                             bottom: "{info}{select}{pager}",
                         },
                     });
+
+                    this.perPage = this.datatable.options.perPage;
                 },
 
                 checkAllCheckbox() {
@@ -286,25 +235,52 @@
                 },
 
                 setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
-                    }
+                    // this.dataArr = [];
+                    // for (let i = 0; i < this.items.length; i++) {
+                    //     this.dataArr[i] = [];
+                    //     for (let p in this.items[i]) {
+                    //         if (this.items[i].hasOwnProperty(p)) {
+                    //             this.dataArr[i].push(this.items[i][p]);
+                    //         }
+                    //     }
+                    // }
+                    this.dataArr = this.items
+                        .filter(item => {
+                            // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                            const guruMatch = this.selectedGuru === '' || item.nama_guru === this.selectedGuru;
+
+                            // Jika selectedIndustri tidak kosong, hanya tampilkan yang sesuai
+                            const industriMatch = this.selectedIndustri === '' || item.nama_industri === this.selectedIndustri;
+
+                            // Kembalikan true jika keduanya cocok
+                            return guruMatch && industriMatch;
+                        })
+                        .map(item => {
+                            return Object.values(item); // Mengonversi setiap item ke array data
+                        });
+                },
+
+                refreshTable() {
+                    this.perPage = this.datatable.options.perPageSelect.find(select => select == this.datatable.options.perPage) || 10; 
+
+                    this.datatable.destroy();
+                    this.setTableData();
+                    this.initializeTable();
+                },
+
+                filterByGuru() {
+                    this.refreshTable(); 
+                },
+
+                filterByIndustri() {
+                    this.refreshTable(); 
                 },
 
                 searchInvoice() {
                     return this.items.filter((d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
-                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
-                        (d.status && d.status.toLowerCase().includes(this.searchText))
+                        (d.nama_guru && d.nama_guru.toLowerCase().includes(this.searchText)) ||
+                        (d.nama_industri && d.nama_industri.toLowerCase().includes(this.searchText)) ||
+                        (d.tanggal && d.tanggal.toLowerCase().includes(this.searchText))
                     );
                 },
 

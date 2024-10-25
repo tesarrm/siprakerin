@@ -395,6 +395,57 @@ class AuthSeeder extends Seeder
             ['name' => 'd_hasil_monitoring'],
             ['name' => 'd_hasil_monitoring']
         );
+// user 
+        $permission_c_user = Permission::updateOrCreate(
+            ['name' => 'c_user'],
+            ['name' => 'c_user']
+        );
+        $permission_r_user = Permission::updateOrCreate(
+            ['name' => 'r_user'],
+            ['name' => 'r_user']
+        );
+        $permission_u_user = Permission::updateOrCreate(
+            ['name' => 'u_user'],
+            ['name' => 'u_user']
+        );
+        $permission_d_user = Permission::updateOrCreate(
+            ['name' => 'd_user'],
+            ['name' => 'd_user']
+        );
+// guru industri 
+        $permission_c_guru_industri = Permission::updateOrCreate(
+            ['name' => 'c_guru_industri'],
+            ['name' => 'c_guru_industri']
+        );
+        $permission_r_guru_industri = Permission::updateOrCreate(
+            ['name' => 'r_guru_industri'],
+            ['name' => 'r_guru_industri']
+        );
+        $permission_u_guru_industri = Permission::updateOrCreate(
+            ['name' => 'u_guru_industri'],
+            ['name' => 'u_guru_industri']
+        );
+        $permission_d_guru_industri = Permission::updateOrCreate(
+            ['name' => 'd_guru_industri'],
+            ['name' => 'd_guru_industri']
+        );
+// pengaturan 
+        $permission_c_pengaturan = Permission::updateOrCreate(
+            ['name' => 'c_pengaturan'],
+            ['name' => 'c_pengaturan']
+        );
+        $permission_r_pengaturan = Permission::updateOrCreate(
+            ['name' => 'r_pengaturan'],
+            ['name' => 'r_pengaturan']
+        );
+        $permission_u_pengaturan = Permission::updateOrCreate(
+            ['name' => 'u_pengaturan'],
+            ['name' => 'u_pengaturan']
+        );
+        $permission_d_pengaturan = Permission::updateOrCreate(
+            ['name' => 'd_pengaturan'],
+            ['name' => 'd_pengaturan']
+        );
 
 // =================================================================
 // =================================================================
@@ -495,6 +546,21 @@ class AuthSeeder extends Seeder
         $role_admin->givePermissionTo($permission_u_hasil_monitoring);
         $role_admin->givePermissionTo($permission_d_hasil_monitoring);
 
+        $role_admin->givePermissionTo($permission_c_user);
+        $role_admin->givePermissionTo($permission_r_user);
+        $role_admin->givePermissionTo($permission_u_user);
+        $role_admin->givePermissionTo($permission_d_user);
+
+        $role_admin->givePermissionTo($permission_c_guru_industri);
+        $role_admin->givePermissionTo($permission_r_guru_industri);
+        $role_admin->givePermissionTo($permission_u_guru_industri);
+        $role_admin->givePermissionTo($permission_d_guru_industri);
+
+        $role_admin->givePermissionTo($permission_c_pengaturan);
+        $role_admin->givePermissionTo($permission_r_pengaturan);
+        $role_admin->givePermissionTo($permission_u_pengaturan);
+        $role_admin->givePermissionTo($permission_d_pengaturan);
+
 // koordinator 
         $role_koordinator->givePermissionTo($permission_c_penempatan_industri);
         $role_koordinator->givePermissionTo($permission_r_penempatan_industri);
@@ -521,6 +587,8 @@ class AuthSeeder extends Seeder
         $role_koordinator->givePermissionTo($permission_u_jadwal_monitoring);
         $role_koordinator->givePermissionTo($permission_d_jadwal_monitoring);
 
+        $role_koordinator->givePermissionTo($permission_r_hasil_monitoring);
+
         $role_koordinator->givePermissionTo($permission_r_jurnal);
 
 // pembimbing 
@@ -541,10 +609,20 @@ class AuthSeeder extends Seeder
 
         $role_pembimbing->givePermissionTo($permission_r_jurnal);
 
+        $role_pembimbing->givePermissionTo($permission_r_pkl);
+
 // wali kelas 
         $role_wali_kelas->givePermissionTo($permission_r_penempatan_industri);
 
         $role_wali_kelas->givePermissionTo($permission_r_jurnal);
+
+        $role_wali_kelas->givePermissionTo($permission_r_pelanggaran);
+
+        $role_wali_kelas->givePermissionTo($permission_r_pkl);
+
+        $role_wali_kelas->givePermissionTo($permission_r_nilai);
+
+        $role_wali_kelas->givePermissionTo($permission_r_hasil_monitoring);
 
 // guru
         $role_guru->givePermissionTo($permission_r_jurnal);
@@ -568,7 +646,6 @@ class AuthSeeder extends Seeder
         $role_siswa->givePermissionTo($permission_c_jurnal);
         $role_siswa->givePermissionTo($permission_r_jurnal);
         $role_siswa->givePermissionTo($permission_u_jurnal);
-        $role_siswa->givePermissionTo($permission_d_jurnal);
 
         $role_siswa->givePermissionTo($permission_r_hasil_monitoring);
 

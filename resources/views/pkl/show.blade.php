@@ -25,43 +25,43 @@
                             <li class="border-b pb-2">
                                 <div class="flex justify-between">
                                     <div class="w-full">NIS</div>
-                                    <div class="w-full items-end text-end">{{$siswa->nis}}</div>
+                                    <div class="w-full items-end text-end">{{$siswa->nis ?? '-'}}</div>
                                 </div>
                             </li>
                             <li class="border-b pb-2">
                                 <div class="flex justify-between">
                                     <div class="w-full">Jenis Kelamin</div>
-                                    <div class="w-full items-end text-end">{{$siswa->jenis_kelamin}}</div>
+                                    <div class="w-full items-end text-end">{{$siswa->jenis_kelamin ?? '-'}}</div>
                                 </div>
                             </li>
                             <li class="border-b pb-2">
                                 <div class="flex justify-between">
                                     <div class="w-full">Kelas</div>
-                                    <div class="w-full items-end text-end">{{$siswa->kelas->nama . " " . $siswa->kelas->jurusan->singkatan . " " . $siswa->kelas->klasifikasi}}</div>
+                                    <div class="w-full items-end text-end">{{$siswa->kelas->nama . " " . $siswa->kelas->jurusan->singkatan . " " . $siswa->kelas->klasifikasi ?? '-'}}</div>
                                 </div>
                             </li>
                             <li class="border-b pb-2">
                                 <div class="flex justify-between">
                                     <div class="w-full">Tahun Ajaran</div>
-                                    <div class="w-full items-end text-end">{{$siswa->kelas->tahun_ajaran}}</div>
+                                    <div class="w-full items-end text-end">{{$siswa->kelas->tahun_ajaran ?? '-'}}</div>
                                 </div>
                             </li>
                             <li class="border-b pb-2">
                                 <div class="flex justify-between">
                                     <div class="w-full">Email</div>
-                                    <div class="w-full items-end text-end">{{$siswa->user->email}}</div>
+                                    <div class="w-full items-end text-end">{{$siswa->user->email ?? '-'}}</div>
                                 </div>
                             </li>
                             <li class="border-b pb-2">
                                 <div class="flex justify-between">
                                     <div class="w-full">No Telp</div>
-                                    <div class="w-full items-end text-end">{{$siswa->no_telp}}</div>
+                                    <div class="w-full items-end text-end">{{$siswa->no_telp ?? '-'}}</div>
                                 </div>
                             </li>
                             <li class="border-b pb-2">
                                 <div class="flex justify-between">
                                     <div class="w-full">Industri</div>
-                                    <div class="w-full items-end text-end">{{$siswa->penempatan->industri->nama}}</div>
+                                    <div class="w-full items-end text-end">{{$siswa->penempatan->industri->nama ?? '-'}}</div>
                                 </div>
                             </li>
                         </ul>
@@ -318,6 +318,11 @@
         let calendar;
 
         document.addEventListener('DOMContentLoaded', function() {
+
+            // Ambil id dari URL
+            var pathArray = window.location.pathname.split('/');
+            var id = pathArray[pathArray.length - 1]; // Ambil bagian terakhir dari URL (id)
+
             var calendarEl = document.getElementById('calendar');
 
             calendar = new FullCalendar.Calendar(calendarEl, {
@@ -325,7 +330,7 @@
                 height: 400,
                 events: function(fetchInfo, successCallback, failureCallback) {
                     // Ambil data dari endpoint backend (Laravel)
-                    fetch('/attendance-data')
+                    fetch(`/attendance-data?id=${id}`)
                         .then(response => response.json())
                         .then(data => {
                             // Map data ke format FullCalendar

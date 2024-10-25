@@ -18,7 +18,7 @@ class KotaController extends Controller
      */
     public function index()
     {
-        $data = $this->bModel->get();
+        $data = Kota::get();
 
         return view('kota.index', [
             'data' => $data

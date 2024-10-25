@@ -17,6 +17,10 @@
             left: 0;
             text-align: right;
         }
+
+        #myTable td {
+            vertical-align: top;
+        }
     </style>
 
     <div x-data="dataList">
@@ -183,12 +187,8 @@
 
                 searchInvoice() {
                     return this.items.filter((d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
-                        (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
-                        (d.status && d.status.toLowerCase().includes(this.searchText))
+                        (d.nama && d.nama.toLowerCase().includes(this.searchText)) ||
+                        (d.bidang_keahlian && d.bidang_keahlian.toLowerCase().includes(this.searchText))
                     );
                 },
 

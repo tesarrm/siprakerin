@@ -58,6 +58,10 @@
     </div>
 
     <script>
+        localStorage.clear();
+    </script>
+
+    <script>
         document.addEventListener("alpine:init", () => {
             Alpine.data("scrollToTop", () => ({
                 showTopButton: false,

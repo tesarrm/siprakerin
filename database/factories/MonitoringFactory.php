@@ -21,7 +21,7 @@ class MonitoringFactory extends Factory
         return [
             'guru_id' => Guru::inRandomOrder()->first()->id,
             'industri_id' => Industri::inRandomOrder()->first()->id,
-            'tanggal' => $this->faker->date(), 
+            'tanggal' => '24 Oktober 2024', 
         ];
     }
 }

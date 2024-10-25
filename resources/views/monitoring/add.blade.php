@@ -11,23 +11,33 @@
         <form action="{{ url('monitoring') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="flex xl:flex-row flex-col gap-2.5">
-                <div class="panel xl:w-[600px] px-0 w-full xl:mt-0 mt-6">
+                <div x-data="industriesData()" class="panel xl:w-[600px] px-0 w-full xl:mt-0 mt-6">
                     <div class="px-4">
                         <div class="text-lg font-semibold mb-4">Data Jadwal Monitoring</div>
                         <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label for="guru_id">Guru<span class="text-danger">*</span></label>
-                                <select required id="guru_id" name="guru_id" class="form-select w-full">
-                                    <option value="">Pilih Guru</option>
-                                    @foreach($guru as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                    @endforeach
-                                </select>
-                                @error('guru_id')
-                                    <div class="mt-2 text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div>
+        <!-- Industri Dropdown -->
+        <div>
+            <label for="industri_id">Industri<span class="text-danger">*</span></label>
+            <select required id="industri_id" name="industri_id" class="form-select w-full" x-model="selectedIndustri" @change="updateGuru">
+                <option value="">Pilih Industri</option>
+                @foreach($industri as $item)
+                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                @endforeach
+            </select>
+            @error('industri_id')
+                <div class="mt-2 text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <!-- Guru Input (Auto Filled) -->
+        <div>
+            <label for="guru">Guru<span class="text-danger">*</span></label>
+            <input required id="guru" type="text" name="guru" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" placeholder="Guru Pembimbing" x-model="guruName" readonly/>
+            @error('guru')
+                <div class="mt-2 text-danger">{{ $message }}</div>
+            @enderror
+        </div>
+                            {{-- <div>
                                 <label for="industri_id">Industri<span class="text-danger">*</span></label>
                                 <select required id="industri_id" name="industri_id" class="form-select w-full">
                                     <option value="">Pilih Industri</option>
@@ -39,6 +49,18 @@
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
+                            <div>
+                                <label for="guru_id">Guru<span class="text-danger">*</span></label>
+                                <select required id="guru_id" name="guru_id" class="form-select w-full">
+                                    <option value="">Pilih Guru</option>
+                                    @foreach($guru as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('guru_id')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div> --}}
                             <div>
                                 <label for="tanggal">Tanggal<span class="text-danger">*</span></label>
                                 <div x-data="tanggal">
@@ -113,4 +135,27 @@
             }));
         });
     </script>
+
+<script>
+    function industriesData() {
+        return {
+            selectedIndustri: '', // Menyimpan ID industri yang dipilih
+            guruName: '', // Guru yang akan diisi otomatis
+
+            // Data industri dengan guru terkait (diambil dari backend Laravel)
+            industries: @json($industri),
+
+            // Fungsi untuk mengupdate nama guru berdasarkan industri yang dipilih
+            updateGuru() {
+                const selectedIndustri = this.industries.find(item => item.id == this.selectedIndustri);
+                if (selectedIndustri && selectedIndustri.gurus.length > 0) {
+                    this.guruName = selectedIndustri.gurus[0].nama; // Isi guru dengan guru pertama yang terkait
+                } else {
+                    this.guruName = ''; // Kosongkan jika tidak ada guru
+                }
+            }
+        }
+    }
+</script>
+
 </x-layout.default>

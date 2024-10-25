@@ -35,21 +35,25 @@ class PenempatanIndustriController extends Controller
             $kelas = Kelas::where('guru_id', $guru->id)->first();
 
             // Filter jurnal berdasarkan kelas
-            $penempatan = PenempatanIndustri::whereHas('siswa.kelas', function ($query) use ($kelas) {
+            $penempatan = PenempatanIndustri::whereHas('siswa.kelas.jurusan', function ($query) use ($kelas) {
                 $query->where('kelas.id', $kelas->id);
             })->with(['siswa.kelas', 'industri.kota'])->get();
         } else {
-            $penempatan = PenempatanIndustri::with(['siswa.kelas', 'industri.kota'])->get();
+            $penempatan = PenempatanIndustri::with(['siswa.kelas.jurusan', 'industri.kota'])->get();
         }
         $data = Industri::where('aktif', 1)->with(['kuotaIndustri', 'kuotaIndustri.jurusan'])
             ->withCount(['penempatanIndustri as total_terisi' => function($query) {
                 $query->select(DB::raw('count(*)'));
             }])->get();
 
-
         $jurusan = Jurusan::get();
+        $kota = Kota::get();
+        $kelas = Kelas::with('jurusan')->get();
+
         return view('penempatan_industri.index', [
             'data' => $data,
+            'kelas' => $kelas,
+            'kota' => $kota,
             'jurusan' => $jurusan,
             'penempatan' => $penempatan,
         ]);
@@ -124,7 +128,7 @@ class PenempatanIndustriController extends Controller
         $kota_id = $industri->kota->id;
 
         // // Filter siswa berdasarkan pilihan_kotas yang kota_id_1, kota_id_2, atau kota_id_3 cocok dengan kota_id industri
-        $siswa = Siswa::with(['kelas.jurusan', 'pilihankota.kota1', 'pilihankota.kota2', 'pilihankota.kota3'])
+        $siswa = Siswa::with(['kelas.jurusan', 'pilihankota.kota1', 'pilihankota.kota2', 'pilihankota.kota3', 'penempatan'])
             ->whereHas('pilihankota', function ($query) use ($kota_id) {
                 $query->where('kota_id_1', $kota_id)
                     ->orWhere('kota_id_2', $kota_id)
@@ -142,7 +146,8 @@ class PenempatanIndustriController extends Controller
         //     ->with('kelas.jurusan')
         //     ->get();
         $siswaTerfilter = Siswa::whereIn('id', $siswaIds)
-                            ->with(['penempatan', 'kelas.jurusan', 'pilihankota.kota1', 'pilihankota.kota2', 'pilihankota.kota3'])->get();
+                            ->with(['penempatan', 'kelas.jurusan', 'pilihankota.kota1', 'pilihankota.kota2', 'pilihankota.kota3'])
+                            ->get();
 
         return view('penempatan_industri.edit', compact([
             'penempatan', 
@@ -174,16 +179,16 @@ class PenempatanIndustriController extends Controller
     public function storeOrUpdate(Request $request){
         $validated = $request->validate([
             'industri_id' => 'required|string',
-            'data.*.id_siswa' => 'required|string',
-            'pilihan' => 'required|string',
-            'tahun_ajaran' => 'required|string',
+            'data.*.id_siswa' => 'nullable|string',
+            'pilihan' => 'nullable|string',
+            'tahun_ajaran' => 'nullable|string',
         ]);
 
         $industri_id = $validated['industri_id'];
-        $tahun_ajaran = $validated['tahun_ajaran'];
+        // $tahun_ajaran = $validated['tahun_ajaran'];
 
         PenempatanIndustri::where('industri_id', $industri_id)
-                    ->where('tahun_ajaran', $tahun_ajaran)
+                    // ->where('tahun_ajaran', $tahun_ajaran)
                     ->delete();
 
         if(isset($validated['data'])) {

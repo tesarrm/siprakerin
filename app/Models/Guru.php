@@ -38,4 +38,8 @@ class Guru extends Model
     {
         return $this->hasOne(Kelas::class);
     }
+    public function industris()
+    {
+        return $this->belongsToMany(Industri::class, 'guru_industri');
+    }
 }

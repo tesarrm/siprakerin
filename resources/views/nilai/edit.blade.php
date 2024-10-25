@@ -142,7 +142,7 @@
                         siswa_id: penempatan.siswa.id,
                         nama: penempatan.siswa.nama,
                         jenis_kelamin: penempatan.siswa.jenis_kelamin,
-                        kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan,
+                        kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan + " " + penempatan.siswa.kelas.klasifikasi,
                         jurusan: penempatan.siswa.kelas.jurusan.nama,
                         capaian: penempatan.capaian ? penempatan.capaian : '',
                     }

@@ -20,80 +20,45 @@
                                     </div>
                                 </div>
                                 {{-- <div class="mt-4 flex items-center">
-                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama Guru<span class="text-danger">*</span></label>
+                                    <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Penilaian Ke-2<span class="text-danger">*</span></label>
                                     <div class="flex-1">
-                                        <input required id="reciever-name" type="text" name="nama_guru" class="form-input w-full"
-                                            placeholder="Isi Nama Guru" />
-                                        @error('nama_guru')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="flex items-center mt-4">
-                                    <label for="jenis_kelamin" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Jenis Kelamin<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="jenis_kelamin" name="jenis_kelamin" class="form-select w-full">
-                                            <option value="">Pilih Jenis Kelamin</option>
-                                            <option value="Laki-laki">Laki-laki</option>
-                                            <option value="Perempuan">Perempuan</option>
-                                        </select>
-                                        @error('jenis_kelamin')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div> 
-                                <div class="flex items-center mt-4">
-                                    <label for="peran" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Peran<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <select required id="peran" name="peran" class="form-select w-full">
-                                            <option value="">Pilih Peran</option>
-                                            <option value="Admin">Admin</option>
-                                        </select>
-                                        @error('peran')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div> 
-                                <div class="flex items-center mt-4">
-                                    <label for="wali_kelas" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Wali Kelas</label>
-                                    <div class="flex-1">
-                                        <select id="wali_kelas" name="wali_kelas" class="form-select w-full">
-                                            <option value="">Pilih Kelas</option>
-                                            <option value="United States">Laki-Laki</option>
-                                            <option value="United Kingdom">Perempuan</option>
-                                        </select>
-                                        @error('wali_kelas')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>  --}}
-                            </div>
-                            <div class="lg:w-1/2 w-full">
-                                {{-- <div class="flex items-center mt-11">
-                                    <label for="acno" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Username<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input required id="acno" type="text" name="username" class="form-input w-full"
-                                            placeholder="Isi Username" />
-                                        @error('username')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
-                                    </div>
-                                </div>
-                                <div class="flex items-center mt-4">
-                                    <label for="bank-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Password<span class="text-danger">*</span></label>
-                                    <input required id="bank-name" type="password" name="password" class="form-input flex-1"
-                                        placeholder="Isi Password" />
-                                </div>
-                                <div class="flex items-center mt-4">
-                                    <label for="swift-code" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Konfirmasi Password<span class="text-danger">*</span></label>
-                                    <div class="flex-1">
-                                        <input required id="swift-code" type="password" name="konfirmasi_password" class="form-input w-full"
-                                            placeholder="Isi Konfirmasi Password" />
-                                        @error('password')
-                                            <div class="mt-2 text-danger">{{ $message }}</div>
-                                        @enderror
+                                        <label class="w-12 h-6 relative">
+                                            <input type="checkbox" class="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="custom_switch_checkbox4" />
+                                            <span for="custom_switch_checkbox4" class="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                        </label>
                                     </div>
                                 </div> --}}
+                                {{-- <div class="mt-4 flex items-center">
+                                    <label for="penilaian-ke-2" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Penilaian Ke-2<span class="text-danger">*</span></label>
+                                    <div class="flex-1">
+                                        <!-- Hidden input untuk mengirim nilai "off" jika checkbox tidak dicentang -->
+                                        <input type="hidden" name="penilaian_2" value="off">
+                                        <label class="w-12 h-6 relative">
+                                            <input type="checkbox" class="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="custom_switch_checkbox4" name="penilaian_ke_2" value="on" />
+                                            <span for="custom_switch_checkbox4" class="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                        </label>
+                                    </div>
+                                </div> --}}
+
+                        <div class="mt-4 flex items-center">
+                            <label for="penilaian-ke-2" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Penilaian Ke-2<span class="text-danger">*</span></label>
+                            <div class="flex-1">
+                                <!-- Hidden input untuk mengirim nilai "off" jika checkbox tidak dicentang -->
+                                <input type="hidden" name="penilaian_2" value="off">
+
+                                <label class="w-12 h-6 relative">
+                                    <!-- Checkbox switcher -->
+                                    <input type="checkbox" class="custom_switch absolute w-full h-full opacity-0 z-10 cursor-pointer peer" id="custom_switch_checkbox4" name="penilaian_2" value="on"
+                                    {{ $data->penilaian_2 == 'on' ? 'checked' : '' }} />
+                                    
+                                    <span for="custom_switch_checkbox4" class="bg-[#ebedf2] dark:bg-dark block h-full rounded-full before:absolute before:left-1 before:bg-white dark:before:bg-white-dark dark:peer-checked:before:bg-white before:bottom-1 before:w-4 before:h-4 before:rounded-full peer-checked:before:left-7 peer-checked:bg-primary before:transition-all before:duration-300"></span>
+                                </label>
+                            </div>
+                        </div>
+                            
+                            </div>
+                            <div class="lg:w-1/2 w-full">
+                           
                             </div>
                         </div>
                     </div>

@@ -15,4 +15,9 @@ class Nilai extends Model
         'nilai',
         'urutan'
     ];
+
+    public function siswa()
+    {
+        return $this->belongsTo(Siswa::class);
+    }
 }

@@ -27,6 +27,9 @@ class MonitoringController extends Controller
     {
         $data = Monitoring::with(['guru', 'industri'])->get();
 
+        $guru = Guru::where('aktif', 1)->get();
+        $industri = Industri::where('aktif', 1)->get();
+
         // $guru = Guru::with('user')->findOrFail(1);
         ///dd($guru->user->getRoleNames());
 
@@ -35,7 +38,9 @@ class MonitoringController extends Controller
         // dd(auth()->user()->getAllPermissions());
 
         return view('monitoring.index', [
-            'data' => $data
+            'data' => $data,
+            'guru' => $guru,
+            'industri' => $industri,
         ]);
     }
 
@@ -45,7 +50,7 @@ class MonitoringController extends Controller
     public function create()
     {
         $guru = Guru::get();
-        $industri = Industri::get();
+        $industri = Industri::with('gurus')->get();
 
         return view('monitoring.add', [
             'guru' => $guru,
@@ -56,24 +61,52 @@ class MonitoringController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
-    {
-        $validatedData = $request->validate([
-            'guru_id' => 'required',
-            'industri_id' => 'required',
-            'tanggal' => 'required',
-        ]);
+    // public function store(Request $request)
+    // {
+    //     $validatedData = $request->validate([
+    //         'guru' => 'required',
+    //         'industri_id' => 'required',
+    //         'tanggal' => 'required',
+    //     ]);
 
-        // assign role
-        $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
-        $guru->user->assignRole('pembimbing');
+    //     $guru = Guru::where('nama', $validatedData['guru'])->first();
 
-        // create 
-        $create = collect($validatedData);
-        $this->model->create($create->toArray());
+    //     // assign role
+    //     // $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
+    //     // $guru->user->assignRole('pembimbing');
 
-        return redirect('monitoring')->with('status', 'Data berhasil ditambah!');
+    //     // create 
+    //     $create = collect($validatedData);
+    //     $this->model->create($create->toArray())->put('guru_id', $guru->id);
+
+    //     return redirect('monitoring')->with('status', 'Data berhasil ditambah!');
+    // }
+
+public function store(Request $request)
+{
+    // Validasi input
+    $validatedData = $request->validate([
+        'guru' => 'required',
+        'industri_id' => 'required',
+        'tanggal' => 'required',
+    ]);
+
+    // Cari guru berdasarkan nama
+    $guru = Guru::where('nama', $validatedData['guru'])->first();
+
+    if (!$guru) {
+        return redirect()->back()->withErrors(['guru' => 'Guru tidak ditemukan'])->withInput();
     }
+
+    // Tambahkan guru_id ke data yang akan disimpan
+    $validatedData['guru_id'] = $guru->id;
+
+    // Buat record baru menggunakan model dan data yang sudah ditambah guru_id
+    $this->model->create($validatedData);
+
+    // Redirect dengan pesan sukses
+    return redirect('monitoring')->with('status', 'Data berhasil ditambah!');
+}
 
     /**
      * Display the specified resource.
@@ -89,7 +122,7 @@ class MonitoringController extends Controller
     public function edit(Monitoring $monitoring)
     {
         $guru = Guru::get();
-        $industri = Industri::get();
+        $industri = Industri::with('gurus')->get();
 
         return view('monitoring.edit', [
             'data' => $monitoring,
@@ -106,17 +139,25 @@ class MonitoringController extends Controller
         $data = Monitoring::with('guru.user')->findOrFail($id);
 
         $validatedData = $request->validate([
-            'guru_id' => 'required',
+            'guru' => 'required',
             'industri_id' => 'required',
             'tanggal' => 'required',
         ]);
 
-        // remove role
-        $data->guru->user->removeRole('pembimbing');
+        $guru = Guru::where('nama', $validatedData['guru'])->first();
 
-        // assign role
-        $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
-        $guru->user->assignRole('pembimbing');
+        if (!$guru) {
+            return redirect()->back()->withErrors(['guru' => 'Guru tidak ditemukan'])->withInput();
+        }
+
+        // // remove role
+        // $data->guru->user->removeRole('pembimbing');
+
+        // // assign role
+        // $guru = Guru::with('user')->findOrFail($validatedData['guru_id']);
+        // $guru->user->assignRole('pembimbing');
+
+        $validatedData['guru_id'] = $guru->id;
 
         // update 
         $update = collect($validatedData);

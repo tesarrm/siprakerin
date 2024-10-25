@@ -10,7 +10,8 @@ class Pengaturan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'tahun_ajaran'
+        'tahun_ajaran',
+        'penilaian_2',
     ];
 
     public $timestamps = false;

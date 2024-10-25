@@ -19,7 +19,7 @@ class JurnalFactory extends Factory
     {
         return [
             'siswa_id' => Siswa::inRandomOrder()->first()->id,
-            'tanggal_waktu' => $this->faker->date(),
+            'tanggal_waktu' => "22 October 2024 13:20 - 13:20",
             'kegiatan' => $this->faker->text(),
             'keterangan' => $this->faker->text(),
         ];

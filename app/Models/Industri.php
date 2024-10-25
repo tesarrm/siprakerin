@@ -34,4 +34,8 @@ class Industri extends Model
     {
         return $this->hasOne(LiburMingguan::class);
     }
+    public function gurus()
+    {
+        return $this->belongsToMany(Guru::class, 'guru_industri');
+    }
 }

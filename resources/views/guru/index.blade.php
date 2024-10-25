@@ -77,7 +77,7 @@
                                                 @csrf
                                                 <div>
                                                     <label for="ctnFile">Unduh Template</label>
-                                                    <button type="button" class="btn btn-danger">
+                                                    <a href="{{ url('guru-template')}}" class="flex max-w-max btn btn-danger">
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                                             xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                                                             <path opacity="0.5"
@@ -88,7 +88,7 @@
                                                                 stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                                         </svg>
                                                         &nbsp;&nbsp;Excel
-                                                    </button>
+                                                    </a>
                                                     <span class="text-white-dark text-xs">Jangan ubah bagian header!</span>
                                                 </div>
                                                 <div class="mt-6">
@@ -114,11 +114,14 @@
         </div>
     </div>
 
+
+
+
     {{-- =========================== --}}
     {{-- BOTTOM --}}
     {{-- =========================== --}}
 
-    {{-- alert toast --}}
+    {{-- alert toast success --}}
     @if(session('status'))
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -136,6 +139,40 @@
                 });
                 toast.fire({
                     icon: 'success',
+                    title: message,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+            }
+        </script>
+    @endif
+
+    {{-- alert toast import excel error --}}
+    @if($errors->any())
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const errors = @json($errors->all());
+                displayAlerts(errors);
+            });
+
+            async function displayAlerts(errors) {
+                for (const error of errors) {
+                    await showAlert(error);
+                }
+            }
+
+            async function showAlert(message) {
+                const toast = window.Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+
+                await toast.fire({
+                    icon: 'error',
                     title: message,
                     padding: '2em',
                     customClass: 'sweet-alerts',
@@ -258,11 +295,11 @@
                             ],
                             data: this.dataArr
                         },
-                        perPage: 10,
+                        perPage: this.perPage || 10,
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
-                                select: [11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
+                                select: [8, 11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
                                 hidden: true,
                             },
                             {
@@ -346,7 +383,7 @@
                                                         class="ltr:right-0 rtl:left-0">
                                                         <li><a href="#" @click="$dispatch('open-detail', { rowId: '${rowId}' })">Detail</a></li>
                                                         <li><a href="/guru/${data}/edit">Edit</a></li>
-                                                        <li><a href="#" @click="resetPassword('${row.cells[8].data}')">Reset Password</a></li>
+                                                        <li><a href="#" @click="resetPassword('${row.cells[11].data}')">Reset Password</a></li>
                                                         <li><a href="#" @click="nonaktif('${data}')">Nonaktifkan</a></li>
                                                         <li><a href="#" @click="deleteSingleRow('${data}')">Hapus</a></li>
                                                     </ul>
@@ -492,9 +529,14 @@
                             bottom: "{info}{select}{pager}",
                         },
                     });
+
+                    this.perPage = this.datatable.options.perPage;
                 },
 
                 refreshTable() {
+                    // Ambil nilai perPage saat ini dari instance datatable
+                    this.perPage = this.datatable.options.perPageSelect.find(select => select == this.datatable.options.perPage) || 10; 
+
                     this.datatable.destroy();
                     this.setTableData();
                     this.initializeTable();
@@ -532,12 +574,12 @@
 
                 searchInvoice() {
                     return this.items.filter((d) =>
-                        (d.invoice && d.invoice.toLowerCase().includes(this.searchText)) ||
-                        (d.name && d.name.toLowerCase().includes(this.searchText)) ||
+                        (d.nama && d.nama.toLowerCase().includes(this.searchText)) ||
+                        (d.nip && d.nip.toLowerCase().includes(this.searchText)) ||
                         (d.email && d.email.toLowerCase().includes(this.searchText)) ||
-                        (d.date && d.date.toLowerCase().includes(this.searchText)) ||
-                        (d.amount && d.amount.toLowerCase().includes(this.searchText)) ||
-                        (d.status && d.status.toLowerCase().includes(this.searchText))
+                        (d.no_telp && d.no_telp.toLowerCase().includes(this.searchText)) ||
+                        (d.jenis_kelamin && d.jenis_kelamin.toLowerCase().includes(this.searchText)) ||
+                        (d.kelas && d.kelas.toLowerCase().includes(this.searchText))
                     );
                 },
 
@@ -704,65 +746,61 @@
                             });
                         }
                     });
+                },
+
+                resetPassword(user_id) {
+                    window.Swal.fire({
+                        icon: 'warning',
+                        title: 'Apakah Anda yakin?',
+                        text: "Data akan direset password!",
+                        showCancelButton: true,
+                        confirmButtonText: 'Reset',
+                        cancelButtonText: 'Batal',
+                        padding: '2em',
+                        customClass: 'sweet-alerts'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/guru/${user_id}/reset`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.Swal.fire({
+                                        title: 'Direset Password!',
+                                        text: 'Data berhasil direset password.',
+                                        icon: 'success',
+                                        customClass: 'sweet-alerts'
+                                    });
+                                } else {
+                                    console.log(error)
+                                    window.Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Terjadi kesalahan saat mereset password data.',
+                                        icon: 'error',
+                                        customClass: 'sweet-alerts'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                window.Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Terjadi kesalahan saat mereset password data.',
+                                    icon: 'error',
+                                    customClass: 'sweet-alerts'
+                                });
+                            });
+                        }
+                    });
                 }
             }))
         })
-        
-        /*************
-         * reset password datatable
-         */
 
-        function resetPassword(user_id) {
-            window.Swal.fire({
-                icon: 'warning',
-                title: 'Apakah Anda yakin?',
-                text: "Data akan direset password!",
-                showCancelButton: true,
-                confirmButtonText: 'Reset',
-                cancelButtonText: 'Batal',
-                padding: '2em',
-                customClass: 'sweet-alerts'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    fetch(`/guru/${user_id}/reset`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            window.Swal.fire({
-                                title: 'Direset Password!',
-                                text: 'Data berhasil direset password.',
-                                icon: 'success',
-                                customClass: 'sweet-alerts'
-                            }).then(() => {
-                                location.reload();
-                            });
-                        } else {
-                            window.Swal.fire({
-                                title: 'Gagal!',
-                                text: 'Terjadi kesalahan saat mereset password data.',
-                                icon: 'error',
-                                customClass: 'sweet-alerts'
-                            });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error)
-                        window.Swal.fire({
-                            title: 'Error!',
-                            text: 'Terjadi kesalahan saat mereset password data.',
-                            icon: 'error',
-                            customClass: 'sweet-alerts'
-                        });
-                    });
-                }
-            });
-        }
     </script>
 
 </x-layout.default>

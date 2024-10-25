@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\BiodataSiswa;
+use App\Models\Guru;
+use App\Models\Industri;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\TemporaryFile;
@@ -275,4 +277,66 @@ class UserController extends Controller
         return redirect('user')->with('status', 'Data berhasil diperbarui!');
     }
 
+    // public function guruIndustriIndex()
+    // {
+    //     $data = Guru::where('aktif', 1)->with('industris')->get();
+    //     $industri = Industri::where('aktif', 1)->get();
+
+    //     return view('user.index_gi', compact('data', 'industri'));
+    // }
+
+// public function guruIndustriIndex()
+// {
+//     // Ambil data guru beserta industri yang terhubung
+//     $data = Guru::where('aktif', 1)
+//                 ->with(['industris', 'user'])
+//                 ->get()
+//                 ->map(function ($guru) {
+//                     // Gabungkan ID industri menjadi satu string yang dipisahkan koma dan spasi
+//                     $guru->industri = $guru->industris->pluck('id')->implode(', ');
+//                     return $guru;
+//                 });
+                
+//     $industri = Industri::where('aktif', 1)->get();
+
+//     // dd($data);
+
+//     return view('user.index_gi', compact('data', 'industri'));
+// }
+
+public function guruIndustriIndex()
+{
+    // Ambil data guru yang user-nya memiliki role 'pembimbing' dan industri yang terhubung
+    $data = Guru::where('aktif', 1)
+                ->whereHas('user', function($query) {
+                    $query->role('pembimbing'); // Filter berdasarkan role 'pembimbing'
+                })
+                ->with(['industris', 'user'])
+                ->get()
+                ->map(function ($guru) {
+                    // Gabungkan ID industri menjadi satu string yang dipisahkan koma dan spasi
+                    $guru->industri = $guru->industris->pluck('id')->implode(', ');
+                    return $guru;
+                });
+
+    $industri = Industri::where('aktif', 1)->get();
+
+    return view('user.index_gi', compact('data', 'industri'));
+}
+
+
+    public function storeGuruIndustri(Request $request, $guruId)
+    {
+        $validated = $request->validate([
+            'industri_id' => 'required|array|min:1',
+            'industri_id.*' => 'required|exists:industris,id',
+        ]);
+
+        $guru = Guru::findOrFail($guruId);
+
+        // Sinkronisasi industri ke guru (jika ada relasi many-to-many)
+        $guru->industris()->sync($validated['industri_id']); 
+
+        return redirect('guruindustri')->with('success', 'Industri berhasil ditambahkan!');
+    }
 }

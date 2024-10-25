@@ -83,13 +83,13 @@
     <div>
         <form action="{{ route('penempatan.storeOrUpdate') }}" method="POST">
             @csrf
+            <input type="hidden" name="industri_id" value="{{ $industri->id }}">
             <div class="flex xl:flex-row flex-col gap-2.5">
                 <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
                     <div class=" px-4">
                         <div class="text-lg font-semibold">Penempatan Prakerin</div>
                         <div class="flex justify-between lg:flex-row flex-col">
                             <div class="w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <input type="hidden" name="industri_id" value="{{ $industri->id }}">
                                 <div class="mt-4 flex items-center">
                                     <label for="nama" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama</span></label>
                                     <div class="flex-1">
@@ -160,7 +160,7 @@
                                                     <option value="">Pilih Siswa</option>
                                                     <template x-for="siswa in siswaData" :key="siswa.id">
                                                         <option :value="siswa.id">
-                                                            <span x-text="siswa.nama + ' | '"></span>
+                                                            <span x-text="siswa.nama_lengkap + ' | '"></span>
                                                             <span x-text="siswa.kelas.nama + ' ' + siswa.kelas.jurusan.singkatan + ' ' + siswa.kelas.klasifikasi + ' | '"></span>
                                                             {{-- Logika pengecekan kota --}}
                                                             <span x-show="siswa.pilihankota.kota1.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota2.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota3.nama === '{{ $industri->kota->nama }}'">
@@ -401,6 +401,20 @@
                     }
 
                     if (selectedSiswa) {
+                        // Check if siswa has penempatan
+                        if (selectedSiswa.penempatan) {
+                            console.log(selectedSiswa)
+                            window.Swal.fire({
+                                icon: 'info',
+                                title: 'Siswa Telah Ditempatkan!',
+                                text: 'Siswa ini sudah memiliki penempatan di industri.',
+                                padding: '2em',
+                                customClass: 'sweet-alerts'
+                            });
+                            this.tableData[index].id_siswa = ''; // Reset pilihan siswa
+                            return;
+                        }
+
                         // Validasi kuota
                         let jurusanId = selectedSiswa.kelas.jurusan.id;
                         let jenisKelamin = selectedSiswa.jenis_kelamin.toLowerCase();

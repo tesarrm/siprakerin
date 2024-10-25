@@ -10,7 +10,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Facades\Excel;
 
 class GuruController extends Controller
@@ -27,8 +29,8 @@ class GuruController extends Controller
 
     }
 
-        // dd(auth()->user()->getRoleNames());
-        // dd(auth()->user()->getAllPermissions());
+    // dd(auth()->user()->getRoleNames());
+    // dd(auth()->user()->getAllPermissions());
     public function index()
     {
         // Ambil semua data guru beserta user dan role terkait
@@ -91,15 +93,15 @@ class GuruController extends Controller
 
         // assign role
         $user->assignRole('guru');
-        if (!empty($request->peran_admin)) {
-            $user->assignRole('admin');
-        }
-        if (!empty($request->peran_kabeng)) {
-            $user->assignRole('kabeng');
-        }
-        if (!empty($request->peran_ortu)) {
-            $user->assignRole('ortu');
-        }
+        // if (!empty($request->peran_admin)) {
+        //     $user->assignRole('admin');
+        // }
+        // if (!empty($request->peran_kabeng)) {
+        //     $user->assignRole('kabeng');
+        // }
+        // if (!empty($request->peran_ortu)) {
+        //     $user->assignRole('ortu');
+        // }
 
         // colect data sesaui dengan fillable
         $create = collect($validatedData);
@@ -287,8 +289,19 @@ class GuruController extends Controller
     }
 
     public function import(Request $request){
-        Excel::import(new GuruImport, $request->file('excel'));
-        return redirect('guru');
+        // Excel::import(new GuruImport, $request->file('excel'));
+        // return redirect('guru');
+
+        try {
+            Excel::import(new GuruImport, $request->file('excel'));
+            return redirect()->back()->with('status', 'Data guru berhasil diimpor!');
+        } catch (ValidationException $e) {
+            // Ambil pesan error dari exception
+            $errors = $e->validator->errors()->getMessages();
+
+            // Redirect ke halaman dengan pesan error
+            return redirect()->back()->withErrors($errors)->withInput();
+        }
     }
 
     public function resetPassword($user_id)
@@ -329,5 +342,11 @@ class GuruController extends Controller
         } else {
             return response()->json(['success' => false]);
         }
+    }
+
+    public function downloadTemplate()
+    {
+        $filePath = public_path('files/guru.xlsx'); 
+        return Response::download($filePath);
     }
 }

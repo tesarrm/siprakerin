@@ -2,34 +2,55 @@
 
 namespace App\Imports;
 
-use App\Models\Guru;
+use App\Models\Kelas;
+use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class GuruImport implements ToCollection, WithHeadingRow
+
+
+class SiswaImport implements ToCollection, WithHeadingRow
 {
     protected $errors = [];
 
-    /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
     public function collection(Collection $rows)
     {
         foreach ($rows as $row){
+            // Membuat array nama kelas yang valid
+            $kelas = Kelas::with('jurusan')->get();
+
+            $validKelas = $kelas->map(function ($k) {
+                return $k->nama . " " . $k->jurusan->singkatan . " " . $k->klasifikasi;
+            })->toArray();
 
             // Validasi setiap baris data
             $validator = Validator::make($row->toArray(), [
-                'nip' => 'required',
-                'email' => 'required|string|unique:users,email|max:255',
+                'kelas' => [
+                    'required',
+                    'in:' . implode(',', $validKelas), 
+                ],
+                'nis' => 'required',
+                'nama' => 'required',
                 'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+                'email' => 'required|string|unique:users,email|max:255',
             ]);
+
+            // relasi kelas
+            $kelas = Kelas::with('jurusan.bidangKeahlian')
+                ->get()
+                ->first(function ($k) use ($row) {
+                    // Gabungkan nama kelas dengan jurusan dan klasifikasi untuk dibandingkan
+                    $nama = $k->nama . " " . $k->jurusan->singkatan . " " . $k->klasifikasi;
+                    return $row['kelas'] == $nama; // Bandingkan nama yang sudah dibentuk dengan row
+                });
+
 
             // Jika validasi gagal, tambahkan error ke dalam array $errors
             if ($validator->fails()) {
@@ -45,32 +66,29 @@ class GuruImport implements ToCollection, WithHeadingRow
             ]);
 
             // assign role
-            $user->assignRole('guru');
+            $user->assignRole('siswa');
 
             // create
-            Guru::create([
+            Siswa::create([
                 'user_id' => $user->id,
-                'nip' => $row['nip'],
-                'no_ktp' => $row['no_ktp'],
-                'nama' => $row['nama'],
+                'kelas_id' => $kelas->id,
+                'nis' => $row['nis'],
+                'nisn' => $row['nisn'],
+                'nama_lengkap' => $row['nama'],
+                // 'nama' => $row['nama'],
                 'tempat_lahir' => $row['tempat_lahir'],
                 'tanggal_lahir' => $row['tanggal_lahir'],
                 'jenis_kelamin' => $row['jenis_kelamin'],
-                'golongan_darah' => $row['golongan_darah'],
-                'kecamatan' => $row['kecamatan'],
-                'alamat' => $row['alamat'],
-                'rt' => $row['rt'],
-                'rw' => $row['rw'],
-                'kode_pos' => $row['kode_pos'],
-                'no_telp' => $row['no_telp'],
-                'no_hp' => $row['no_hp'],
                 'agama' => $row['agama'],
+                'alamat' => $row['alamat'],
+                'no_telp' => $row['no_telp'],
             ]);
-
         }
 
         if (!empty($this->errors)) {
             throw ValidationException::withMessages($this->errors);
         }
     }
+
+
 }
