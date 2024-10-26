@@ -13,19 +13,19 @@
                                 <div class="mt-4 flex items-center">
                                     <label for="nis" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">NIS</span></label>
                                     <div class="flex-1">
-                                        <input value="{{ $data->siswa->nis }}" required id="nis" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                        <input value="{{ $data->siswa->nis ?? '-' }}" required id="nis" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                     </div>
                                 </div>
                                 <div class="mt-4 flex items-center">
                                     <label for="nama" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama</span></label>
                                     <div class="flex-1">
-                                        <input value="{{ $data->siswa->nama }}" required id="nama" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                        <input value="{{ $data->siswa->nama ?? '-' }}" required id="nama" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                     </div>
                                 </div>
                                 <div class="mt-4 flex items-center">
                                     <label for="jenis_kelamin" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Jenis Kelamin</span></label>
                                     <div class="flex-1">
-                                        <input value="{{ $data->siswa->jenis_kelamin }}" required id="jenis_kelamin" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                        <input value="{{ $data->siswa->jenis_kelamin ?? '-' }}" required id="jenis_kelamin" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                     </div>
                                 </div>
                                 <div class="mt-4 flex items-center">
@@ -37,19 +37,19 @@
                                 <div class="mt-4 flex items-center">
                                     <label for="alamat" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Alamat</span></label>
                                     <div class="flex-1">
-                                        <input value="{{ $data->siswa->alamat }}" required id="alamat" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                        <input value="{{ $data->siswa->alamat ?? '-' }}" required id="alamat" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                     </div>
                                 </div>
                                 <div class="mt-4 flex items-center">
                                     <label for="no_telp" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">No Telp</span></label>
                                     <div class="flex-1">
-                                        <input value="{{ $data->siswa->no_telp }}" required id="no_telp" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                        <input value="{{ $data->siswa->no_telp ?? '-' }}" required id="no_telp" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                     </div>
                                 </div>
                                 <div class="mt-4 flex items-center">
                                     <label for="email" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Email</span></label>
                                     <div class="flex-1">
-                                        <input value="{{ $data->siswa->user->email }}" required id="email" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                        <input value="{{ $data->siswa->user->email ?? '-' }}" required id="email" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                     </div>
                                 </div>
                                 <div class="mt-4 flex items-center">
@@ -61,17 +61,17 @@
                                                 <table>
                                                     <thead>
                                                         <tr>
-                                                            <th>Pilihan 1</th>
-                                                            <th>Pilihan 2</th>
-                                                            <th>Pilihan 3</th>
+                                                            <th class="py-4">Pilihan 1</th>
+                                                            <th class="py-4">Pilihan 2</th>
+                                                            <th class="py-4">Pilihan 3</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <template x-for="data in tableData" :key="data.id">
                                                             <tr>
-                                                                <td x-text="data.pilihan_1"></td>
-                                                                <td x-text="data.pilihan_2"></td>
-                                                                <td x-text="data.pilihan_3"></td>
+                                                                <td class="py-4" x-text="data.pilihan_1"></td>
+                                                                <td class="py-4" x-text="data.pilihan_2"></td>
+                                                                <td class="py-4" x-text="data.pilihan_3"></td>
                                                             </tr>
                                                         </template>
                                                     </tbody>
@@ -90,19 +90,19 @@
                                                 <table>
                                                     <thead>
                                                         <tr>
-                                                            <th>Nama Industri</th>
-                                                            <th>Alamat</th>
-                                                            <th>Kota</th>
-                                                            <th>Pilihan Kota</th>
+                                                            <th class="py-4">Nama Industri</th>
+                                                            <th class="py-4">Alamat</th>
+                                                            <th class="py-4">Kota</th>
+                                                            <th class="py-4">Pilihan Kota</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <template x-for="data in tableData" :key="data.id">
                                                             <tr>
-                                                                <td x-text="data.nama"></td>
-                                                                <td x-text="data.alamat"></td>
-                                                                <td x-text="data.kota"></td>
-                                                                <td x-text="data.pilihan"></td>
+                                                                <td class="py-4" x-text="data.nama"></td>
+                                                                <td class="py-4" x-text="data.alamat"></td>
+                                                                <td class="py-4" x-text="data.kota"></td>
+                                                                <td class="py-4" x-text="data.pilihan"></td>
                                                             </tr>
                                                         </template>
                                                     </tbody>
@@ -118,20 +118,15 @@
 
                     <div class="px-4">
                         <div class="flex justify-end items-center mt-6 gap-4">
-                              <button type="button" class="btn btn-outline-danger gap-2">
-
+                              <a href="{{url('penempatan')}}" class="btn btn-outline-danger gap-2">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2 shrink-0">
-                                    <path
-                                        d="M3.46447 20.5355C4.92893 22 7.28595 22 12 22C16.714 22 19.0711 22 20.5355 20.5355C22 19.0711 22 16.714 22 12C22 11.6585 22 11.4878 21.9848 11.3142C21.9142 10.5049 21.586 9.71257 21.0637 9.09034C20.9516 8.95687 20.828 8.83317 20.5806 8.58578L15.4142 3.41944C15.1668 3.17206 15.0431 3.04835 14.9097 2.93631C14.2874 2.414 13.4951 2.08581 12.6858 2.01515C12.5122 2 12.3415 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355Z"
-                                        stroke="currentColor" stroke-width="1.5" />
-                                    <path
-                                        d="M17 22V21C17 19.1144 17 18.1716 16.4142 17.5858C15.8284 17 14.8856 17 13 17H11C9.11438 17 8.17157 17 7.58579 17.5858C7 18.1716 7 19.1144 7 21V22"
-                                        stroke="currentColor" stroke-width="1.5" />
-                                    <path opacity="0.5" d="M7 8H13" stroke="currentColor" stroke-width="1.5"
-                                        stroke-linecap="round" />
+                                    <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" 
+                                        stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M17.5 9.50026H9.96155C8.04979 9.50026 6.5 11.05 6.5 12.9618C6.5 14.8736 8.04978 16.4233 9.96154 16.4233H14.5M17.5 9.50026L15.25 7.42334M17.5 9.50026L15.25 11.5772" 
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
-                                Kembali </button>
+                                Kembali </a>
                         </div>
                     </div>
                 </div>

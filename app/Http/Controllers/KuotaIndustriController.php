@@ -22,7 +22,13 @@ class KuotaIndustriController extends Controller
 
     public function index()
     {
-        $data = Industri::where('aktif', 1)->with(['kuotaIndustri', 'kuotaIndustri.jurusan', 'kota'])->get();
+        $data = Industri::where('aktif', 1)
+            ->with([
+                'kuotaIndustri', 
+                'kuotaIndustri.jurusan', 
+                'kota'])
+            ->orderBy('nama', 'asc')
+            ->paginate(100);
         $jurusan = Jurusan::get();
 
         return view('kuota_industri.index', [

@@ -1,12 +1,10 @@
 
 <x-layout.default>
-
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
+    <script src="/assets/js/simple-datatables.js"></script>
 
     <div x-data="dataList">
-        <script src="/assets/js/simple-datatables.js"></script>
-
         <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
             <div class="px-5">
                 <div class="md:absolute md:top-5 ltr:md:left-5 rtl:md:right-5">
@@ -131,6 +129,22 @@
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<input type="checkbox" class="form-checkbox mt-1" :id="'chk' + ${data}" :value="(${data})" x-model.number="selectedRows" />`;
+                                }
+                            },
+                            {
+                                select: 2,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
                                 }
                             },
                             {
@@ -363,5 +377,4 @@
             }))
         })
     </script>
-
 </x-layout.default>

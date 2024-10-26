@@ -60,7 +60,7 @@
                         <div x-data="modal" @open-modal.window="toggle">
                             <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
                                 <div class="flex items-start justify-center min-h-screen px-4" @click.self="open = false">
-                                    <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden  w-full max-w-sm my-8">
+                                    <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden  w-full max-w-md my-8">
                                         <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
                                             <h5 class="font-bold text-lg">Impor Excel</h5>
                                             <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
@@ -106,7 +106,7 @@
                             </div>
                         </div>
                         {{-- select kelas --}}
-                        <div class="" style="width: 150px">
+                        <div style="width: 150px">
                             <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
                                 <option value="">Pilih Kelas</option>
                                 @foreach($kelas as $item)
@@ -131,13 +131,12 @@
                             <li>
                                 <a href="{{ $data->previouspageurl() }}"  
                                     class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
-
-                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none"
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
-                                        <path d="m13 19l7 12l13 5" stroke="currentcolor" stroke-width="1.5"
+                                        <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5"
                                             stroke-linecap="round" stroke-linejoin="round" />
-                                        <path opacity="0.5" d="m16.9998 19l10.9998 12l16.9998 5"
-                                            stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"
+                                        <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                             stroke-linejoin="round" />
                                     </svg>
                                 </a>
@@ -157,13 +156,12 @@
                             <li>
                                 <a href="{{ $data->nextpageurl() }}" 
                                     class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
-
-                                    <svg width="24" height="24" viewbox="0 0 24 24" fill="none"
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                         xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
-                                        <path d="m11 19l17 12l11 5" stroke="currentcolor" stroke-width="1.5"
+                                        <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5"
                                             stroke-linecap="round" stroke-linejoin="round" />
-                                        <path opacity="0.5" d="m6.99976 19l12.9998 12l6.99976 5"
-                                            stroke="currentcolor" stroke-width="1.5" stroke-linecap="round"
+                                        <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                                             stroke-linejoin="round" />
                                     </svg>
                                 </a>
@@ -246,12 +244,12 @@
             $items[] = [
                 'id' => $d->id ?? '-',
                 'nis' => $d->nis ?? '-',
-                'nama' => $d->nama ?? '-',
+                'nama' => $d->nama_lengkap ?? '-',
+                'email' => $d->user->email ?? '-',
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                 'agama' => $d->agama ?? '-',
                 'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
                 'tahun_ajaran' => $pengaturan->tahun_ajaran ?? '-',
-                'email' => $d->user->email ?? '-',
                 'gambar' => $d->gambar, 
                 'action' => $d->id ?? '-', 
 
@@ -274,32 +272,11 @@
         }
     @endphp
 
-    {{-- <script>
-        document.getElementById('filterKelas').addEventListener('change', function() {
-            let selectedKelas = this.value;
-            fetchFilteredData(selectedKelas);
-        });
-
-        function fetchFilteredData(kelas) {
-            // Kirimkan request ke controller melalui Ajax
-            fetch(`{{ route('siswa.filter') }}?kelas=${kelas}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Content-Type': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Render ulang tabel dengan data baru
-                let table = simpleDatatables.init({ data: data }); // Inisialisasi ulang tabel dengan data baru
-                // Update data pada tabel
-            })
-            .catch(error => console.error('Error fetching data:', error));
-        }
-    </script> --}}
-
     <script>
+        /*************
+         * filter kelas 
+         */
+
         document.getElementById('filterKelas').addEventListener('change', function() {
             let selectedKelas = this.value;
             if(selectedKelas) {
@@ -308,9 +285,7 @@
                 document.getElementById('pagePlus').style.display = 'flex';
             }
         });
-    </script>
-    
-    <script>
+
         /*************
          * detail
          */
@@ -334,7 +309,7 @@
                 selectedRows: [],
                 items: @json($items),
                 searchText: '',
-                selectedKelas: '', // Tambahkan untuk pilihan kelas
+                selectedKelas: '', 
                 datatable: null,
                 dataArr: [],
 
@@ -356,11 +331,11 @@
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                                 "NIS",
                                 "Nama",
+                                "Email",
                                 "Jenis Kelamin",
                                 "Agama",
                                 "Kelas",
                                 "Tahun Ajaran",
-                                "Email",
                                 "Gambar",
                                 "Aksi",
 
@@ -407,6 +382,28 @@
                                                     <img class="h-8 w-8 rounded-full object-cover" src="${imageUrl}" alt="Profile Image"/>
                                                 </div>${data}
                                             </div>`;
+                                }
+                            },
+                            {
+                                select: 3,
+                                render: (data, cell, row) => {
+                                    return `<a href="mailto:${data}" class="text-primary hover:underline">${ data }</a>`
+                                },
+                            },
+                            {
+                                select: 6,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
                                 }
                             },
                             {
@@ -539,7 +536,7 @@
                                                                     </div>
                                                                     <div class="flex justify-end items-center mt-8">
                                                                         <button type="button" class="btn btn-outline-danger"
-                                                                            @click="toggle1">Discard</button>
+                                                                            @click="toggle1">Batal</button>
                                                                         <a href="/guru/${data}/edit" class="btn btn-primary ltr:ml-4 rtl:mr-4"
                                                                             >Edit</a>
                                                                     </div>
@@ -608,21 +605,6 @@
                         }
                     }
                 },
-
-                // setTableData() {
-                //     this.dataArr = this.items
-                //         .filter(item => {
-                //             // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
-                //             return this.selectedKelas === '' || item.kelas === this.selectedKelas;
-                //         })
-                //         .map(item => {
-                //             return Object.values(item); // Mengonversi setiap item ke array data
-                //         });
-                // },
-
-                // filterByKelas() {
-                //     this.refreshTable(); // Muat ulang tabel ketika filter berubah
-                // },
 
                 searchInvoice() {
                     return this.items.filter((d) =>
@@ -809,10 +791,10 @@
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}' // Pastikan CSRF token disertakan
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}' 
                             },
                             body: JSON.stringify({
-                                kelas: this.selectedKelas // Mengambil nilai dari selectedKelas
+                                kelas: this.selectedKelas 
                             })
                         })
                         .then(response => response.json())
@@ -878,5 +860,4 @@
             }))
         })
     </script>
-
 </x-layout.default>

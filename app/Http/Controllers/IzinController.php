@@ -64,11 +64,11 @@ class IzinController extends Controller
         Izin::create($create->toArray());
 
         // buat kehadiran hadir
-        Attendance::create([
-            'siswa_id' => $siswa->id,
-            'date' => Carbon::now(),
-            'status' => 'izin',
-        ]);
+        // Attendance::create([
+        //     'siswa_id' => $siswa->id,
+        //     'date' => Carbon::now(),
+        //     'status' => 'izin',
+        // ]);
 
         return redirect('jurnal')->with('status', 'Data berhasil ditambah!');
     }

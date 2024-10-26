@@ -25,7 +25,10 @@ class IndustriController extends Controller
      */
     public function index()
     {
-        $data = $this->model->with('kota')->where('aktif', 1)->get();
+        $data = Industri::with('kota')
+            ->where('aktif', 1)
+            ->orderBy('nama', 'asc')
+            ->paginate(100);
 
         return view('industri.index', [
             'data' => $data

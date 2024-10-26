@@ -34,17 +34,22 @@ class GuruController extends Controller
     public function index()
     {
         // Ambil semua data guru beserta user dan role terkait
-        $guru = $this->model->with(['user.roles', 'hoKelas'])->where('aktif', 1)->get()->map(function ($guru) {
-            // Ambil peran dari user yang terkait dengan guru
-            $guru->user->peran = $guru->user->roles->isNotEmpty() 
-                ? $guru->user->roles->pluck('name')->implode(', ')
-                : '-';
-            return $guru;
-        });
+        $guru = Guru::with(['user.roles', 'hoKelas.jurusan'])
+            ->where('aktif', 1)
+            ->orderBy('nama', 'asc')
+            ->paginate(100);
+            // ->get()->map(function ($guru) {
+            //     // Ambil peran dari user yang terkait dengan guru
+            //     $guru->user->peran = $guru->user->roles->isNotEmpty() 
+            //         ? $guru->user->roles->pluck('name')->implode(', ')
+            //         : '-';
+            //     return $guru;
+            // });
+        
 
         // Kirim data ke view
         return view('guru.index', [
-            'guru' => $guru
+            'data' => $guru
         ]);
     }
 
@@ -152,7 +157,7 @@ class GuruController extends Controller
         $validatedData = $request->validate([
             'aktif' => 'nullable|string',
             'gambar' => 'nullable|string',
-            'nip' => 'required|unique:gurus,nip',
+            'nip' => 'required|unique:gurus,nip,' . $id,
             'no_ktp' => 'nullable|string',
             'nama' => 'required|string|max:255',
             'tempat_lahir' => 'nullable|string',

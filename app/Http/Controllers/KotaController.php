@@ -18,7 +18,7 @@ class KotaController extends Controller
      */
     public function index()
     {
-        $data = Kota::get();
+        $data = Kota::orderBy('nama', 'asc')->get();
 
         return view('kota.index', [
             'data' => $data

@@ -41,6 +41,50 @@
             <div class="invoice-table">
                 <table id="myTable" class="whitespace-nowrap"></table>
             </div>
+
+            {{-- pagination max 100 --}}
+            @if($data->total() > 100)
+                <div id="pageplus" class="flex justify-center mt-3">
+                    <ul class="flex items-center m-auto">
+                        <li>
+                            <a href="{{ $data->previouspageurl() }}"  
+                                class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                    <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </a>
+                        </li>
+                        @for ($i = 1; $i <= $data->lastpage(); $i++)
+                            <li>
+                                <a href="{{ $data->url($i) }}"
+                                    class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                        {{ ($data->currentpage() == $i) ? 
+                                            'bg-primary text-white dark:text-white-light dark:bg-primary' : 
+                                            'bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary'
+                                        }}">{{ $i * 100 }}</a>
+                            </li>
+                        @endfor
+                        <li>
+                            <a href="{{ $data->nextpageurl() }}" 
+                                class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                    <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -130,6 +174,22 @@
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<input type="checkbox" class="form-checkbox mt-1" :id="'chk' + ${data}" :value="(${data})" x-model.number="selectedRows" />`;
+                                }
+                            },
+                            {
+                                select: 3,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
                                 }
                             },
                             {

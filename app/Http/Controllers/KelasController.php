@@ -24,7 +24,10 @@ class KelasController extends Controller
 
     public function index()
     {
-        $data = $this->model->with(['jurusan.bidangKeahlian', 'guru'])->where('aktif', 1)->get();
+        $data = Kelas::with(['jurusan.bidangKeahlian', 'guru'])
+            ->where('aktif', 1)
+            ->orderBy('nama', 'asc')
+            ->get();
 
         return view('kelas.index', [
             'data' => $data

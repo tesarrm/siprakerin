@@ -11,6 +11,7 @@ use App\Models\PenempatanIndustri;
 use App\Models\Pengaturan;
 use App\Models\PilihanKota;
 use App\Models\Siswa;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -39,12 +40,17 @@ class PenempatanIndustriController extends Controller
                 $query->where('kelas.id', $kelas->id);
             })->with(['siswa.kelas', 'industri.kota'])->get();
         } else {
-            $penempatan = PenempatanIndustri::with(['siswa.kelas.jurusan', 'industri.kota'])->get();
+            $penempatan = PenempatanIndustri::with(['siswa.kelas.jurusan', 'industri.kota'])
+                ->paginate(250);
         }
-        $data = Industri::where('aktif', 1)->with(['kuotaIndustri', 'kuotaIndustri.jurusan'])
+
+        $data = Industri::where('aktif', 1)
+            ->with(['kuotaIndustri', 'kuotaIndustri.jurusan'])
             ->withCount(['penempatanIndustri as total_terisi' => function($query) {
                 $query->select(DB::raw('count(*)'));
-            }])->get();
+            }])
+            ->orderBy('nama', 'asc')
+            ->paginate(100);
 
         $jurusan = Jurusan::get();
         $kota = Kota::get();
@@ -177,27 +183,33 @@ class PenempatanIndustriController extends Controller
     }
 
     public function storeOrUpdate(Request $request){
-        $validated = $request->validate([
+        // $validated = $request->validate([
+        $validated = Validator::make($request->all(), [
             'industri_id' => 'required|string',
-            'data.*.id_siswa' => 'nullable|string',
+            'data.*.id_siswa' => 'required|string',
             'pilihan' => 'nullable|string',
             'tahun_ajaran' => 'nullable|string',
         ]);
 
-        $industri_id = $validated['industri_id'];
+        if ($validated->fails()) {
+            // Mengembalikan dengan status pesan "Error" jika id_siswa gagal validasi
+            return back()->with('error', 'Pastikan data tidak kosong!');
+        }
+
+        $industri_id = $request->industri_id;
         // $tahun_ajaran = $validated['tahun_ajaran'];
 
         PenempatanIndustri::where('industri_id', $industri_id)
                     // ->where('tahun_ajaran', $tahun_ajaran)
                     ->delete();
 
-        if(isset($validated['data'])) {
-            foreach ($validated['data'] as $data) {
+        if(isset($request->data)) {
+            foreach ($request->data as $data) {
                 PenempatanIndustri::updateOrCreate([
                         'industri_id' => $industri_id,
                         'siswa_id' => $data['id_siswa'],
-                        'pilihan' => $validated['pilihan'],
-                        'tahun_ajaran' => $validated['tahun_ajaran']
+                        'pilihan' => $request->pilihan,
+                        'tahun_ajaran' => $request->tahun_ajaran
                     ],
                 );
             }

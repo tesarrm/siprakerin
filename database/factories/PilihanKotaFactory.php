@@ -31,7 +31,7 @@ class PilihanKotaFactory extends Factory
 
         $siswa = Siswa::factory()->create([
             'nis' => $this->faker->unique()->numerify('##########'), // 10 digit
-            'nama' => $namaSiswa,
+            // 'nama' => $namaSiswa,
             'nama_lengkap' => $namaSiswa,
             'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
             'kelas_id' => Kelas::inRandomOrder()->first()->id,

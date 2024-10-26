@@ -1,4 +1,3 @@
-
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
@@ -60,7 +59,7 @@
                         <div x-data="modal" @open-modal.window="toggle">
                             <div class="fixed inset-0 bg-[black]/60 z-[999] hidden overflow-y-auto" :class="open && '!block'">
                                 <div class="flex items-start justify-center min-h-screen px-4" @click.self="open = false">
-                                    <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden  w-full max-w-sm my-8">
+                                    <div x-show="open" x-transition x-transition.duration.300 class="panel border-0 p-0 rounded-lg overflow-hidden  w-full max-w-md my-8">
                                         <div class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
                                             <h5 class="font-bold text-lg">Impor Excel</h5>
                                             <button type="button" class="text-white-dark hover:text-dark" @click="toggle">
@@ -111,11 +110,52 @@
             <div class="invoice-table">
                 <table id="myTable" class="whitespace-nowrap"></table>
             </div>
+
+            {{-- pagination max 100 --}}
+            @if($data->total() > 100)
+                <div id="pageplus" class="flex justify-center mt-3">
+                    <ul class="flex items-center m-auto">
+                        <li>
+                            <a href="{{ $data->previouspageurl() }}"  
+                                class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                    <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </a>
+                        </li>
+                        @for ($i = 1; $i <= $data->lastpage(); $i++)
+                            <li>
+                                <a href="{{ $data->url($i) }}"
+                                    class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                        {{ ($data->currentpage() == $i) ? 
+                                            'bg-primary text-white dark:text-white-light dark:bg-primary' : 
+                                            'bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary'
+                                        }}">{{ $i * 100 }}</a>
+                            </li>
+                        @endfor
+                        <li>
+                            <a href="{{ $data->nextpageurl() }}" 
+                                class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                    <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            @endif
         </div>
     </div>
-
-
-
 
     {{-- =========================== --}}
     {{-- BOTTOM --}}
@@ -184,7 +224,7 @@
     {{-- data datatable --}}
     @php
         $items = [];
-        foreach ($guru as $d) {
+        foreach ($data as $d) {
             $items[] = [
                 'id' => $d->id ?? '-',
                 'user_id' => $d->user_id ?? '-',
@@ -195,7 +235,9 @@
                 'no_telp' => $d->no_telp ?? '-',
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                 'peran' => $d->user->peran ?? '-',
-                'kelas' => $d->hoKelas->nama ?? '-',
+                'kelas' => optional($d->hoKelas)->nama 
+                    ? optional($d->hoKelas)->nama . " " . optional($d->hoKelas->jurusan)->singkatan . " " . optional($d->hoKelas)->klasifikasi 
+                    : '-',
                 'action' => $d->id ?? '-',
 
                 '_user_id' => $d->user_id ?? '-', //11
@@ -238,6 +280,7 @@
         /*************
          * datatable 
          */
+
 
         document.addEventListener("alpine:init", () => {
             Alpine.data('dataList', () => ({
@@ -299,7 +342,7 @@
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
-                                select: [8, 11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
+                                select: [1, 2, 8, 11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28],
                                 hidden: true,
                             },
                             {
@@ -308,14 +351,6 @@
                                 render: function(data, cell, row) {
                                     return `<input type="checkbox" class="form-checkbox mt-1" :id="'chk' + ${data}" :value="(${data})" x-model.number="selectedRows" />`;
                                 }
-                            },
-                            {
-                                select: 1,
-                                hidden: true,
-                            },
-                            {
-                                select: 2,
-                                hidden: true,
                             },
                             {
                                 select: 3,
@@ -331,27 +366,25 @@
                                 }
                             },
                             {
-                                select: 4,
-                                render: function(data, cell, row) {
-                                    return `${data ? data : "-"}`;
-                                }
-                            },
-                            {
                                 select: 5,
-                                render: function(data, cell, row) {
-                                    return `${data ? data : "-"}`;
-                                }
-                            },
-                            {
-                                select: 6,
-                                render: function(data, cell, row) {
-                                    return `${data ? data : "-"}`;
-                                }
+                                render: (data, cell, row) => {
+                                    return `<a href="mailto:${data}" class="text-primary hover:underline">${ data }</a>`
+                                },
                             },
                             {
                                 select: 9,
                                 render: function(data, cell, row) {
-                                    return `${data ? data : "-"}`;
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
                                 }
                             },
                             {
@@ -501,7 +534,7 @@
                                                                     </div>
                                                                     <div class="flex justify-end items-center mt-8">
                                                                         <button type="button" class="btn btn-outline-danger"
-                                                                            @click="toggle1">Discard</button>
+                                                                            @click="toggle1">Batal</button>
                                                                         <a href="/guru/${data}/edit" class="btn btn-primary ltr:ml-4 rtl:mr-4"
                                                                             >Edit</a>
                                                                     </div>

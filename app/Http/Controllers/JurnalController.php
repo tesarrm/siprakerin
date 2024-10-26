@@ -61,7 +61,10 @@ class JurnalController extends Controller
         } else if(auth()->user()->hasRole('siswa')) {
             $siswa = Siswa::where('user_id', auth()->user()->id)->first();
             $penempatan = PenempatanIndustri::with('industri.libur')->where('siswa_id', $siswa->id)->first();
-            $dIzin = Izin::with('siswa.kelas.jurusan')->where('siswa_id', $siswa->id)->get();
+            $dIzin = Izin::with('siswa.kelas.jurusan')
+                ->where('siswa_id', $siswa->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
             $attendances = Attendance::where('siswa_id', $siswa->id)->get();
             $hadir = Attendance::where([
                 'siswa_id' => $siswa->id, 
@@ -110,7 +113,10 @@ class JurnalController extends Controller
             $selisihHariSampaiHariIni = $tanggalHariIni->diffInDays($tanggalAwal);
             $selisihHariDariHariIni = $tanggalHariIni->diffInDays($tanggalAkhir);
 
-            $data = Jurnal::with('siswa.kelas')->where('siswa_id', $siswa->id)->get();
+            $data = Jurnal::with('siswa.kelas')
+                ->where('siswa_id', $siswa->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             // hanya satu kali dalam sehari
             $jurnalToDay = Jurnal::whereDate('created_at', Carbon::today())->where('siswa_id', $siswa->id)->first();
@@ -213,11 +219,11 @@ class JurnalController extends Controller
         $this->model->create($create->toArray());
         
         // buat kehadiran hadir
-        Attendance::create([
-            'siswa_id' => $siswa->id,
-            'date' => Carbon::now(),
-            'status' => 'hadir',
-        ]);
+        // Attendance::create([
+        //     'siswa_id' => $siswa->id,
+        //     'date' => Carbon::now(),
+        //     'status' => 'hadir',
+        // ]);
 
         return redirect('jurnal')->with('status', 'Data berhasil ditambah!');
     }
@@ -332,7 +338,7 @@ class JurnalController extends Controller
         $siswa = Siswa::with(['kelas', 'user'])
             ->where('aktif', 1)
             ->where('kelas_id', $kelas->id) 
-            ->orderBy('nama', 'asc') 
+            ->orderBy('created_at', 'desc') 
             ->get();
 
         // Ambil data siswa dari Jurnal yang terhubung dengan kelas tertentu
@@ -369,13 +375,13 @@ class JurnalController extends Controller
         $items = [];
         foreach ($siswa as $d) {
             $items[] = [
-                'nis' => $d->siswa->nis,
-                'siswa' => $d->siswa->nama,
+                'nis' => $d->siswa->nis ?? '-',
+                'siswa' => $d->siswa->nama_lengkap ?? '-',
                 'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                 'industri' => isset($d->siswa->penempatan->industri) ? $d->siswa->penempatan->industri->nama : '-',
-                'tanggal_waktu' => $d->tanggal_waktu,
-                'kegiatan' => $d->kegiatan,
-                'keterangan' => $d->keterangan,
+                'tanggal_waktu' => $d->tanggal_waktu ?? '-',
+                'kegiatan' => $d->kegiatan ?? '-',
+                'keterangan' => $d->keterangan ?? '-',
                 'aksi' => $d->id,
             ];
         }

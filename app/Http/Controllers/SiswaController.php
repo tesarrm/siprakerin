@@ -35,7 +35,10 @@ class SiswaController extends Controller
 
     public function index()
     {
-        $data = $this->model->with(['kelas', 'user'])->where('aktif', 1)->paginate(250);
+        $data = $this->model->with(['kelas', 'user'])
+            ->where('aktif', 1)
+            ->orderBy('nama_lengkap', 'asc')
+            ->paginate(250);
         $pengaturan = Pengaturan::first();
         $kelas = Kelas::with('jurusan')->get();
 

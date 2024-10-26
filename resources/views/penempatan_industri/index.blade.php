@@ -1,8 +1,8 @@
-
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
+    <script src="/assets/js/nice-select2.js"></script>
 
     {{-- style tab --}}
     <style>
@@ -66,7 +66,7 @@
             $row['total_kuota'] = $totalLakiLaki + $totalPerempuan;
             $row['terisi'] = $d->total_terisi;
             $row['status'] = $row['terisi'] == 0
-                ? 'Belum dikelolah'
+                ? 'Belum Dikelolah'
                 : ($row['total_kuota'] <= $row['terisi']
                     ? 'Kuota Terpenuhi'
                     : 'Kuota Terisi');
@@ -90,11 +90,14 @@
                         >
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
-                            <path opacity="0.5"
-                                d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z"
-                                stroke="currentColor" stroke-width="1.5" />
-                            <path d="M12 15L12 18" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" />
+                            <path d="M2 17.5C2 16.5654 2 16.0981 2.20096 15.75C2.33261 15.522 2.52197 15.3326 2.75 15.201C3.09808 15 3.56538 15 4.5 15C5.43462 15 5.90192 15 6.25 15.201C6.47803 15.3326 6.66739 15.522 6.79904 15.75C7 16.0981 7 16.5654 7 17.5C7 18.4346 7 18.9019 6.79904 19.25C6.66739 19.478 6.47803 19.6674 6.25 19.799C5.90192 20 5.43462 20 4.5 20C3.56538 20 3.09808 20 2.75 19.799C2.52197 19.6674 2.33261 19.478 2.20096 19.25C2 18.9019 2 18.4346 2 17.5Z" 
+                                stroke="currentColor" stroke-width="1.5"/>
+                            <path opacity="0.5" d="M9.5 17.5C9.5 16.5654 9.5 16.0981 9.70096 15.75C9.83261 15.522 10.022 15.3326 10.25 15.201C10.5981 15 11.0654 15 12 15C12.9346 15 13.4019 15 13.75 15.201C13.978 15.3326 14.1674 15.522 14.299 15.75C14.5 16.0981 14.5 16.5654 14.5 17.5C14.5 18.4346 14.5 18.9019 14.299 19.25C14.1674 19.478 13.978 19.6674 13.75 19.799C13.4019 20 12.9346 20 12 20C11.0654 20 10.5981 20 10.25 19.799C10.022 19.6674 9.83261 19.478 9.70096 19.25C9.5 18.9019 9.5 18.4346 9.5 17.5Z" 
+                                stroke="currentColor" stroke-width="1.5"/>
+                            <path opacity="0.7" d="M17 17.5C17 16.5654 17 16.0981 17.201 15.75C17.3326 15.522 17.522 15.3326 17.75 15.201C18.0981 15 18.5654 15 19.5 15C20.4346 15 20.9019 15 21.25 15.201C21.478 15.3326 21.6674 15.522 21.799 15.75C22 16.0981 22 16.5654 22 17.5C22 18.4346 22 18.9019 21.799 19.25C21.6674 19.478 21.478 19.6674 21.25 19.799C20.9019 20 20.4346 20 19.5 20C18.5654 20 18.0981 20 17.75 19.799C17.522 19.6674 17.3326 19.478 17.201 19.25C17 18.9019 17 18.4346 17 17.5Z" 
+                                stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M4.5 15V9C4.5 6.64298 4.5 5.46447 5.23223 4.73223C5.96447 4 7.14298 4 9.5 4H14.5C16.857 4 18.0355 4 18.7678 4.73223C19.5 5.46447 19.5 6.64298 19.5 9V12M19.5 12L21.5 10M19.5 12L17.5 10" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                         Penempatan</a>
                 </li>
@@ -184,7 +187,50 @@
                         </table>
                     </div>
                 </div>
-            
+
+                {{-- pagination max 100 --}}
+                @if($data->total() > 100)
+                    <div id="pageplus" class="flex justify-center mt-3">
+                        <ul class="flex items-center m-auto">
+                            <li>
+                                <a href="{{ $data->previouspageurl() }}"  
+                                    class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                        <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </li>
+                            @for ($i = 1; $i <= $data->lastpage(); $i++)
+                                <li>
+                                    <a href="{{ $data->url($i) }}"
+                                        class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                            {{ ($data->currentpage() == $i) ? 
+                                                'bg-primary text-white dark:text-white-light dark:bg-primary' : 
+                                                'bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary'
+                                            }}">{{ $i * 100 }}</a>
+                                </li>
+                            @endfor
+                            <li>
+                                <a href="{{ $data->nextpageurl() }}" 
+                                    class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                        <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5"
+                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" />
+                                    </svg>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                @endif
 
             </div>
             <div class="tab-content">
@@ -217,6 +263,51 @@
                     <div class="invoice-table">
                         <table id="table_siswa" class="whitespace-nowrap"></table>
                     </div>
+
+                    {{-- pagination max 250 --}}
+                    @if($penempatan->total() > 250)
+                        <div id="pageplus" class="flex justify-center mt-3">
+                            <ul class="flex items-center m-auto">
+                                <li>
+                                    <a href="{{ $penempatan->previouspageurl() }}"  
+                                        class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                            <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </a>
+                                </li>
+                                @for ($i = 1; $i <= $penempatan->lastpage(); $i++)
+                                    <li>
+                                        <a href="{{ $penempatan->url($i) }}"
+                                            class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                                {{ ($penempatan->currentpage() == $i) ? 
+                                                    'bg-primary text-white dark:text-white-light dark:bg-primary' : 
+                                                    'bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary'
+                                                }}">{{ $i * 250 }}</a>
+                                    </li>
+                                @endfor
+                                <li>
+                                    <a href="{{ $penempatan->nextpageurl() }}" 
+                                        class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                            <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    @endif
+
                 </div>
 
                     @if(!auth()->user()->hasRole('wali_kelas'))
@@ -263,12 +354,12 @@
         foreach ($penempatan as $d) {
             $dSiswa[] = [
                 'nis' => $d->siswa->nis ?? '-',
-                'nama' => $d->siswa->nama ?? '-',
+                'nama' => $d->siswa->nama_lengkap ?? '-',
                 'jenis_kelamin' => $d->siswa->jenis_kelamin ?? '-',
                 'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
-                'tahun_ajaran' => $d->tahun_ajaran ?? "-",
                 'industri' => $d->industri->nama ?? '-',
                 'kota' => $d->industri->kota->nama ?? '-',
+                'tahun_ajaran' => $d->tahun_ajaran ?? "-",
                 'action' => $d->id ?? '-', 
             ];
         }
@@ -336,6 +427,11 @@
                 },
 
                 initializeTable() {
+                    function generateSequence(start, count) {
+                        return Array.from({ length: count }, (_, i) => start + i);
+                    }
+                    const countArr = generateSequence(3, {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}});
+
                     this.datatable = new simpleDatatables.DataTable('#myTable', {
                         data: {
                             data: this.dataArr
@@ -343,7 +439,66 @@
                         perPage: 10,
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
-            
+                            {
+                                select: 2,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: countArr,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge bg-[#e6e9ed] dark:bg-[#1b2e4b] text-[#6a6e73] dark:text-[#888ea8] rounded-full text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: @json($jurusanLakiLaki->count() + $jurusanPerempuan->count()) + 5,
+                                render: function(data, cell, row) {
+                                    if(data == 'Belum Dikelolah'){
+                                        return `
+                                            <span class="badge bg-dark/20 text-dark rounded-full">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else if(data == 'Kuota Terisi'){
+                                        return `
+                                            <span class="badge bg-warning/20 text-warning rounded-full">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else if(data == 'Kuota Terpenuhi'){
+                                        return `
+                                            <span class="badge bg-danger/20 text-danger rounded-full">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
                             {
                                 select: @json($jurusanLakiLaki).length + @json($jurusanPerempuan).length + 6,
                                 sortable: false,
@@ -500,16 +655,64 @@
                                 "Nama",
                                 "Jenis Kelamin",
                                 "Kelas",
-                                "Tahun Ajaran",
                                 "Industri",
                                 "Kota",
+                                "Tahun Ajaran",
                                 "Aksi",
                             ],
                             data: this.dataArr
                         },
                         perPage: 10,
-                        perPageSelect: [10, 20, 30, 50, 100],
+                        perPageSelect: [10, 20, 30, 50, 100, 250],
                         columns: [
+                            {
+                                select: 3,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 4,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-success text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 5,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-warning text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
                             {
                                 select: 7,
                                 sortable: false,
@@ -612,5 +815,17 @@
 
             }))
         })
+
+        /*************
+         * filter kelas 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterKelas"), options);
+        });
+
     </script>
 </x-layout.default>

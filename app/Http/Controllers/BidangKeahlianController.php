@@ -23,7 +23,7 @@ class BidangKeahlianController extends Controller
      */
     public function index()
     {
-        $data = $this->bModel->get();
+        $data = BidangKeahlian::orderBy('nama', 'asc')->get();
 
         return view('bidang_keahlian.index', [
             'data' => $data

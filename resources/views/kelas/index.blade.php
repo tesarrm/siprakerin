@@ -1,6 +1,4 @@
-
 <x-layout.default>
-
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
@@ -81,11 +79,11 @@
             $items[] = [
                 'id' => $d->id ?? '-',
                 'nama' => $d->nama . " " . $d->jurusan->singkatan . " " . $d->klasifikasi ?? '-',
-                'tahun_ajaran' => $d->tahun_ajaran ?? '-',
-                'jurusan' => $d->jurusan->nama ?? '-',
-                'bidang_keahlian' => $d->jurusan->bidangKeahlian->nama ?? '-',
                 'klasifikasi' => $d->klasifikasi ?? '-',
+                'jurusan' => $d->jurusan->nama ?? '-',
+                // 'bidang_keahlian' => $d->jurusan->bidangKeahlian->nama ?? '-',
                 'guru' => $d->guru->nama ?? '-',
+                'tahun_ajaran' => $d->tahun_ajaran ?? '-',
                 'action' => $d->id ?? '-', 
             ];
         }
@@ -137,11 +135,11 @@
                             headings: [
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                                 "Nama",
-                                "Tahun Ajaran",
-                                "Jurusan",
-                                "Bidang Keahlian",
                                 "Klasifikasi",
+                                "Jurusan",
+                                // "Bidang Keahlian",
                                 "Wali Kelas",
+                                "Tahun Ajaran",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -157,7 +155,39 @@
                                 }
                             },
                             {
-                                select: 7,
+                                select: 3,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 4,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-success text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 6,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const rowId = `row-${data}`; // Buat unique row ID berdasarkan data
@@ -491,5 +521,4 @@
             });
         }
     </script>
-
 </x-layout.default>
