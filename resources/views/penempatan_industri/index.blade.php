@@ -2,6 +2,8 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
+
+    <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
     <script src="/assets/js/nice-select2.js"></script>
 
     {{-- style tab --}}
@@ -128,8 +130,8 @@
                             <div class="flex items-center gap-2 mb-5">
 
                                 <div class="" style="width: 225px">
-                                    <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
-                                        <option value="">Pilih Kota</option>
+                                    <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="selectize">
+                                        <option selected ="">Pilih Kota</option>
                                         @foreach($kota as $item)
                                             <option value="{{ $item->nama}}">
                                                 {{ $item->nama}}
@@ -245,8 +247,8 @@
                             <div class="flex items-center gap-2 mb-5">
 
                                 <div class="" style="width: 225px">
-                                    <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
-                                        <option value="">Pilih Kelas</option>
+                                    <select id="filterKelas1" x-model="selectedKelas" @change="filterByKelas" class="selectize">
+                                        <option selected value="">Pilih Kelas</option>
                                         @foreach($kelas as $item)
                                             <option value="{{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}">
                                                 {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
@@ -366,6 +368,28 @@
     @endphp
 
     <script>
+        /*************
+         * filter kelas 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterKelas"), options);
+        });
+
+        /*************
+         * filter kelas1 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterKelas1"), options);
+        });
+
         /*************
          * atur posisi header table 
          */
@@ -820,12 +844,12 @@
          * filter kelas 
          */
 
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("filterKelas"), options);
-        });
+        // document.addEventListener("DOMContentLoaded", function(e) {
+        //     var options = {
+        //         searchable: true
+        //     };
+        //     NiceSelect.bind(document.getElementById("filterKelas"), options);
+        // });
 
     </script>
 </x-layout.default>

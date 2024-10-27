@@ -1,8 +1,10 @@
-
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
+
+    <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
+    <script src="/assets/js/nice-select2.js"></script>
 
     <div x-data="dataList">
         <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
@@ -107,8 +109,8 @@
                         </div>
                         {{-- select kelas --}}
                         <div style="width: 150px">
-                            <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
-                                <option value="">Pilih Kelas</option>
+                            <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="selectize">
+                                <option selected value="">Pilih Kelas</option>
                                 @foreach($kelas as $item)
                                     <option value="{{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}">
                                         {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
@@ -125,48 +127,90 @@
 
             {{-- pagination max 250 --}}
             @if($data->total() > 250)
-                <div id="pageplus" class="flex justify-center mt-3">
+                <div id="pageplus" class="flex justify-center mt-4">
                     <ul class="flex items-center m-auto">
-                        {{-- @if ($data->currentpage() > 1) --}}
+                        {{-- Tombol halaman sebelumnya --}}
+                        <li>
+                            <a href="{{ $data->previousPageUrl() }}"  
+                                class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                    <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </a>
+                        </li>
+
+                        {{-- Tentukan batas halaman yang terlihat --}}
+                        @php
+                            $start = max(1, $data->currentPage() - 2);
+                            $end = min($data->lastPage(), $data->currentPage() + 2);
+                        @endphp
+
+                        {{-- Tampilkan halaman pertama jika tidak dalam rentang --}}
+                        @if ($start > 1)
                             <li>
-                                <a href="{{ $data->previouspageurl() }}"  
-                                    class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
-                                        <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                        <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                    </svg>
+                                <a href="{{ $data->url(1) }}"
+                                class="flex justify-center font-semibold px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                    1
                                 </a>
                             </li>
-                        {{-- @endif --}}
-                        @for ($i = 1; $i <= $data->lastpage(); $i++)
+                            @if ($start > 2)
+                                <li><span class="px-3">...</span></li>
+                            @endif
+                        @endif
+
+                        {{-- Loop melalui halaman dalam rentang yang ditentukan --}}
+                        @for ($i = $start; $i <= $end; $i++)
                             <li>
                                 <a href="{{ $data->url($i) }}"
-                                    class="flex justify-center font-semibold px-3.5 py-2 transition 
-                                        {{ ($data->currentpage() == $i) ? 
+                                class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                        {{ ($data->currentPage() == $i) ? 
                                             'bg-primary text-white dark:text-white-light dark:bg-primary' : 
                                             'bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary'
-                                        }}">{{ $i * 250 }}</a>
-                            </li>
-                        @endfor
-                        {{-- @if ($data->hasmorepages()) --}}
-                            <li>
-                                <a href="{{ $data->nextpageurl() }}" 
-                                    class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
-                                        <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5"
-                                            stroke-linecap="round" stroke-linejoin="round" />
-                                        <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5"
-                                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round" />
-                                    </svg>
+                                        }}">
+                                    {{ $i }}
                                 </a>
                             </li>
-                        {{-- @endif --}}
+                        @endfor
+
+                        {{-- Tampilkan halaman terakhir jika tidak dalam rentang --}}
+                        @if ($end < $data->lastPage())
+                            @if ($end < $data->lastPage() - 1)
+                                <li>
+                                    <div
+                                        class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                            bg-white-light text-dark dark:text-white-light dark:bg-[#191e3a] 
+                                            ">
+                                        <span class="px-3 ">...</span>
+                                    </div>
+                                </li>
+                            @endif
+                            <li>
+                                <a href="{{ $data->url($data->lastPage()) }}"
+                                class="flex justify-center font-semibold px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                    {{ $data->lastPage() }}
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Tombol halaman berikutnya --}}
+                        <li>
+                            <a href="{{ $data->nextPageUrl() }}" 
+                                class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                    <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                    <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5"
+                                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                        stroke-linejoin="round" />
+                                </svg>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             @endif
@@ -273,6 +317,17 @@
     @endphp
 
     <script>
+        /*************
+         * filter kelas 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterKelas"), options);
+        });
+
         /*************
          * filter kelas 
          */

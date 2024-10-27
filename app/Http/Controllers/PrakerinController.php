@@ -402,9 +402,9 @@ class PrakerinController extends Controller
                 // }
 
                 if ($selesai) {
-                    $status = 'selesai';
+                    $status = 'Selesai';
                 } else {
-                    $status = 'prakerin';
+                    $status = 'Prakerin';
                 }
 
                 // Simpan status dalam properti tambahan jika dibutuhkan

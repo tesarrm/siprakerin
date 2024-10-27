@@ -330,7 +330,7 @@
                 </a>
             </li>
             <li class="menu nav-item relative">
-                <a href="{{url('nilai')}}" class="nav-link">
+                <a href="/nilai" class="nav-link">
                     <div class="flex items-center">
                         <svg class="group-hover:!text-primary shrink-0" width="20" height="20"
                             viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -346,7 +346,7 @@
                 </a>
             </li>
             <li class="menu nav-item relative">
-                <a href="{{url('hasilmonitoring')}}" class="nav-link">
+                <a href="/hasilmonitoring" class="nav-link">
                     <div class="flex items-center">
                         <svg class="group-hover:!text-primary shrink-0" width="20" height="20"
                             viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

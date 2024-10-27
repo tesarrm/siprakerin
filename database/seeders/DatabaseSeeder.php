@@ -4,11 +4,14 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\CapaianPembelajaran;
 use App\Models\Industri;
 use App\Models\Jurusan;
 use App\Models\KuotaIndustri;
+use App\Models\TujuanPembelajaran;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
+use Faker\Factory as Faker;
 
 class DatabaseSeeder extends Seeder
 {
@@ -81,8 +84,32 @@ class DatabaseSeeder extends Seeder
         // \App\Models\PilihanKota::factory()->count(2000)->create();
 
         // \App\Models\Monitoring::factory()->count(3)->create();
-        \App\Models\Jurnal::factory()->count(500000)->create();
+        // \App\Models\Jurnal::factory()->count(500000)->create();
 
+        // ======= capaian dan tujuran 
+        $faker = Faker::create();
+        $jurusans = Jurusan::all();
+
+        foreach ($jurusans as $jurusan) {
+            // Generate antara 1 hingga 5 capaian untuk setiap jurusan
+            $capaianCount = rand(1, 5);
+            for ($i = 0; $i < $capaianCount; $i++) {
+                // Buat capaian pembelajaran untuk jurusan ini
+                $capaian = CapaianPembelajaran::create([
+                    'jurusan_id' => $jurusan->id,
+                    'nama' => $faker->sentence,
+                ]);
+
+                // Generate antara 1 hingga 3 tujuan untuk setiap capaian
+                $tujuanCount = rand(1, 3);
+                for ($j = 0; $j < $tujuanCount; $j++) {
+                    TujuanPembelajaran::create([
+                        'capaian_pembelajaran_id' => $capaian->id,
+                        'nama' => $faker->sentence . " " . $faker->sentence,
+                    ]);
+                }
+            }
+        }
 
         
         // \App\Models\KuotaIndustri::factory()->create();

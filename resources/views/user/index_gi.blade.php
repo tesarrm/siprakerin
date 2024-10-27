@@ -47,12 +47,23 @@
     {{-- data datatable --}}
     @php
         $items = [];
+        // foreach ($data as $d) {
+        //     $items[] = [
+        //         'nama' => $d->nama ?? '-',
+        //         'guru_id' => $d->id ?? '-',
+        //         'industri' => $d->industri == "" ? '-' : $d->industri,
+        //         'action' => $d->id ?? '-',
+        //     ];
+        // }
         foreach ($data as $d) {
+            $industriCount = $d->industri ? count(explode(',', $d->industri)) : 0;
+            
             $items[] = [
-                'nama' => $d->nama,
-                'guru_id' => $d->id,
-                'industri' => $d->industri,
+                'nama' => $d->nama ?? '-',
+                'guru_id' => $d->id ?? '-',
+                'industri_count' => $industriCount,
                 'action' => $d->id ?? '-',
+                'industri' => $d->industri == "" ? '-' : $d->industri,
             ];
         }
     @endphp
@@ -87,8 +98,9 @@
                             headings: [
                                 "Nama",
                                 "Guru Id",
-                                "Industri",
+                                "Total Industri",
                                 "Aksi",
+                                "Industri",
                             ],
                             data: this.dataArr
                         },
@@ -96,8 +108,24 @@
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
-                                select: 1, 
+                                select: [1, 4], 
                                 hidden: true,
+                            },
+                            {
+                                select: 2,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge bg-[#e6e9ed] dark:bg-[#1b2e4b] text-[#6a6e73] dark:text-[#888ea8] rounded-full text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
                             },
                             {
                                 select: 3,
@@ -158,47 +186,71 @@
                                                                 </div>
                                                                 <div class="p-5 pt-0 overflow-hidden max-h-[80vh] overflow-y-auto">
 
-                                        <form action="{{ url('guruindustri/${row.cells[1].data}/industri') }}" method="POST" enctype="multipart/form-data">
-                                            @csrf
-                                            <div>
-                                                <label for="guru">Guru<span class="text-danger">*</span></label>
-                                                <input value="${row.cells[0].data}" required id="guru" type="text" name="guru"
-                                                    class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed"
-                                                    disabled />
-                                            </div>
-                                            
-                                            <div x-data="{
-                                                    industriList: '${row.cells[2].data}'.split(', '), // Inisialisasi industri
-                                                    addIndustri() {
-                                                        this.industriList.push(''); // Tambah input baru
-                                                        console.log(this.industriList);
-                                                    },
-                                                    removeIndustri(index) {
-                                                        this.industriList.splice(index, 1); // Hapus input
-                                                    }
-                                                }">
-                                                <div class="space-y-4">
-                                                    <label for="industri" style="margin-bottom: -10px;" class="mt-3">Industri<span class="text-danger">*</span></label>
-                                                    <template x-for="(industri, index) in industriList" :key="index">
-                                                        <div class="flex gap-2 items-center">
-                                                            <select x-model="industriList[index]" name="industri_id[]" class="form-select w-full" required>
-                                                                <option value="">Pilih Industri</option>
-                                                                @foreach($industri as $item)
-                                                                    <option value="{{ $item->id }}" :selected="industri == '{{ $item->id }}'">{{ $item->nama }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                            <button type="button" @click="removeIndustri(index)" class="text-red-500 hover:text-red-700" x-show="industriList.length > 1">Hapus</button>
-                                                        </div>
-                                                    </template>
-                                                </div>
-                                                <div class="mt-4">
-                                                    <button type="button" @click="addIndustri()" class="text-blue-500 hover:text-blue-700">Tambah Industri</button>
-                                                </div>
-                                                <div class="mt-6">
-                                                    <button type="submit" class="btn btn-primary">Simpan</button>
-                                                </div>
-                                            </div>
-                                        </form>
+                                                                    <form action="{{ url('guruindustri/${row.cells[1].data}/industri') }}" method="POST" enctype="multipart/form-data">
+                                                                        @csrf
+                                                                        <div>
+                                                                            <label for="guru">Guru<span class="text-danger">*</span></label>
+                                                                            <input value="${row.cells[0].data}" required id="guru" type="text" name="guru"
+                                                                                class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed"
+                                                                                disabled />
+                                                                        </div>
+                                                                        
+                                                                        <div x-data="{
+                                                                                industriList: '${row.cells[4].data}'.split(', '), // Inisialisasi industri
+                                                                                addIndustri() {
+                                                                                    this.industriList.push(''); // Tambah input baru
+                                                                                },
+                                                                                removeIndustri(index) {
+                                                                                    this.industriList.splice(index, 1); // Hapus input
+                                                                                }
+                                                                            }">
+                                                                            <div class="space-y-4">
+                                                                                <label for="industri" style="margin-bottom: -10px;" class="mt-3">Industri<span class="text-danger">*</span></label>
+                                                                                <template x-for="(industri, index) in industriList" :key="index">
+                                                                                    <div class="flex gap-2 items-center">
+                                                                                        <select x-model="industriList[index]" name="industri_id[]" class="form-select w-full" required>
+                                                                                            <option value="">Pilih Industri</option>
+                                                                                            @foreach($industri as $item)
+                                                                                                <option value="{{ $item->id }}" :selected="industri == '{{ $item->id }}'">{{ $item->nama }}</option>
+                                                                                            @endforeach
+                                                                                        </select>
+                                                                                        <button 
+                                                                                            type="button" 
+                                                                                            @click="removeIndustri(index)" 
+                                                                                            x-tooltip="Hapus" 
+                                                                                            x-show="industriList.length > 1"
+                                                                                        >
+                                                                                            <svg width="24" height="24" viewBox="0 0 24 24"
+                                                                                                fill="none" xmlns="http://www.w3.org/2000/svg"
+                                                                                                class="w-5 h-5 text-danger">
+                                                                                                <circle opacity="0.5" cx="12" cy="12"
+                                                                                                    r="10" stroke="currentColor"
+                                                                                                    stroke-width="1.5" />
+                                                                                                <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
+                                                                                                    stroke="currentColor" stroke-width="1.5"
+                                                                                                    stroke-linecap="round" />
+                                                                                            </svg>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                </template>
+                                                                            </div>
+                                                                            <div class="mt-4">
+                                                                                <button 
+                                                                                    type="button" 
+                                                                                    @click="addIndustri()" 
+                                                                                    x-tooltip="Tambah" 
+                                                                                    class="btn btn-outline-info btn-sm"
+                                                                                >
+                                                                                    Tambah
+                                                                                </button>
+                                                                            </div>
+                                                                            <div class="flex justify-end items-center mt-8">
+                                                                                <button type="button" class="btn btn-outline-danger"
+                                                                                    @click="toggle1">Batal</button>
+                                                                                <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">Ubah</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </form>
 
                                                                 </div>
                                                             </div>

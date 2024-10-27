@@ -50,7 +50,7 @@
             <div class="panel h-full p-0">
                 <div class="flex p-5">
                     <div
-                        class="shrink-0 bg-success/10 text-success rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                        class="shrink-0 bg-success/10 text-success rounded-xl w-11 h-11 flex justify-center items-center dark:bg-success dark:text-white-light">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                             <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" 
@@ -69,7 +69,7 @@
             <div class="panel h-full p-0">
                 <div class="flex p-5">
                     <div
-                        class="shrink-0 bg-warning/10 text-warning rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                        class="shrink-0 bg-warning/10 text-warning rounded-xl w-11 h-11 flex justify-center items-center dark:bg-warning dark:text-white-light">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                             <path d="M12 7V13" 
@@ -89,7 +89,7 @@
             <div class="panel h-full p-0">
                 <div class="flex p-5">
                     <div
-                        class="shrink-0 bg-danger/10 text-danger rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                        class="shrink-0 bg-danger/10 text-danger rounded-xl w-11 h-11 flex justify-center items-center dark:bg-danger dark:text-white-light">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
                             <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" 
@@ -109,7 +109,6 @@
 
     <div class="panel">
 
-        @if(auth()->user()->hasRole('siswa'))
 
         <div id="tabs" x-data="{ tab: 'guru'}">
             <ul class="flex flex-wrap mb-5 border-b border-white-light dark:border-[#191e3a]">
@@ -151,6 +150,8 @@
                         </svg>
                         Siswa Izin</a>
                 </li>
+
+                @if(auth()->user()->hasRole('siswa'))
                 <li class="tab">
                     <a href="javascript:;"
                         class="p-5 py-3 -mb-[1px] flex items-center relative before:transition-all before:duration-700 hover:text-secondary before:absolute before:w-0 before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:bg-secondary hover:before:w-full"
@@ -183,13 +184,12 @@
                         </svg>
                         Kalender Kehadiran</a>
                 </li>
+                @endif
             </ul>
         </div>
         <div id="tab-content">
             <div class="tab-content show">
     
-            @endif
-
                 <div x-data="invoiceList">
                     <div class="panel px-0 py-0 shadow-none">
                         @if(!auth()->user()->can('r_dashwalikelas'))
@@ -278,23 +278,45 @@
                     </div>
                 </div>
 
-                @if(auth()->user()->hasRole('siswa'))
-
             </div>
             <div class="tab-content">
-                <div x-data="siswa">
-                    <div class="invoice-table">
-                        <table id="table_siswa"></table>
-                    </div>
 
+                <div x-data="siswa">
+                    <div class="panel px-0 py-0 shadow-none">
+
+                        @if(!auth()->user()->hasRole('siswa'))
+                        <div class="px-5">
+                            <div class="md:absolute ltr:md:left-5 rtl:md:right-5">
+                                <div class="flex items-center gap-2 mb-5">
+                                    <div class="" style="width: 150px">
+                                        <select id="filterKelas1" x-model="selectedKelas" @change="filterByKelas" class="selectize">
+                                            <option selected value="">Pilih Kelas</option>
+                                            @foreach($kelas as $item)
+                                                <option value="{{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}">
+                                                    {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+
+                        <div class="invoice-table">
+                            <table id="table_siswa"></table>
+                        </div>
+                    </div>
                 </div>
+
             </div>
+
+            @if(auth()->user()->hasRole('siswa'))
             <div class="tab-content">
                 <div id='calendar'></div>
             </div>
+            @endif
         </div>
-
-        @endif
 
     </div>
 
@@ -388,6 +410,16 @@
             }));
         });
 
+        document.addEventListener("alpine:init", () => {
+            Alpine.data("detail1", (initialOpenState = false) => ({
+                open: initialOpenState,
+
+                toggle2() {
+                    this.open = !this.open;
+                },
+            }));
+        });
+
         /*************
          * filter kelas 
          */
@@ -397,6 +429,17 @@
                 searchable: true
             };
             NiceSelect.bind(document.getElementById("filterKelas"), options);
+        });
+
+        /*************
+         * filter kelas 1 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterKelas1"), options);
         });
 
         /*************
@@ -1178,7 +1221,6 @@
     </script>
 
     {{-- izin data untuk datatable --}}
-    @if(auth()->user()->hasRole('siswa'))
         @php
             $dIzin = [];
             foreach ($dataIzin as $d) {
@@ -1191,6 +1233,7 @@
                     'catatan' => $d->catatan ?? '-',
                     'action' => $d->id ?? '-', 
                     'created_at' => $d->created_at ?? '-', 
+                    'gambar' => $d->gambar ?? '-', 
                 ];
             }
         @endphp
@@ -1206,20 +1249,23 @@
                     items: @json($dIzin),
                     searchText: '',
                     datatable: null,
+                    selectedKelas: '', 
                     dataArr: [],
 
                     init() {
                         this.setTableData();
                         this.initializeTable();
                         this.$watch('items', value => {
-                            this.datatable.destroy()
-                            this.setTableData();
-                            this.initializeTable();
+                            // this.datatable.destroy()
+                            // this.setTableData();
+                            // this.initializeTable();
+                            this.refreshTable();
                         });
                         this.$watch('selectedRows', value => {
-                            this.datatable.destroy()
-                            this.setTableData();
-                            this.initializeTable();
+                            // this.datatable.destroy()
+                            // this.setTableData();
+                            // this.initializeTable();
+                            this.refreshTable();
                         });
                     },
 
@@ -1235,6 +1281,7 @@
                                     "Catatan",
                                     "Aksi",
                                     "Created At",
+                                    "Gambar",
                                 ],
                                 data: this.dataArr
                             },
@@ -1242,7 +1289,7 @@
                             perPageSelect: [10, 20, 30, 50, 100],
                             columns: [
                                 {
-                                    select: 7,
+                                    select: [7, 8],
                                     hidden: true,
                                 },
                                 {
@@ -1273,7 +1320,9 @@
                                     render: function(data, cell, row) {
                                         const today = new Date().toISOString().slice(0, 10); // Mendapatkan tanggal hari ini dalam format "YYYY-MM-DD"
                                         const createdAt = row.cells[7].data.slice(0, 10); // Mengambil tanggal dari created_at (tanpa waktu)
+                                        const rowId = `row-${data}`; // Buat unique row ID berdasarkan data
                                         
+                                        @if(auth()->user()->hasRole('siswa'))
                                         const showButton = createdAt == today ? `
                                             <a href="/izin/${data}/edit" class="hover:text-info">
                                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5">
@@ -1298,11 +1347,14 @@
                                                 </svg>
                                             </a>
                                             ` : '';
+                                            @else
+                                            const showButton = ''; 
+                                            @endif
                                         
                                         return `<div>
                                                     <div class="flex gap-4 items-center">
                                                         ${showButton}
-                                                        <a href="/izin/${data}" class="hover:text-info">
+                                                        <a href="#" @click="$dispatch('open-detail', { rowId: '${rowId}' })" class="hover:text-info">
                                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                                 <path 
                                                                     opacity="0.5" d="M3.27489 15.2957C2.42496 14.1915 2 13.6394 2 12C2 10.3606 2.42496 9.80853 3.27489 8.70433C4.97196 6.49956 7.81811 4 12 4C16.1819 4 19.028 6.49956 20.7251 8.70433C21.575 9.80853 22 10.3606 22 12C22 13.6394 21.575 14.1915 20.7251 15.2957C19.028 17.5004 16.1819 20 12 20C7.81811 20 4.97196 17.5004 3.27489 15.2957Z" 
@@ -1317,6 +1369,67 @@
                                                             </svg>
                                                         </a>
 
+                                                        <div x-data="detail1" @open-detail.window="if ($event.detail.rowId === '${rowId}') toggle2()">
+                                                            <div class="fixed inset-0 bg-[black]/60 z-[999] hidden" :class="open && '!block'" style="text-wrap: wrap;">
+                                                                <div class="flex items-start justify-center min-h-screen px-4"
+                                                                    @click.self="open = false">
+                                                                    <div x-show="open" x-transition x-transition.duration.300
+                                                                        class="panel border-0 p-0 rounded-lg overflow-hidden w-full max-w-5xl my-8">
+                                                                        <div
+                                                                            class="flex bg-[#fbfbfb] dark:bg-[#121c2c] items-center justify-between px-5 py-3">
+                                                                            <h5 class="font-bold text-lg">Detail</h5>
+                                                                            <button type="button" class="text-white-dark hover:text-dark"
+                                                                                @click="toggle2">
+
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="24px"
+                                                                                    height="24px" viewBox="0 0 24 24" fill="none"
+                                                                                    stroke="currentColor" stroke-width="1.5"
+                                                                                    stroke-linecap="round" stroke-linejoin="round"
+                                                                                    class="w-6 h-6">
+                                                                                    <line x1="18" y1="6" x2="6"
+                                                                                        y2="18"></line>
+                                                                                    <line x1="6" y1="6" x2="18"
+                                                                                        y2="18"></line>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div class="flex xl:flex-row flex-col gap-2.5">
+                                                                            <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
+                                                                                <div class="px-4"  >
+                                                                                    <div class="text-lg font-semibold">Surat Izin</div>
+                                                                                    <div class="flex xl:flex-row flex-col gap-6">
+                                                                                        <div class="space-y-5 px-0 flex-1 py-6" >
+                                                                                            <div class="mb-5 border rounded-xl overflow-hidden">
+                                                                                                <img class="object-cover w-full h-full" src="{{ asset('storage/posts') }}/${row.cells[8].data}"> 
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="xl:w-96 w-full xl:mt-0 mt-6 space-y-5">
+                                                                                            <div class="grid grid-cols-1 gap-4">
+                                                                                                <div>
+                                                                                                    <label for="tanggal1">Tanggal<span class="text-danger">*</span></label>
+                                                                                                    <input value="${row.cells[4].data}" required type="text" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div>
+                                                                                                <label for="catatan">Catatan</label>
+                                                                                                <textarea id="catatan" rows="10" name="catatan" class="form-textarea bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly 
+                                                                                                    placeholder="Isi Catatan" required>${row.cells[5].data}</textarea>
+                                                                                            </div>
+                                                                                            {{-- button --}}
+                                                                                            <div class="flex justify-end items-center mt-8 gap-4">
+                                                                                                <button type="button" class="btn btn-outline-danger"
+                                                                                                    @click="toggle2">Batal</button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                        
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
                                                     </div>
                                                 </div>`;
@@ -1358,15 +1471,34 @@
                     },
 
                     setTableData() {
-                        this.dataArr = [];
-                        for (let i = 0; i < this.items.length; i++) {
-                            this.dataArr[i] = [];
-                            for (let p in this.items[i]) {
-                                if (this.items[i].hasOwnProperty(p)) {
-                                    this.dataArr[i].push(this.items[i][p]);
-                                }
-                            }
-                        }
+                        // this.dataArr = [];
+                        // for (let i = 0; i < this.items.length; i++) {
+                        //     this.dataArr[i] = [];
+                        //     for (let p in this.items[i]) {
+                        //         if (this.items[i].hasOwnProperty(p)) {
+                        //             this.dataArr[i].push(this.items[i][p]);
+                        //         }
+                        //     }
+                        // }
+
+                        this.dataArr = this.items
+                            .filter(item => {
+                                // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                                return this.selectedKelas === '' || item.kelas === this.selectedKelas;
+                            })
+                            .map(item => {
+                                return Object.values(item); // Mengonversi setiap item ke array data
+                            });
+                    },
+
+                    refreshTable() {
+                        this.datatable.destroy();
+                        this.setTableData();
+                        this.initializeTable();
+                    },
+
+                    filterByKelas() {
+                        this.refreshTable(); 
                     },
 
                     searchInvoice() {
@@ -1383,5 +1515,4 @@
             })
 
         </script>
-    @endif
 </x-layout.default>

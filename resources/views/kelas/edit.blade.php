@@ -2,6 +2,9 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
 
+    <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
+    <script src="/assets/js/nice-select2.js"></script>
+
     <div>
         <form action="{{ url('kelas/' . $data->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -13,7 +16,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label for="nama">Kelas</label>
-                                <select required id="nama" name="nama" class="form-select w-full">
+                                <select required id="nama" name="nama" class="selectize w-full">
                                     <option value="">Pilih Kelas</option>
                                     <option value="X" @selected($data->nama == 'X')>X</option>
                                     <option value="XI" @selected($data->nama == 'XI')>XI</option>
@@ -32,7 +35,7 @@
                             </div>
                             <div>
                                 <label for="jurusan_id">Jurusan<span class="text-danger">*</span></label>
-                                <select required id="jurusan_id" name="jurusan_id" class="form-select w-full">
+                                <select required id="jurusan_id" name="jurusan_id" class="selectize w-full">
                                     <option value="">Pilih Jurusan</option>
                                     @foreach($jurusan as $item)
                                         <option value="{{ $item->id }}" @selected($data->jurusan_id == $item->id)>{{ $item->nama }}</option>
@@ -52,7 +55,7 @@
                             </div>
                             <div>
                                 <label for="guru_id">Wali Kelas<span class="text-danger">*</span></label>
-                                <select required id="guru_id" name="guru_id" class="form-select w-full">
+                                <select required id="guru_id" name="guru_id" class="selectize w-full">
                                     <option value="">Pilih Wali Kelas</option>
                                     @foreach($guru as $item)
                                         <option value="{{ $item->id }}" @selected($data->guru_id == $item->id)>{{ $item->nama }}</option>
@@ -99,3 +102,29 @@
         </form>
     </div>
 </x-layout.default>
+<script>
+
+        /*************
+         * filter 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("nama"), options);
+        });
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("jurusan_id"), options);
+        });
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("guru_id"), options);
+        });
+
+</script>

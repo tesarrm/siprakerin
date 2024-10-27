@@ -188,7 +188,7 @@
                                                     :name="'data['+index+'][id_siswa]'" 
                                                     x-model="row.id_siswa" 
                                                     @change="updateSiswa(row.id_siswa, index)" 
-                                                    class="form-input w-full" 
+                                                    class="selectize w-full" 
                                                     style="border:none; padding: 5px; padding-right: 30px;"
                                                 >
                                                     <option value="">Pilih Siswa</option>

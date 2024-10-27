@@ -28,6 +28,7 @@ class PelanggaranSiswaController extends Controller
                     $query->where('id', $kelasId);
                 })
                 ->with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])
+                ->orderBy('created_at', 'desc')
                 ->get();
         } else if(auth()->user()->hasRole('siswa')) {
             $siswa = Siswa::where('user_id', auth()->user()->id)
@@ -36,13 +37,18 @@ class PelanggaranSiswaController extends Controller
             // Filter pelanggaran siswa yang hanya terjadi pada siswa di kelas tersebut
             $data = PelanggaranSiswa::where('siswa_id', $siswa->id)
                 ->with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])
+                ->orderBy('created_at', 'desc')
                 ->get();
         } else {
-            $data = PelanggaranSiswa::with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])->get();
+            $data = PelanggaranSiswa::with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
+        $kelas = Kelas::where('aktif', 1)->get();
 
         return view('pelanggaran.index', [
             'data' => $data,
+            'kelas' => $kelas,
         ]);
     }
 
@@ -87,28 +93,19 @@ class PelanggaranSiswaController extends Controller
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    // public function edit($id, PelanggaranSiswa $pelanggaraSiswa)
-    // {
-    //     $siswa = Siswa::get();
-    //     $pelanggaran = PelanggaranSiswa::findOrFail($id);
 
-    //     return view('pelanggaran.edit', [
-    //         'data' => $pelanggaran,
-    //         'siswa' => $siswa
-    //     ]);
-    // }
+    public function edit($id)
+    {
+        $data = PelanggaranSiswa::with('siswa.kelas')
+            ->findOrFail($id); 
+        $kelas = Kelas::with('jurusan')
+            ->get(); 
+        $siswa = Siswa::with('kelas')
+            ->orderBy('nama', 'asc')
+            ->get();   
 
-public function edit($id)
-{
-    $data = PelanggaranSiswa::with('siswa.kelas')->findOrFail($id); // Ambil data pelanggaran dan relasinya
-    $kelas = Kelas::with('jurusan')->get(); // Semua kelas
-    $siswa = Siswa::with('kelas')->orderBy('nama', 'asc')->get();   // Semua siswa
-
-    return view('pelanggaran.edit', compact('data', 'kelas', 'siswa'));
-}
+        return view('pelanggaran.edit', compact('data', 'kelas', 'siswa'));
+    }
 
 
     /**

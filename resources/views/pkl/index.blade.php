@@ -4,6 +4,14 @@
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
 
+    <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
+    <script src="/assets/js/nice-select2.js"></script>
+
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    <script src="/assets/js/simple-datatables.js"></script>
+
+
+
     <div x-data="dataList">
         <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
             @if(!auth()->user()->hasRole('wali_kelas')) 
@@ -12,8 +20,8 @@
                     <div class="flex items-center gap-2 mb-5">
 
                         <div class="" style="width: 150px">
-                            <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
-                                <option value="">Pilih Kelas</option>
+                            <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="selectize">
+                                <option selected value="">Pilih Kelas</option>
                                 @foreach($kelas as $item)
                                     <option value="{{ $item->id }}">
                                         {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
@@ -23,8 +31,8 @@
                         </div>
 
                         <div class="" style="width: 150px">
-                            <select id="filterIndustri" x-model="selectedIndustri" @change="filterByIndustri" class="form-input">
-                                <option value="">Pilih Industri</option>
+                            <select id="filterIndustri" x-model="selectedIndustri" @change="filterByIndustri" class="selectize">
+                                <option selected value="">Pilih Industri</option>
                                 @foreach($industri as $item)
                                     <option value="{{ $item->nama }}">
                                         {{ $item->nama }}
@@ -99,6 +107,28 @@
 
     <script>
         /*************
+         * filter kelas 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterKelas"), options);
+        });
+
+        /*************
+         * filter industri 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterIndustri"), options);
+        });
+
+        /*************
          * datatable 
          */
 
@@ -116,14 +146,10 @@
                     this.setTableData();
                     this.initializeTable();
                     this.$watch('items', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
+                        this.refreshTable();
                     });
                     this.$watch('selectedRows', value => {
-                        this.datatable.destroy()
-                        this.setTableData();
-                        this.initializeTable();
+                        this.refreshTable();
                     });
                 },
 
@@ -153,6 +179,60 @@
                             {
                                 select: [8,9,10, 11],
                                 hidden: true,
+                            },
+                            {
+                                select: 1,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 2,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-warning text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 6,
+                                render: function(data, cell, row) {
+                                    if(data == 'Prakerin'){
+                                        return `
+                                            <span class="badge bg-info/20 text-info rounded-full">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else if(data == 'Selesai'){
+                                        return `
+                                            <span class="badge bg-success/20 text-success rounded-full">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
                             },
                             {
                                 select: 7,
@@ -206,7 +286,7 @@
                                                                         </svg>
                                                                     </button>
                                                                 </div>
-                                                                <div x-data="{rowc2: '${row.cells[3].data}'}"  class="p-5 pt-0 overflow-hidden max-h-[80vh] overflow-y-auto">
+                                                                <div x-data="{rowc2: '${row.cells[11].data}'}"  class="p-5 pt-0 overflow-hidden max-h-[80vh] overflow-y-auto">
 
                                                                     <form action="{{ url('pkl') }}/${data}" method="POST" enctype="multipart/form-data">
                                                                         @csrf
@@ -253,7 +333,7 @@
                                                                                         }
                                                                                     }">
                                                                                         <label for="industri">Industri<span class="text-danger">*</span></label>
-                                                                                        <select required id="industri_id" name="industri_id" class="form-select w-full" 
+                                                                                        <select required id="industri_id" name="industri_id" class="selectize w-full industri-select" 
                                                                                             @change="updateDates($event.target.value)">
                                                                                             <option value="">Pilih Industri</option>
                                                                                             @foreach($industri as $item)
@@ -261,7 +341,7 @@
                                                                                                     <option value="{{ $item->id }}" 
                                                                                                         data-tanggal-awal="{{ $item->tanggal_awal }}" 
                                                                                                         data-tanggal-akhir="{{ $item->tanggal_akhir }}"
-                                                                                                        x-bind:selected="rowc2 === '{{ $item->nama }}' ? true : false">
+                                                                                                        x-bind:selected="rowc2 === '{{ $item->id }}' ? true : false">
                                                                                                         {{ $item->nama . " (" . $item->kota->nama . ")" }} 
                                                                                                     </option>
                                                                                                 </template>
@@ -302,7 +382,8 @@
                                                                         </div>
 
                                                                         <div class="flex justify-end items-center mt-8">
-                                                                            <button type="button" class="btn btn-outline-danger" @click="toggle1">Discard</button>
+                                                                            <button type="button" class="btn btn-outline-danger"
+                                                                                @click="toggle1">Batal</button>
                                                                             <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">Pindah</button>
                                                                         </div>
                                                                     </form>
@@ -372,7 +453,8 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="flex justify-end items-center mt-8">
-                                                                            <button type="button" class="btn btn-outline-danger" @click="toggle2">Discard</button>
+                                                                            <button type="button" class="btn btn-outline-danger"
+                                                                                @click="toggle2">Batal</button>
                                                                             <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">Berhenti</button>
                                                                         </div>
                                                                     </form>
@@ -403,7 +485,7 @@
                                                                         </svg>
                                                                     </button>
                                                                 </div>
-                                                                <div x-data="{rowc2: '${row.cells[3].data}'}"  class="p-5 pt-0 overflow-hidden max-h-[80vh] overflow-y-auto">
+                                                                <div x-data="{rowc2: '${row.cells[11].data}'}"  class="p-5 pt-0 overflow-hidden max-h-[80vh] overflow-y-auto">
 
                                                                     <form action="{{ url('pkl') }}/${data}/lanjut" method="POST" enctype="multipart/form-data">
                                                                         @csrf
@@ -449,7 +531,7 @@
                                                                                         }
                                                                                     }">
                                                                                         <label for="industri">Industri<span class="text-danger">*</span></label>
-                                                                                        <select required id="industri_id" name="industri_id" class="form-select w-full" 
+                                                                                        <select required id="industri_id" name="industri_id" class="selectize w-full industri-select" 
                                                                                             @change="updateDates($event.target.value)">
                                                                                             <option value="">Pilih Industri</option>
                                                                                             @foreach($industri as $item)
@@ -457,7 +539,7 @@
                                                                                                     <option value="{{ $item->id }}" 
                                                                                                         data-tanggal-awal="{{ $item->tanggal_awal }}" 
                                                                                                         data-tanggal-akhir="{{ $item->tanggal_akhir }}"
-                                                                                                        x-bind:selected="rowc2 === '{{ $item->nama }}' ? true : false">
+                                                                                                        x-bind:selected="rowc2 === '{{ $item->id }}' ? true : false">
                                                                                                         {{ $item->nama . " (" . $item->kota->nama . ")" }} 
                                                                                                     </option>
                                                                                                 </template>
@@ -493,7 +575,8 @@
                                                                         </div>
 
                                                                         <div class="flex justify-end items-center mt-8">
-                                                                            <button type="button" class="btn btn-outline-danger" @click="toggle1">Discard</button>
+                                                                            <button type="button" class="btn btn-outline-danger"
+                                                                                @click="toggle1">Batal</button>
                                                                             <button type="submit" class="btn btn-primary ltr:ml-4 rtl:mr-4">Lanjut</button>
                                                                         </div>
                                                                     </form>
@@ -597,7 +680,7 @@
                         .then(response => response.json())
                         .then(data => {
                             this.items = data; // Menyimpan data dari server
-                            this.refreshTable();  // Memperbarui tabel
+                            // this.refreshTable();  // Memperbarui tabel
                         })
                         .catch(error => console.error('Error fetching data:', error));
                     } else {
@@ -627,6 +710,52 @@
                     if (!this.tanggalAkhir) {
                         this.tanggalAkhir = rowCells4Data;
                     }
+
+                    // Alpine.nextTick(() => {
+                    //     let selectElement = document.getElementById('industri_id');
+
+                    //     if (selectElement && selectElement.nextElementSibling && selectElement.nextElementSibling.classList.contains('nice-select')) {
+                    //         // Hapus elemen dropdown NiceSelect secara manual
+                    //         selectElement.nextElementSibling.remove();
+                    //         // Tampilkan kembali elemen select asli
+                    //         selectElement.style.display = "inline-block";
+                    //     }
+
+                    //     var options = {
+                    //         searchable: true
+                    //     };
+                    //     NiceSelect.bind(selectElement, options);
+                    // });
+
+                    if(this.open){
+                        Alpine.nextTick(() => {
+                            // Pilih semua elemen select dengan class industri-select
+                            document.querySelectorAll('.industri-select').forEach(selectElement => {
+                                if (selectElement.nextElementSibling && selectElement.nextElementSibling.classList.contains('nice-select')) {
+                                    // Hapus elemen dropdown NiceSelect secara manual jika sudah ada
+                                    selectElement.nextElementSibling.remove();
+                                    // Tampilkan kembali elemen select asli
+                                    selectElement.style.display = "inline-block";
+                                }
+
+                                // Terapkan NiceSelect pada elemen yang dipilih
+                                var options = { searchable: true };
+                                NiceSelect.bind(selectElement, options);
+                            });
+                        });
+                    } else {
+                        Alpine.nextTick(() => {
+                            // Pilih semua elemen select dengan class industri-select
+                            document.querySelectorAll('.industri-select').forEach(selectElement => {
+                                if (selectElement.nextElementSibling && selectElement.nextElementSibling.classList.contains('nice-select')) {
+                                    // Hapus elemen dropdown NiceSelect secara manual jika sudah ada
+                                    selectElement.nextElementSibling.remove();
+                                    // Tampilkan kembali elemen select asli
+                                    selectElement.style.display = "inline-block";
+                                }
+                            });
+                        });
+                    }
                 },
 
                 updateDates(industriId) {
@@ -639,8 +768,16 @@
                         this.tanggalAkhir = rowCells4Data;
                     }
                 },
+                // init() {
+                //     console.log('halo')
+                //     // Reinitialize NiceSelect after Alpine component is initialized
+                //     Alpine.nextTick(() => {
+                //         NiceSelect.bind(document.getElementById("industri_id"), { searchable: true });
+                //     });
+                // }
             }));
         });
+        
 
         /*************
          * berhenti 
@@ -692,7 +829,9 @@
         });
     </script>
 </x-layout.default>
+
 @else
+
 <x-layout.default>
     <style>
         .tab-content {
@@ -702,9 +841,6 @@
             display: block;
         }
     </style>
-
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
-    <script src="/assets/js/simple-datatables.js"></script>
 
 
     <div>

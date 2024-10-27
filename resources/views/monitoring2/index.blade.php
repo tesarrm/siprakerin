@@ -1,13 +1,8 @@
-
 <x-layout.default>
-
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
            
-
-
-
     <div class="panel">
         <div class="mb-5" x-data="{ tab: 'home' }">
             <div>

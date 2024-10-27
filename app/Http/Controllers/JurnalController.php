@@ -139,10 +139,14 @@ class JurnalController extends Controller
             // $data = Jurnal::with(['siswa.kelas', 'siswa.penempatan.industri'])->get();
             $data = [];
             $kelas = Kelas::with('jurusan')->get();
+            $dIzin = Izin::with('siswa.kelas.jurusan')
+                ->orderBy('created_at', 'desc')
+                ->get();
 
             return view('jurnal.index', [
                 'data' => $data,
                 'kelas' => $kelas,
+                'dataIzin' => $dIzin,
             ]);
         }
 

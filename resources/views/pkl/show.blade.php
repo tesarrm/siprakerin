@@ -1,4 +1,7 @@
 <x-layout.default>
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    <script src="/assets/js/simple-datatables.js"></script>
+
     <style>
         .tab-content {
             display: none;
@@ -7,9 +10,31 @@
             display: block;
         }
     </style>
+    <style>
+        .cell-content-tanggal {
+            text-align: center;
+            max-width: 120px; 
+            display: block; 
+            box-sizing: border-box; 
+        }
 
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
-    <script src="/assets/js/simple-datatables.js"></script>
+        .cell-content {
+            max-width: 300px; 
+            max-height: 200px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; /* Menampilkan titik-titik (...) jika konten terlalu panjang */
+            display: block; 
+            box-sizing: border-box; 
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+    </style>
+
 
 
     <div>
@@ -74,23 +99,13 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
                     <div class="flex">
                         <div
-                            class="shrink-0 bg-primary/10 text-primary rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                            class="shrink-0 bg-success/10 text-success rounded-xl w-11 h-11 flex justify-center items-center dark:bg-success dark:text-white-light">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                <circle cx="12" cy="6" r="4" stroke="currentColor"
-                                    stroke-width="1.5" />
-                                <path opacity="0.5" d="M18 9C19.6569 9 21 7.88071 21 6.5C21 5.11929 19.6569 4 18 4"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <path opacity="0.5" d="M6 9C4.34315 9 3 7.88071 3 6.5C3 5.11929 4.34315 4 6 4"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <ellipse cx="12" cy="17" rx="6" ry="4"
-                                    stroke="currentColor" stroke-width="1.5" />
-                                <path opacity="0.5"
-                                    d="M20 19C21.7542 18.6153 23 17.6411 23 16.5C23 15.3589 21.7542 14.3847 20 14"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <path opacity="0.5"
-                                    d="M4 19C2.24575 18.6153 1 17.6411 1 16.5C1 15.3589 2.24575 14.3847 4 14"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" 
+                                    stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M8.5 12.5L10.5 14.5L15.5 9.5" 
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                         <div class="ltr:ml-3 rtl:mr-3 font-semibold">
@@ -100,23 +115,15 @@
                     </div>
                     <div class="flex">
                         <div
-                            class="shrink-0 bg-primary/10 text-primary rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                            class="shrink-0 bg-warning/10 text-warning rounded-xl w-11 h-11 flex justify-center items-center dark:bg-warning dark:text-white-light">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                <circle cx="12" cy="6" r="4" stroke="currentColor"
-                                    stroke-width="1.5" />
-                                <path opacity="0.5" d="M18 9C19.6569 9 21 7.88071 21 6.5C21 5.11929 19.6569 4 18 4"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <path opacity="0.5" d="M6 9C4.34315 9 3 7.88071 3 6.5C3 5.11929 4.34315 4 6 4"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <ellipse cx="12" cy="17" rx="6" ry="4"
-                                    stroke="currentColor" stroke-width="1.5" />
-                                <path opacity="0.5"
-                                    d="M20 19C21.7542 18.6153 23 17.6411 23 16.5C23 15.3589 21.7542 14.3847 20 14"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <path opacity="0.5"
-                                    d="M4 19C2.24575 18.6153 1 17.6411 1 16.5C1 15.3589 2.24575 14.3847 4 14"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path d="M12 7V13" 
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="12" cy="16" r="1" 
+                                    fill="currentColor"/>
+                                <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" 
+                                    stroke="currentColor" stroke-width="1.5"/>
                             </svg>
                         </div>
                         <div class="ltr:ml-3 rtl:mr-3 font-semibold">
@@ -126,23 +133,13 @@
                     </div>
                     <div class="flex">
                         <div
-                            class="shrink-0 bg-primary/10 text-primary rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                            class="shrink-0 bg-danger/10 text-danger rounded-xl w-11 h-11 flex justify-center items-center dark:bg-danger dark:text-white-light">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                <circle cx="12" cy="6" r="4" stroke="currentColor"
-                                    stroke-width="1.5" />
-                                <path opacity="0.5" d="M18 9C19.6569 9 21 7.88071 21 6.5C21 5.11929 19.6569 4 18 4"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <path opacity="0.5" d="M6 9C4.34315 9 3 7.88071 3 6.5C3 5.11929 4.34315 4 6 4"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <ellipse cx="12" cy="17" rx="6" ry="4"
-                                    stroke="currentColor" stroke-width="1.5" />
-                                <path opacity="0.5"
-                                    d="M20 19C21.7542 18.6153 23 17.6411 23 16.5C23 15.3589 21.7542 14.3847 20 14"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <path opacity="0.5"
-                                    d="M4 19C2.24575 18.6153 1 17.6411 1 16.5C1 15.3589 2.24575 14.3847 4 14"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" 
+                                    stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5" 
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
                         </div>
                         <div class="ltr:ml-3 rtl:mr-3 font-semibold">
@@ -152,24 +149,17 @@
                     </div>
                     <div class="flex">
                         <div
-                            class="shrink-0 bg-primary/10 text-primary rounded-xl w-11 h-11 flex justify-center items-center dark:bg-primary dark:text-white-light">
+                            class="shrink-0 bg-info/10 text-info rounded-xl w-11 h-11 flex justify-center items-center dark:bg-info dark:text-white-light">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                 xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                <circle cx="12" cy="6" r="4" stroke="currentColor"
-                                    stroke-width="1.5" />
-                                <path opacity="0.5" d="M18 9C19.6569 9 21 7.88071 21 6.5C21 5.11929 19.6569 4 18 4"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <path opacity="0.5" d="M6 9C4.34315 9 3 7.88071 3 6.5C3 5.11929 4.34315 4 6 4"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <ellipse cx="12" cy="17" rx="6" ry="4"
-                                    stroke="currentColor" stroke-width="1.5" />
-                                <path opacity="0.5"
-                                    d="M20 19C21.7542 18.6153 23 17.6411 23 16.5C23 15.3589 21.7542 14.3847 20 14"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                                <path opacity="0.5"
-                                    d="M4 19C2.24575 18.6153 1 17.6411 1 16.5C1 15.3589 2.24575 14.3847 4 14"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                                <path opacity="0.5" d="M22 12C22 13.9778 21.4135 15.9112 20.3147 17.5557C19.2159 19.2002 17.6541 20.4819 15.8268 21.2388C13.9996 21.9957 11.9889 22.1937 10.0491 21.8079C8.10929 21.422 6.32746 20.4696 4.92893 19.0711C3.53041 17.6725 2.578 15.8907 2.19215 13.9509C1.80629 12.0111 2.00433 10.0004 2.7612 8.17317C3.51808 6.3459 4.79981 4.78412 6.4443 3.6853C8.08879 2.58649 10.0222 2 12 2" 
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M15 12L12 12M12 12L9 12M12 12L12 9M12 12L12 15" 
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <path d="M14.5 2.31494C18.014 3.21939 20.7805 5.98588 21.685 9.4999" 
+                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
+
                         </div>
                         <div class="ltr:ml-3 rtl:mr-3 font-semibold">
                             <p class="text-xl dark:text-white-light">{{$sisa_hari}}</p>
@@ -189,8 +179,8 @@
                 </div>
 
                 <div x-data="pelanggaran">
-                    <div class="invoice-table" style="word-wrap: word">
-                        <table id="myTable" class="whitespace-nowrap"></table>
+                    <div class="invoice-table">
+                        <table id="myTable"></table>
                     </div>
                 </div>
             </div>
@@ -410,6 +400,18 @@
                         perPage: 10,
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
+                            {
+                                select: 1, 
+                                render: function(data, cell, row) {
+                                    return `<div class="cell-content">${data}</div>`;
+                                }
+                            },
+                            {
+                                select: 2, 
+                                render: function(data, cell, row) {
+                                    return `<div class="cell-content">${data}</div>`;
+                                }
+                            },
                         ],
                         firstLast: true,
                         firstText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',

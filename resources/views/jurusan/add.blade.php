@@ -43,7 +43,6 @@
                     <div class="mt-8 px-4">
                         <div class="flex justify-end items-center mt-8 gap-4">
                             <button type="submit" class="btn btn-success gap-2">
-
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2 shrink-0">
                                     <path

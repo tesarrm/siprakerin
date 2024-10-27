@@ -20,7 +20,20 @@ class Monitoring2Controller extends Controller
      */
     public function index()
     {
-        $data = Monitoring::with(['guru', 'industri'])->get();
+        $data = Monitoring::with([
+                'guru', 
+                'industri',
+                'hasilMonitoring'
+                ])
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($item) {
+                // Menambahkan key status berdasarkan kondisi whereHas hasilMonitoring
+                $item->status = $item->hasilMonitoring()->exists() ? 'sudah monitoring' : 'belum monitoring';
+                return $item;
+            });
+
+        dd($data);
 
         return view('monitoring2.index', [
             'data' => $data

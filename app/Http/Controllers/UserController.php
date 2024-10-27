@@ -24,7 +24,15 @@ class UserController extends Controller
 
     public function index()
     {
-        $data = User::all()->map(function ($user) {
+        // $data = User::all()->map(function ($user) {
+        //     // Cek apakah user memiliki role, jika tidak, isi dengan "-"
+        //     $user->peran = $user->roles->isNotEmpty() 
+        //         ? $user->roles->pluck('name')->implode(', ') 
+        //         : '-';
+        //     return $user;
+        // });
+
+        $data = User::paginate(250)->through(function ($user) {
             // Cek apakah user memiliki role, jika tidak, isi dengan "-"
             $user->peran = $user->roles->isNotEmpty() 
                 ? $user->roles->pluck('name')->implode(', ') 
@@ -319,7 +327,10 @@ public function guruIndustriIndex()
                     return $guru;
                 });
 
-    $industri = Industri::where('aktif', 1)->get();
+    $industri = Industri::where('aktif', 1)
+        ->orderBy('nama', 'asc')
+        ->whereHas('penempatanIndustri')
+        ->get();
 
     return view('user.index_gi', compact('data', 'industri'));
 }

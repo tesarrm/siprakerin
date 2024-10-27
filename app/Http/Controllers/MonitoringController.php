@@ -25,10 +25,16 @@ class MonitoringController extends Controller
      */
     public function index()
     {
-        $data = Monitoring::with(['guru', 'industri'])->get();
+        $data = Monitoring::with(['guru', 'industri'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        $guru = Guru::where('aktif', 1)->get();
-        $industri = Industri::where('aktif', 1)->get();
+        $guru = Guru::where('aktif', 1)
+            ->whereHas('monitorings')
+            ->get();
+        $industri = Industri::where('aktif', 1)
+            ->whereHas('monitorings')
+            ->get();
 
         // $guru = Guru::with('user')->findOrFail(1);
         ///dd($guru->user->getRoleNames());
@@ -50,7 +56,9 @@ class MonitoringController extends Controller
     public function create()
     {
         $guru = Guru::get();
-        $industri = Industri::with('gurus')->get();
+        $industri = Industri::with('gurus')
+            ->whereHas('penempatanIndustri')
+            ->get();
 
         return view('monitoring.add', [
             'guru' => $guru,
@@ -122,7 +130,9 @@ public function store(Request $request)
     public function edit(Monitoring $monitoring)
     {
         $guru = Guru::get();
-        $industri = Industri::with('gurus')->get();
+        $industri = Industri::with('gurus')
+            ->whereHas('penempatanIndustri')
+            ->get();
 
         return view('monitoring.edit', [
             'data' => $monitoring,

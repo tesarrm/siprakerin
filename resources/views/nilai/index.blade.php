@@ -59,6 +59,10 @@
             foreach ($data as $d) {
                 $items[] = [
                     'nama' => $d->nama ?? '-',
+                    'alamat' => $d->alamat ?? '-',
+                    'kota' => $d->kota->nama ?? '-',
+                    'tahun_ajaran' => $d->tahun_ajaran ?? '-',
+                    'total_siswa' => $d->penempatan_industri_count?? '-',
                     'action' => $d->id ?? '-',
                 ];
             }
@@ -97,6 +101,10 @@
                             data: {
                                 headings: [
                                     "Nama Industri",
+                                    "Alamat",
+                                    "Kota",
+                                    "Tahun Ajaran",
+                                    "Total Siswa",
                                     "Aksi",
                                 ],
                                 data: this.dataArr
@@ -105,7 +113,39 @@
                             perPageSelect: [10, 20, 30, 50, 100],
                             columns: [
                                 {
-                                    select: 1,
+                                    select: 2,
+                                    render: function(data, cell, row) {
+                                        if(data != '-'){
+                                            return `
+                                                <span class="badge badge-outline-info text-sm">
+                                                    ${data}
+                                                </span>
+                                            `;
+                                        } else {
+                                            return `
+                                                ${data}
+                                            `;
+                                        }
+                                    }
+                                },
+                                {
+                                    select: 4,
+                                    render: function(data, cell, row) {
+                                        if(data != '-'){
+                                            return `
+                                                <span class="badge bg-[#e6e9ed] dark:bg-[#1b2e4b] text-[#6a6e73] dark:text-[#888ea8] rounded-full text-sm">
+                                                    ${data}
+                                                </span>
+                                            `;
+                                        } else {
+                                            return `
+                                                ${data}
+                                            `;
+                                        }
+                                    }
+                                },
+                                {
+                                    select: 5,
                                     sortable: false,
                                     render: function(data, cell, row) {
                                         return `<div class="flex gap-4 items-center">
@@ -298,7 +338,9 @@
         </script>
     @endif
 </x-layout.default>
+
 @else
+
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
@@ -344,11 +386,11 @@
         <form action="{{ url('nilai') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="flex xl:flex-row flex-col gap-2.5">
-                <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
+                <div class="panel px-0 flex-1 py-6">
                     <div class=" px-4">
                         <div class="flex justify-between lg:flex-row flex-col">
                             <div class="w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="text-lg font-semibold">Penempatan Prakerin</div>
+                                <div class="text-lg font-semibold">Penilaian Siswa</div>
                                 <input value="{{ $industri->id }}" type="text" name="industri_id" class="hidden"/>
                                 <div class="mt-4 flex items-center">
                                     <label for="industri" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Industri</span></label>
@@ -357,7 +399,7 @@
                                     </div>
                                 </div>
                                 <div class="mt-6 flex items-center">
-                                    <div class="text-lg font-semibold">Data Monitoring Siswa</div>
+                                    <div class="text-lg font-semibold">Data Penilaian Siswa</div>
                                 </div>
                                 <div class="mt-4">
 
@@ -403,9 +445,9 @@
                                                 <table class="table-auto w-full">
                                                     <thead>
                                                         <tr>
-                                                            <th class="px-4 py-5">ID Siswa</th>
+                                                            <th class="px-4 py-5 hidden">ID Siswa</th>
                                                             <th class="px-4 py-5">Nama Siswa</th>
-                                                            <th class="px-4 py-5">Jenis Kelamin</th>
+                                                            <th class="px-4 py-5 hidden">Jenis Kelamin</th>
                                                             <th class="px-4 py-5">Kelas</th>
                                                             <th class="px-4 py-5">Jurusan</th>
                                                             <th class="px-4 py-5">Nilai</th>
@@ -414,24 +456,26 @@
                                                     <tbody>
                                                         <template x-for="(row, index) in tableData" :key="index">
                                                             <tr>
-                                                                <td class="px-4 py-2 align-top">
+                                                                <td class="px-4 py-2 align-top hidden">
                                                                     <input type="text" :name="'data['+index+'][siswa_id]'" x-model="row.siswa_id" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                                                 </td>
                                                                 <td class="px-4 py-2 align-top">
                                                                     <input type="text" x-model="row.nama" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                                                 </td>
-                                                                <td class="px-4 py-2 align-top">
+                                                                <td class="px-4 py-2 align-top hidden">
                                                                     <input type="text" x-model="row.jenis_kelamin" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                                                 </td>
                                                                 <td class="px-4 py-2 align-top">
-                                                                    <input type="text" x-model="row.kelas" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                                    {{-- <input type="text" x-model="row.kelas" class="form-input w-full" style="border:none; padding: 0;" readonly /> --}}
+                                                                    <span x-text="row.kelas" class="badge badge-outline-info text-sm"></span>
                                                                 </td>
                                                                 <td class="px-4 py-2 align-top">
-                                                                    <input type="text" x-model="row.jurusan" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                                    {{-- <input type="text" x-model="row.jurusan" class="form-input w-full" style="border:none; padding: 0;" readonly /> --}}
+                                                                    <span x-text="row.jurusan" class="badge badge-outline-success text-sm"></span>
                                                                 </td>
                                                                 <td class="px-4 py-2 max-w-xl">
                                                                     <template x-for="(capaian, capaianIndex) in row.capaian" :key="capaianIndex">
-                                                                        <div class="mb-4">
+                                                                        <div class="mb-4" style="line-height: 1.7;">
                                                                             <strong x-text="capaian.nama"></strong>
                                                                             <ol class="ordered-list">
                                                                                 <template x-for="(tujuan, tujuanIndex) in capaian.tujuan" :key="tujuanIndex">
@@ -457,9 +501,9 @@
                                                 <table class="table-auto w-full">
                                                     <thead>
                                                         <tr>
-                                                            <th class="px-4 py-5">ID Siswa</th>
+                                                            <th class="px-4 py-5 hidden">ID Siswa</th>
                                                             <th class="px-4 py-5">Nama Siswa</th>
-                                                            <th class="px-4 py-5">Jenis Kelamin</th>
+                                                            <th class="px-4 py-5 hidden">Jenis Kelamin</th>
                                                             <th class="px-4 py-5">Kelas</th>
                                                             <th class="px-4 py-5">Jurusan</th>
                                                             <th class="px-4 py-5">Nilai</th>
@@ -468,24 +512,26 @@
                                                     <tbody>
                                                         <template x-for="(row, index) in tableData" :key="index">
                                                             <tr>
-                                                                <td class="px-4 py-2 align-top">
+                                                                <td class="px-4 py-2 align-top hidden">
                                                                     <input type="text" :name="'data['+index+'][siswa_id]'" x-model="row.siswa_id" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                                                 </td>
                                                                 <td class="px-4 py-2 align-top">
                                                                     <input type="text" x-model="row.nama" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                                                 </td>
-                                                                <td class="px-4 py-2 align-top">
+                                                                <td class="px-4 py-2 align-top hidden">
                                                                     <input type="text" x-model="row.jenis_kelamin" class="form-input w-full" style="border:none; padding: 0;" readonly />
                                                                 </td>
                                                                 <td class="px-4 py-2 align-top">
-                                                                    <input type="text" x-model="row.kelas" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                                    {{-- <input type="text" x-model="row.kelas" class="form-input w-full" style="border:none; padding: 0;" readonly /> --}}
+                                                                    <span x-text="row.kelas" class="badge badge-outline-info text-sm"></span>
                                                                 </td>
                                                                 <td class="px-4 py-2 align-top">
-                                                                    <input type="text" x-model="row.jurusan" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                                    {{-- <input type="text" x-model="row.jurusan" class="form-input w-full" style="border:none; padding: 0;" readonly /> --}}
+                                                                    <span x-text="row.jurusan" class="badge badge-outline-success text-sm"></span>
                                                                 </td>
                                                                 <td class="px-4 py-2 max-w-xl">
                                                                     <template x-for="(capaian, capaianIndex) in row.capaian" :key="capaianIndex">
-                                                                        <div class="mb-4">
+                                                                        <div class="mb-4" style="line-height: 1.7;">
                                                                             <strong x-text="capaian.nama"></strong>
                                                                             <ol class="ordered-list">
                                                                                 <template x-for="(tujuan, tujuanIndex) in capaian.tujuan" :key="tujuanIndex">
@@ -512,7 +558,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-8 px-4">
+                    {{-- <div class="mt-8 px-4">
                         <div class="flex justify-end items-center mt-8 gap-4">
                             <button type="submit" class="btn btn-success gap-2">
                                 Simpan 
@@ -521,7 +567,7 @@
                                 Kembali 
                             </button>
                         </div>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </form>
@@ -558,7 +604,7 @@
                 tableData: @json($penempatan).map(penempatan => {
                     return {
                         siswa_id: penempatan.siswa.id,
-                        nama: penempatan.siswa.nama,
+                        nama: penempatan.siswa.nama_lengkap,
                         jenis_kelamin: penempatan.siswa.jenis_kelamin,
                         kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan + " " + penempatan.siswa.kelas.klasifikasi,
                         jurusan: penempatan.siswa.kelas.jurusan.nama,
@@ -584,7 +630,7 @@
                 tableData: @json($penempatan2).map(penempatan => {
                     return {
                         siswa_id: penempatan.siswa.id,
-                        nama: penempatan.siswa.nama,
+                        nama: penempatan.siswa.nama_lengkap,
                         jenis_kelamin: penempatan.siswa.jenis_kelamin,
                         kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan + " " + penempatan.siswa.kelas.klasifikasi,
                         jurusan: penempatan.siswa.kelas.jurusan.nama,

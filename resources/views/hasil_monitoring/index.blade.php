@@ -1,5 +1,11 @@
-
 <x-layout.default>
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
+    <script src="/assets/js/swiper-bundle.min.js"></script>
+    <script src="/assets/js/simple-datatables.js"></script>
+
+    <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
+    <script src="/assets/js/nice-select2.js"></script>
+
     <style>
         .tab-content {
             display: none;
@@ -8,10 +14,31 @@
             display: block;
         }
     </style>
+    <style>
+        .cell-content-tanggal {
+            text-align: center;
+            max-width: 120px; 
+            display: block; 
+            box-sizing: border-box; 
+        }
 
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
-    <script src="/assets/js/swiper-bundle.min.js"></script>
-    <script src="/assets/js/simple-datatables.js"></script>
+        .cell-content {
+            max-width: 300px; 
+            max-height: 200px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; /* Menampilkan titik-titik (...) jika konten terlalu panjang */
+            display: block; 
+            box-sizing: border-box; 
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+    </style>
+
 
     <div class="panel">
 
@@ -31,11 +58,26 @@
                         >
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
-                            <path opacity="0.5"
-                                d="M2 12.2039C2 9.91549 2 8.77128 2.5192 7.82274C3.0384 6.87421 3.98695 6.28551 5.88403 5.10813L7.88403 3.86687C9.88939 2.62229 10.8921 2 12 2C13.1079 2 14.1106 2.62229 16.116 3.86687L18.116 5.10812C20.0131 6.28551 20.9616 6.87421 21.4808 7.82274C22 8.77128 22 9.91549 22 12.2039V13.725C22 17.6258 22 19.5763 20.8284 20.7881C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.7881C2 19.5763 2 17.6258 2 13.725V12.2039Z"
-                                stroke="currentColor" stroke-width="1.5" />
-                            <path d="M12 15L12 18" stroke="currentColor" stroke-width="1.5"
-                                stroke-linecap="round" />
+                            <path d="M2 12C2 8.22876 2 6.34315 3.17157 5.17157C4.34315 4 6.22876 4 10 4H14C17.7712 4 19.6569 4 20.8284 5.17157C22 6.34315 22 8.22876 22 12V14C22 17.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22H10C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 17.7712 2 14V12Z" 
+                                stroke="currentColor" stroke-width="1.5"/>
+                            <path opacity="0.5" d="M7 4V2.5" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path opacity="0.5" d="M17 4V2.5" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path opacity="0.5" d="M2.5 9H21.5" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M18 17C18 17.5523 17.5523 18 17 18C16.4477 18 16 17.5523 16 17C16 16.4477 16.4477 16 17 16C17.5523 16 18 16.4477 18 17Z" 
+                                fill="currentColor"/>
+                            <path d="M18 13C18 13.5523 17.5523 14 17 14C16.4477 14 16 13.5523 16 13C16 12.4477 16.4477 12 17 12C17.5523 12 18 12.4477 18 13Z" 
+                                fill="currentColor"/>
+                            <path d="M13 17C13 17.5523 12.5523 18 12 18C11.4477 18 11 17.5523 11 17C11 16.4477 11.4477 16 12 16C12.5523 16 13 16.4477 13 17Z" 
+                                fill="currentColor"/>
+                            <path d="M13 13C13 13.5523 12.5523 14 12 14C11.4477 14 11 13.5523 11 13C11 12.4477 11.4477 12 12 12C12.5523 12 13 12.4477 13 13Z" 
+                                fill="currentColor"/>
+                            <path d="M8 17C8 17.5523 7.55228 18 7 18C6.44772 18 6 17.5523 6 17C6 16.4477 6.44772 16 7 16C7.55228 16 8 16.4477 8 17Z" 
+                                fill="currentColor"/>
+                            <path d="M8 13C8 13.5523 7.55228 14 7 14C6.44772 14 6 13.5523 6 13C6 12.4477 6.44772 12 7 12C7.55228 12 8 12.4477 8 13Z" 
+                                fill="currentColor"/>
                         </svg>
                         Jadwal Monitoring</a>
                 </li>
@@ -47,10 +89,10 @@
                         ">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                             xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
-                            <circle cx="12" cy="6" r="4"
-                                stroke="currentColor" stroke-width="1.5" />
-                            <ellipse opacity="0.5" cx="12" cy="17" rx="7"
-                                ry="4" stroke="currentColor" stroke-width="1.5" />
+                            <circle cx="11.5" cy="11.5" r="9.5" 
+                                stroke="currentColor" stroke-width="1.5"/>
+                            <path d="M18.5 18.5L22 22" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                         </svg>
                         Hasil Monitoring</a>
                 </li>
@@ -65,10 +107,9 @@
                     <div class="px-5">
                         <div class="md:absolute">
                             <div class="flex items-center gap-2 mb-5">
-
-                                <div class="" style="width: 150px">
-                                    <select id="filterIndustri" x-model="selectedIndustri" @change="filterByIndustri" class="form-input">
-                                        <option value="">Pilih Industri</option>
+                                <div class="" style="width: 200px">
+                                    <select id="filterIndustri" x-model="selectedIndustri" @change="filterByIndustri" class="selectize">
+                                        <option selected value="">Pilih Industri</option>
                                         @foreach($industri as $item)
                                             <option value="{{ $item->nama }}">
                                                 {{ $item->nama }}
@@ -101,9 +142,9 @@
                         <div class="md:absolute">
                             <div class="flex items-center gap-2 mb-5">
 
-                                <div class="" style="width: 150px">
-                                    <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="form-input">
-                                        <option value="">Pilih Kelas</option>
+                                <div class="" style="width: 200px">
+                                    <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="selectize">
+                                        <option selected value="">Pilih Kelas</option>
                                         @foreach($kelas as $item)
                                             <option value="{{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}">
                                                 {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
@@ -118,8 +159,101 @@
                     @endif
 
                     <div class="invoice-table">
-                        <table id="table_hasil" class="whitespace-nowrap"></table>
+                        <table id="table_hasil"></table>
                     </div>
+
+                    @if(!auth()->user()->hasRole('siswa')) 
+                        {{-- pagination max 250 --}}
+                        @if($hasil->total() > 250)
+                            <div id="pageplus" class="flex justify-center mt-4">
+                                <ul class="flex items-center m-auto">
+                                    {{-- Tombol halaman sebelumnya --}}
+                                    <li>
+                                        <a href="{{ $hasil->previousPageUrl() }}"  
+                                            class="flex justify-center font-semibold ltr:rounded-l-full rtl:rounded-r-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                                <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5"
+                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </a>
+                                    </li>
+
+                                    {{-- Tentukan batas halaman yang terlihat --}}
+                                    @php
+                                        $start = max(1, $hasil->currentPage() - 2);
+                                        $end = min($hasil->lastPage(), $hasil->currentPage() + 2);
+                                    @endphp
+
+                                    {{-- Tampilkan halaman pertama jika tidak dalam rentang --}}
+                                    @if ($start > 1)
+                                        <li>
+                                            <a href="{{ $hasil->url(1) }}"
+                                            class="flex justify-center font-semibold px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                                1
+                                            </a>
+                                        </li>
+                                        @if ($start > 2)
+                                            <li><span class="px-3">...</span></li>
+                                        @endif
+                                    @endif
+
+                                    {{-- Loop melalui halaman dalam rentang yang ditentukan --}}
+                                    @for ($i = $start; $i <= $end; $i++)
+                                        <li>
+                                            <a href="{{ $hasil->url($i) }}"
+                                            class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                                    {{ ($hasil->currentPage() == $i) ? 
+                                                        'bg-primary text-white dark:text-white-light dark:bg-primary' : 
+                                                        'bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary'
+                                                    }}">
+                                                {{ $i }}
+                                            </a>
+                                        </li>
+                                    @endfor
+
+                                    {{-- Tampilkan halaman terakhir jika tidak dalam rentang --}}
+                                    @if ($end < $hasil->lastPage())
+                                        @if ($end < $hasil->lastPage() - 1)
+                                            <li>
+                                                <div
+                                                    class="flex justify-center font-semibold px-3.5 py-2 transition 
+                                                        bg-white-light text-dark dark:text-white-light dark:bg-[#191e3a] 
+                                                        ">
+                                                    <span class="px-3 ">...</span>
+                                                </div>
+                                            </li>
+                                        @endif
+                                        <li>
+                                            <a href="{{ $hasil->url($hasil->lastPage()) }}"
+                                            class="flex justify-center font-semibold px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                                {{ $hasil->lastPage() }}
+                                            </a>
+                                        </li>
+                                    @endif
+
+                                    {{-- Tombol halaman berikutnya --}}
+                                    <li>
+                                        <a href="{{ $hasil->nextPageUrl() }}" 
+                                            class="flex justify-center font-semibold ltr:rounded-r-full rtl:rounded-l-full px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 rtl:rotate-180">
+                                                <path d="M11 19L17 12L11 5" stroke="currentColor" stroke-width="1.5"
+                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                <path opacity="0.5" d="M6.99976 19L12.9998 12L6.99976 5"
+                                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                    stroke-linejoin="round" />
+                                            </svg>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        @endif
+                    @endif
+
                 </div>
 
                 @if(
@@ -205,6 +339,7 @@
             foreach ($hasil as $d) {
                 $dHasil[] = [
                     'nama' => $d->monitoring->guru->nama ?? '-',
+                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama?? '-',
                     'tanggal' => $d->monitoring->tanggal?? '-',
                     'hadir' => $d->hadir ?? '-',
@@ -216,7 +351,7 @@
         } else {
             foreach ($hasil as $d) {
                 $dHasil[] = [
-                    'nama' => $d->siswa->nama ?? '-',
+                    'nama' => $d->siswa->nama_lengkap ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama?? '-',
                     'tanggal' => $d->monitoring->tanggal?? '-',
@@ -288,8 +423,46 @@
                             data: this.dataArr
                         },
                         perPage: 10,
-                        perPageSelect: [10, 20, 30, 50, 100],
+                        perPageSelect: [10, 20, 30, 50, 100, 250],
                         columns: [
+                            {
+                                select: 1,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm whitespace-nowrap">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 3,
+                                render: function(data, cell, row) {
+                                    if(data == 'Belum Monitoring'){
+                                        return `
+                                            <span class="badge bg-dark/20 text-dark rounded-full">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else if(data == 'Sudah Monitoring'){
+                                        return `
+                                            <span class="badge bg-info/20 text-info rounded-full">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
                             {
                                 select: 4,
                                 sortable: false,
@@ -357,15 +530,15 @@
                         });
                 },
 
-        refreshTable() {
-            this.datatable.destroy();
-            this.setTableData();
-            this.initializeTable();
-        },
+                refreshTable() {
+                    this.datatable.destroy();
+                    this.setTableData();
+                    this.initializeTable();
+                },
 
-        filterByIndustri() {
-            this.refreshTable(); 
-        },
+                filterByIndustri() {
+                    this.refreshTable(); 
+                },
 
                 searchInvoice() {
                     return this.items.filter((d) =>
@@ -401,6 +574,7 @@
         ) {
             headings = [
                 "Pemonitoring",
+                "Kelas",
                 "Industri",
                 "Tanggal",
                 "Hadir",
@@ -454,6 +628,67 @@
                         perPage: 10,
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
+                            @if(auth()->user()->hasRole('siswa')) 
+                            {
+                                select: 1,
+                                hidden: true,
+                            },
+                            @else
+                            {
+                                select: 1,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm whitespace-nowrap">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            @endif
+                            {
+                                select: 2,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-success text-sm whitespace-nowrap">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: [4, 5, 6],
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge bg-[#e6e9ed] dark:bg-[#1b2e4b] text-[#6a6e73] dark:text-[#888ea8] rounded-full text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 7, 
+                                render: function(data, cell, row) {
+                                    return `<div class="cell-content">${data}</div>`;
+                                }
+                            },
                         ],
                         firstLast: true,
                         firstText: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-4.5 h-4.5 rtl:rotate-180"> <path d="M13 19L7 12L13 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> <path opacity="0.5" d="M16.9998 19L10.9998 12L16.9998 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/> </svg>',
@@ -514,5 +749,27 @@
                 },
             }))
         })
+
+        /*************
+         * filter industri 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterIndustri"), options);
+        });
+
+        /*************
+         * filter kelas 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterKelas"), options);
+        });
     </script>
 </x-layout.default>

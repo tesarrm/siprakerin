@@ -7,6 +7,7 @@ use App\Models\HasilMonitoring;
 use App\Models\Industri;
 use App\Models\Kelas;
 use App\Models\Monitoring;
+use App\Models\MonitoringImage;
 use App\Models\PenempatanIndustri;
 use App\Models\Siswa;
 use App\Models\TemporaryFile;
@@ -30,14 +31,29 @@ class HasilMonitoringController extends Controller
 
         if(auth()->user()->hasRole('pembimbing')){
             $guru = Guru::where('user_id', auth()->user()->id)->first();
-            $data = Monitoring::with(['guru', 'industri'])->where('guru_id', $guru->id )->get();
+            $data = Monitoring::with(['guru', 'industri'])
+                ->where('guru_id', $guru->id )
+                ->get();
 
             $data->each(function ($d) {
-                $hasil = HasilMonitoring::where('monitoring_id', $d->id)->first();
+                $hasil = HasilMonitoring::where('monitoring_id', $d->id)
+                    ->first();
                 $d->status = $hasil ? 'Sudah Monitoring' : 'Belum Monitoring';
             });
         } else {
-            $data = Monitoring::with(['guru', 'industri'])->get();
+            $data = Monitoring::with([
+                    'guru', 
+                    'industri',
+                    'hasilMonitoring'
+                    ])
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->map(function ($item) {
+                    // Menambahkan key status berdasarkan kondisi whereHas hasilMonitoring
+                    $item->status = $item->hasilMonitoring()
+                        ->exists() ? 'Sudah Monitoring' : 'Belum Monitoring';
+                    return $item;
+                });
         }
 
         if(auth()->user()->hasRole('siswa')) {
@@ -56,8 +72,8 @@ class HasilMonitoringController extends Controller
                     'monitoring.guru',
                     'siswa.penempatan.industri',
                     ])
-                ->get();
-
+                ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at desc
+                ->paginate(250);
         } else if (auth()->user()->hasRole('wali_kelas')) {
             $guru = Guru::where('user_id', auth()->user()->id)
                 ->with('hoKelas')  // Ambil kelas yang berelasi dengan guru
@@ -74,18 +90,22 @@ class HasilMonitoringController extends Controller
                 ->whereHas('siswa.kelas', function ($query) use ($kelasId) {
                     $query->where('id', $kelasId);
                 })
-                ->get();
+                ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at desc
+                ->paginate(250);
         } else {
             $hasil = HasilMonitoring::with([
-                'siswa.kelas.jurusan', 
-                'monitoring.guru',
-                'siswa.penempatan.industri',
+                    'siswa.kelas.jurusan', 
+                    'monitoring.guru',
+                    'siswa.penempatan.industri',
                 ])
-                ->get();
+                ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at desc
+                ->paginate(250);
         }
 
         $kelas = Kelas::where('aktif', 1)->get();
-        $industri = Industri::where('aktif', 1)->get();
+        $industri = Industri::where('aktif', 1)
+            ->whereHas('monitorings')
+            ->get();
 
         return view('hasil_monitoring.index', [
             'data' => $data,
@@ -129,11 +149,21 @@ class HasilMonitoringController extends Controller
     public function edit($jadwal_monitoring_id)
     {
         //
-        $jadwal_monitoring = Monitoring::with(['guru', 'industri'])->findOrFail($jadwal_monitoring_id);
-        $hasil_monitoring = HasilMonitoring::where('monitoring_id', $jadwal_monitoring_id)->with('siswa')->get();
-        $penempatan = PenempatanIndustri::where('industri_id', $jadwal_monitoring->industri_id)->with('siswa.kelas.jurusan')->get();
+        $jadwal_monitoring= Monitoring::with(['guru', 'industri'])
+            ->findOrFail($jadwal_monitoring_id);
+        $monitoring_image = MonitoringImage::where('monitoring_id', $jadwal_monitoring_id)
+            ->first();
+        $hasil_monitoring = HasilMonitoring::where('monitoring_id', $jadwal_monitoring_id)
+            ->with(['siswa', 'monitoring'])
+            ->get();
+
+        $penempatan = PenempatanIndustri::where(
+            'industri_id', $jadwal_monitoring->industri->id)
+            ->with('siswa.kelas.jurusan')
+            ->get();
 
         return view('hasil_monitoring.edit', [
+            'monitoring_image' => $monitoring_image,
             'jadwal_monitoring' => $jadwal_monitoring,
             'penempatan' => $penempatan,
             'hasil_monitoring' => $hasil_monitoring,
@@ -167,6 +197,7 @@ class HasilMonitoringController extends Controller
             'data.*.alpa' => 'required|string',
             'data.*.catatan' => 'required|string',
         ]);
+        // dd($request);
 
         $monitoring_id = $validated['monitoring_id'];
 
@@ -181,10 +212,15 @@ class HasilMonitoringController extends Controller
                 $path_gambar = $tmp_file->folder . '/' . $tmp_file->file;
 
                 // update gambar di monitoring
-                $monitoring = Monitoring::findOrFail($validated['monitoring_id']);
-                $monitoring->update([
-                    'gambar' => $path_gambar
-                ]);
+                MonitoringImage::updateOrCreate(
+                    [
+                        'monitoring_id' => $monitoring_id,
+                    ],
+                    [
+                        'monitoring_id' => $monitoring_id,
+                        'gambar' => $path_gambar,
+                    ]
+                );
 
                 Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
                 $tmp_file->delete();
@@ -193,6 +229,7 @@ class HasilMonitoringController extends Controller
 
         HasilMonitoring::where('monitoring_id', $monitoring_id)
                     ->delete();
+                
 
         foreach ($validated['data'] as $data) {
             HasilMonitoring::updateOrCreate([

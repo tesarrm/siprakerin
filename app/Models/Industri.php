@@ -38,4 +38,8 @@ class Industri extends Model
     {
         return $this->belongsToMany(Guru::class, 'guru_industri');
     }
+    public function monitorings()
+    {
+        return $this->hasMany(Monitoring::class);
+    }
 }

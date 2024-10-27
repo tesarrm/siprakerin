@@ -7,8 +7,9 @@
         .list-item {
             display: block; /* Setiap tujuan sebagai blok */
             padding-left: 20px; /* Indentasi kiri untuk tujuan */
-            text-indent: -10px; /* Menggeser angka keluar */
+            text-indent: -15px; /* Menggeser angka keluar */
             position: relative;
+            line-height: 1.7;
         }
 
         .list-item::before {
@@ -71,10 +72,11 @@
                 return '<strong>' . $capaian->nama . '</strong><br>' . $tujuanList;
             })->join('<div class="mb-2"></div>'); // Menyusun capaian ke dalam baris terpisah
 
+
             $items[] = [
                 'nama' => $d->nama ?? '-',
                 'bidang_keahlian' => $d->bidangKeahlian->nama ?? '-',
-                'capaian_tujuan' => $capaianTujuan ?? '-',
+                'capaian_tujuan' => $capaianTujuan == '' ? '-' : $capaianTujuan,
                 'action' => $d->id ?? '-', 
             ];
         }
@@ -120,10 +122,26 @@
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
+                                select: 1, 
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
                                 select: 2, // This should now match your combined Capaian dan Tujuan Pembelajaran column
                                 sortable: false,
                                 render: function(data, cell, row) {
-                                    return `<div style="max-width: 300px;">${data}</div>`;
+                                    return `<div style="max-width: 500px;">${data}</div>`;
                                 }
                             },
                             {

@@ -1,9 +1,10 @@
-
 <x-layout.default>
-
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
+
+    <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
+    <script src="/assets/js/nice-select2.js"></script>
 
     <div x-data="dataList">
         <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
@@ -35,9 +36,9 @@
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                             Tambah </a>
-                        <div class="" style="width: 150px">
-                            <select id="filterGuru" x-model="selectedGuru" @change="filterByGuru" class="form-input">
-                                <option value="">Pilih Guru</option>
+                        <div class="" style="width: 200px">
+                            <select id="filterGuru" x-model="selectedGuru" @change="filterByGuru" class="selectize">
+                                <option selected value="">Pilih Guru</option>
                                 @foreach($guru as $item)
                                     <option value="{{ $item->nama }}">
                                         {{ $item->nama }}
@@ -45,9 +46,9 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="" style="width: 150px">
-                            <select id="filterIndustri" x-model="selectedIndustri" @change="filterByIndustri" class="form-input">
-                                <option value="">Pilih Industri</option>
+                        <div class="" style="width: 200px">
+                            <select id="filterIndustri" x-model="selectedIndustri" @change="filterByIndustri" class="selectize">
+                                <option selected value="">Pilih Industri</option>
                                 @foreach($industri as $item)
                                     <option value="{{ $item->nama }}">
                                         {{ $item->nama }}
@@ -146,6 +147,22 @@
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<input type="checkbox" class="form-checkbox mt-1" :id="'chk' + ${data}" :value="(${data})" x-model.number="selectedRows" />`;
+                                }
+                            },
+                            {
+                                select: 2,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-info text-sm whitespace-nowrap">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
                                 }
                             },
                             {
@@ -399,5 +416,26 @@
                 }
             }))
         })
+        /*************
+         * filter guru 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterGuru"), options);
+        });
+
+        /*************
+         * filter industri 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterIndustri"), options);
+        });
     </script>
 </x-layout.default>

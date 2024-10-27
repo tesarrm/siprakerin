@@ -1,10 +1,30 @@
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
+    <script src="/assets/js/simple-datatables.js"></script>
+
+    <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
+    <script src="/assets/js/nice-select2.js"></script>
+
+    <style>
+        .cell-content {
+            max-width: 300px; 
+            max-height: 200px; 
+            overflow: hidden; 
+            text-overflow: ellipsis; /* Menampilkan titik-titik (...) jika konten terlalu panjang */
+            display: block; 
+            box-sizing: border-box; 
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+    </style>
 
     <div x-data="dataList">
-        <script src="/assets/js/simple-datatables.js"></script>
-
         <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
             @if(
                 !auth()->user()->hasRole('wali_kelas') &&
@@ -38,12 +58,22 @@
                                 <line x1="5" y1="12" x2="19" y2="12"></line>
                             </svg>
                             Tambah </a>
+                        <div class="" style="width: 150px">
+                            <select id="filterKelas" x-model="selectedKelas" @change="filterByKelas" class="selectize">
+                                <option selected value="">Pilih Kelas</option>
+                                @foreach($kelas as $item)
+                                    <option value="{{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}">
+                                        {{ $item->nama . ' ' . $item->jurusan->singkatan . ' ' . $item->klasifikasi }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
             @endif
-            <div class="invoice-table" style="word-wrap: word">
-                <table id="myTable" class="whitespace-nowrap"></table>
+            <div class="invoice-table">
+                <table id="myTable"></table>
             </div>
         </div>
     </div>
@@ -90,8 +120,8 @@
                     'id' => $d->id ?? '-',
                     'nama' => $d->siswa->nama_lengkap ?? '-',
                     'tanggal' => $d->tanggal ?? '-',
-                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'no_telp' => $d->siswa->no_telp ?? '-',
+                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama ?? '-',
                     'pelanggaran' => $d->pelanggaran ?? '-',
                     'solusi' => $d->solusi ?? '-',
@@ -103,8 +133,8 @@
                 $items[] = [
                     'nama' => $d->siswa->nama_lengkap ?? '-',
                     'tanggal' => $d->tanggal ?? '-',
-                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'no_telp' => $d->siswa->no_telp ?? '-',
+                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama ?? '-',
                     'pelanggaran' => $d->pelanggaran ?? '-',
                     'solusi' => $d->solusi ?? '-',
@@ -130,8 +160,8 @@
                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                 "Nama",
                 "Tanggal",
-                "Kelas",
                 "No Telp",
+                "Kelas",
                 "Industri",
                 "Pelanggaran",
                 "Solusi",
@@ -144,6 +174,50 @@
                     sortable: false,
                     render: function(data, cell, row) {
                         return `<input type="checkbox" class="form-checkbox mt-1" :id="'chk' + ${data}" :value="(${data})" x-model.number="selectedRows" />`;
+                    }
+                },
+                {
+                    select: 4,
+                    render: function(data, cell, row) {
+                        if(data != '-'){
+                            return `
+                                <span class="badge badge-outline-info text-sm whitespace-nowrap">
+                                    ${data}
+                                </span>
+                            `;
+                        } else {
+                            return `
+                                ${data}
+                            `;
+                        }
+                    }
+                },
+                {
+                    select: 5,
+                    render: function(data, cell, row) {
+                        if(data != '-'){
+                            return `
+                                <span class="badge badge-outline-success text-sm whitespace-nowrap">
+                                    ${data}
+                                </span>
+                            `;
+                        } else {
+                            return `
+                                ${data}
+                            `;
+                        }
+                    }
+                },
+                {
+                    select: 6, 
+                    render: function(data, cell, row) {
+                        return `<div class="cell-content">${data}</div>`;
+                    }
+                },
+                {
+                    select: 7, 
+                    render: function(data, cell, row) {
+                        return `<div class="cell-content">${data}</div>`;
                     }
                 },
                 {
@@ -200,14 +274,58 @@
             headings = [
                 "Nama",
                 "Tanggal",
-                "Kelas",
                 "No Telp",
+                "Kelas",
                 "Industri",
                 "Pelanggaran",
                 "Solusi",
             ];
 
             columns = [
+                {
+                    select: 3,
+                    render: function(data, cell, row) {
+                        if(data != '-'){
+                            return `
+                                <span class="badge badge-outline-info text-sm whitespace-nowrap">
+                                    ${data}
+                                </span>
+                            `;
+                        } else {
+                            return `
+                                ${data}
+                            `;
+                        }
+                    }
+                },
+                {
+                    select: 4,
+                    render: function(data, cell, row) {
+                        if(data != '-'){
+                            return `
+                                <span class="badge badge-outline-success text-sm whitespace-nowrap">
+                                    ${data}
+                                </span>
+                            `;
+                        } else {
+                            return `
+                                ${data}
+                            `;
+                        }
+                    }
+                },
+                {
+                    select: 5, 
+                    render: function(data, cell, row) {
+                        return `<div class="cell-content">${data}</div>`;
+                    }
+                },
+                {
+                    select: 6, 
+                    render: function(data, cell, row) {
+                        return `<div class="cell-content">${data}</div>`;
+                    }
+                },
             ],
         @endif
 
@@ -218,6 +336,7 @@
                 items: @json($items),
                 searchText: '',
                 datatable: null,
+                selectedKelas: '',
                 dataArr: [],
 
                 init() {
@@ -266,6 +385,10 @@
                     this.initializeTable();
                 },
 
+                filterByKelas() {
+                    this.refreshTable(); 
+                },
+
                 checkAllCheckbox() {
                     if (this.items.length && this.selectedRows.length === this.items.length) {
                         return true;
@@ -285,15 +408,23 @@
                 },
 
                 setTableData() {
-                    this.dataArr = [];
-                    for (let i = 0; i < this.items.length; i++) {
-                        this.dataArr[i] = [];
-                        for (let p in this.items[i]) {
-                            if (this.items[i].hasOwnProperty(p)) {
-                                this.dataArr[i].push(this.items[i][p]);
-                            }
-                        }
-                    }
+                    // this.dataArr = [];
+                    // for (let i = 0; i < this.items.length; i++) {
+                    //     this.dataArr[i] = [];
+                    //     for (let p in this.items[i]) {
+                    //         if (this.items[i].hasOwnProperty(p)) {
+                    //             this.dataArr[i].push(this.items[i][p]);
+                    //         }
+                    //     }
+                    // }
+                    this.dataArr = this.items
+                        .filter(item => {
+                            // Jika selectedKelas tidak kosong, hanya tampilkan yang sesuai
+                            return this.selectedKelas === '' || item.kelas === this.selectedKelas;
+                        })
+                        .map(item => {
+                            return Object.values(item); // Mengonversi setiap item ke array data
+                        });
                 },
 
                 searchInvoice() {
@@ -423,5 +554,16 @@
                 }
             }))
         })
+
+        /*************
+         * filter kelas 
+         */
+
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("filterKelas"), options);
+        });
     </script>
 </x-layout.default>
