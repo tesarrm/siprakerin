@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BidangKeahlianController;
 use App\Http\Controllers\CapaianPembelajaranController;
@@ -10,13 +9,15 @@ use App\Http\Controllers\GuruController;
 use App\Http\Controllers\HasilMonitoringController;
 use App\Http\Controllers\IndustriController;
 use App\Http\Controllers\IzinController;
+use App\Http\Controllers\JadwalMonitoringController;
 use App\Http\Controllers\JurnalController;
 use App\Http\Controllers\JurusanController;
+use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\KehadiranController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\KotaController;
 use App\Http\Controllers\KuotaIndustriController;
 use App\Http\Controllers\Monitoring2Controller;
-use App\Http\Controllers\MonitoringController;
 use App\Http\Controllers\NilaiController;
 use App\Http\Controllers\NonaktifController;
 use App\Http\Controllers\PdfController;
@@ -28,7 +29,6 @@ use App\Http\Controllers\PrakerinController;
 use App\Http\Controllers\PusatUnduhanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\UserController;
-use App\Models\PilihanKota;
 
 Route::get('/', [DashboardController::class, 'index']);
 Route::view('/tabel', 'tabel');
@@ -43,8 +43,8 @@ Route::post('register', [AuthController::class, 'register']);
 
 Route::resource('user', UserController::class);
 Route::get('user/{id}/delete', [UserController::class, 'destroy']);
-Route::get('profile', [UserController::class, 'editProfile']);
-Route::post('profile', [UserController::class, 'updateProfile']);
+Route::get('biodata', [UserController::class, 'editProfile']);
+Route::post('biodata', [UserController::class, 'updateProfile']);
 Route::post('user/{id}/role', [UserController::class, 'role']);
 Route::get('guruindustri', [UserController::class, 'guruIndustriIndex']);
 Route::post('guruindustri/{id}/industri', [UserController::class, 'storeGuruIndustri']);
@@ -97,6 +97,20 @@ Route::post('siswa-import', [SiswaController::class, 'import']);
 Route::get('siswa-template', [SiswaController::class, 'downloadTemplate']);
 Route::post('siswa/filter', [SiswaController::class, 'filter'])->name('siswa.filter');
 Route::post('pilihankota/filter', [PilihanKotaController::class, 'index2'])->name('pilihankota.filter');
+Route::get('siswa-wali', [SiswaController::class, 'indexWali']);
+
+Route::post('siswa-wali', [SiswaController::class, 'updateWali']);
+Route::post('siswa-wali/{id}/reset', [SiswaController::class, 'resetPasswordWali']);
+
+Route::resource('karyawan', KaryawanController::class);
+Route::get('karyawan/{id}/delete', [KaryawanController::class, 'destroy']);
+Route::post('karyawan/delete-multiple', [KaryawanController::class, 'deleteMultiple']);
+Route::post('karyawan/{id}/reset', [KaryawanController::class, 'resetPassword']);
+Route::post('karyawan/{id}/nonaktif', [KaryawanController::class, 'nonaktif']);
+Route::post('karyawan/{id}/aktif', [KaryawanController::class, 'aktif']);
+Route::get('karyawan-export', [KaryawanController::class, 'export']);
+Route::post('karyawan-import', [KaryawanController::class, 'import']);
+Route::get('karyawan-template', [KaryawanController::class, 'downloadTemplate']);
 
 Route::resource('kota', KotaController::class);
 Route::get('kota/{id}/delete', [KotaController::class, 'destroy']);
@@ -104,8 +118,10 @@ Route::post('kota/delete-multiple', [KotaController::class, 'deleteMultiple']);
 
 Route::resource('industri', IndustriController::class);
 Route::get('industri/{industriId}/delete', [IndustriController::class, 'destroy']);
+Route::post('industri-akun/{id}/reset', [IndustriController::class, 'resetPassword']);
 Route::post('industri/{id}/nonaktif', [IndustriController::class, 'nonaktif']);
 Route::post('industri/{id}/aktif', [IndustriController::class, 'aktif']);
+Route::get('industri-akun', [IndustriController::class, 'indexAkun']);
 
 Route::resource('kuotaindustri', KuotaIndustriController::class);
 Route::post('kuota-industri', [KuotaIndustriController::class, 'storeOrUpdate'])->name('kuota-industri.storeOrUpdate');
@@ -122,9 +138,9 @@ Route::get('penempatan/{id}/siswa', [PenempatanIndustriController::class, 'show2
 Route::resource('jurnal', JurnalController::class);
 Route::get('jurnal/{jurnalId}/delete', [JurnalController::class, 'destroy']);
 Route::resource('izin', IzinController::class);
-Route::get('attendance', [AttendanceController::class, 'index']);
-Route::get('attendance-data', [AttendanceController::class, 'getAttendanceData']);
-Route::get('cek', [AttendanceController::class, 'storeCron']);
+Route::get('attendance', [KehadiranController::class, 'index']);
+Route::get('attendance-data', [KehadiranController::class, 'getAttendanceData']);
+Route::get('cek', [KehadiranController::class, 'storeCron']);
 Route::post('jurnal/filter', [JurnalController::class, 'filter'])->name('siswa.filterJurnal');
 Route::post('jurnal/filterSiswa', [JurnalController::class, 'filterJurnal'])->name('jurnal.filter');
 
@@ -139,8 +155,9 @@ Route::post('pkl/filter', [PrakerinController::class, 'filter'])->name('siswa.fi
 Route::resource('capaian', CapaianPembelajaranController::class);
 Route::post('capaian', [CapaianPembelajaranController::class, 'storeOrUpdate']);
 
-Route::resource('monitoring', MonitoringController::class);
-Route::get('monitoring/{id}/delete', [MonitoringController::class, 'destroy']);
+Route::resource('jadwalmonitoring', JadwalMonitoringController::class);
+Route::get('jadwalmonitoring/{id}/delete', [JadwalMonitoringController::class, 'destroy']);
+Route::post('jadwalmonitoring/delete-multiple', [JadwalMonitoringController::class, 'deleteMultiple']);
 
 Route::resource('monitoring2', Monitoring2Controller::class);
 

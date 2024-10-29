@@ -82,7 +82,7 @@
                 'klasifikasi' => $d->klasifikasi ?? '-',
                 'jurusan' => $d->jurusan->nama ?? '-',
                 // 'bidang_keahlian' => $d->jurusan->bidangKeahlian->nama ?? '-',
-                'guru' => $d->guru->nama ?? '-',
+                'guru' => $d->guru->user->name?? '-',
                 'tahun_ajaran' => $d->tahun_ajaran ?? '-',
                 'action' => $d->id ?? '-', 
             ];
@@ -159,7 +159,6 @@
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const id = row.cells[0].data; 
-
                                     return `<a href="/kelas/${id}/edit" class="hover:underline">${ data }</a>`;
                                 }
                             },

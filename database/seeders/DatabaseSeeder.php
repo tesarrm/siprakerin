@@ -50,12 +50,12 @@ class DatabaseSeeder extends Seeder
             AuthSeeder::class,
         ]);
         \App\Models\Pengaturan::factory()->count(1)->create();
-        \App\Models\Guru::factory()->count(100)->create();
-        \App\Models\BidangKeahlian::factory()->count(4)->create();
-        \App\Models\Jurusan::factory()->count(10)->create();
-        \App\Models\Kelas::factory()->count(10)->create();
-        \App\Models\Kota::factory()->count(10)->create();
-        \App\Models\Industri::factory()->count(100)->create();
+        \App\Models\Guru::factory()->count(3)->create();
+        \App\Models\BidangKeahlian::factory()->count(3)->create();
+        \App\Models\Jurusan::factory()->count(3)->create();
+        \App\Models\Kelas::factory()->count(3)->create();
+        \App\Models\Kota::factory()->count(3)->create();
+        // \App\Models\Industri::factory()->count(3)->create();
 
         // ====== Buat data kuota industri
         $industris = Industri::all();
@@ -64,7 +64,8 @@ class DatabaseSeeder extends Seeder
         foreach ($industris as $industri) {
             foreach ($jenisKelamin as $kelamin) {
                 foreach ($jurusans as $jurusan) {
-                    $probabilitas = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2];
+                    // $probabilitas = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2];
+                    $probabilitas = [0, 0, 1, 2];
                     $kuota = $probabilitas[array_rand($probabilitas)];
                     KuotaIndustri::create([
                         'industri_id' => $industri->id,
@@ -78,37 +79,37 @@ class DatabaseSeeder extends Seeder
             }
         }
 
-        // ======= siswa dan pilihan kota
-        \App\Models\PilihanKota::factory()->count(200)->create();
+        // // ======= siswa dan pilihan kota
+        \App\Models\PilihanKota::factory()->count(3)->create();
 
-        \App\Models\Jurnal::factory()->count(20000)->create();
+        // \App\Models\Jurnal::factory()->count(100)->create();
 
-        // ======= capaian dan tujuran 
-        $faker = Faker::create();
-        $jurusans = Jurusan::all();
+        // // ======= capaian dan tujuran 
+        // $faker = Faker::create();
+        // $jurusans = Jurusan::all();
 
-        foreach ($jurusans as $jurusan) {
-            // Generate antara 1 hingga 5 capaian untuk setiap jurusan
-            $capaianCount = rand(1, 5);
-            for ($i = 0; $i < $capaianCount; $i++) {
-                // Buat capaian pembelajaran untuk jurusan ini
-                $capaian = CapaianPembelajaran::create([
-                    'jurusan_id' => $jurusan->id,
-                    'nama' => $faker->sentence,
-                ]);
+        // foreach ($jurusans as $jurusan) {
+        //     // Generate antara 1 hingga 5 capaian untuk setiap jurusan
+        //     $capaianCount = rand(1, 5);
+        //     for ($i = 0; $i < $capaianCount; $i++) {
+        //         // Buat capaian pembelajaran untuk jurusan ini
+        //         $capaian = CapaianPembelajaran::create([
+        //             'jurusan_id' => $jurusan->id,
+        //             'nama' => $faker->sentence,
+        //         ]);
 
-                // Generate antara 1 hingga 3 tujuan untuk setiap capaian
-                $tujuanCount = rand(1, 3);
-                for ($j = 0; $j < $tujuanCount; $j++) {
-                    TujuanPembelajaran::create([
-                        'capaian_pembelajaran_id' => $capaian->id,
-                        'nama' => $faker->sentence . " " . $faker->sentence,
-                    ]);
-                }
-            }
-        }
+        //         // Generate antara 1 hingga 3 tujuan untuk setiap capaian
+        //         $tujuanCount = rand(1, 3);
+        //         for ($j = 0; $j < $tujuanCount; $j++) {
+        //             TujuanPembelajaran::create([
+        //                 'capaian_pembelajaran_id' => $capaian->id,
+        //                 'nama' => $faker->sentence . " " . $faker->sentence,
+        //             ]);
+        //         }
+        //     }
+        // }
 
-        // \App\Models\Monitoring::factory()->count(3)->create();
+        // // \App\Models\Monitoring::factory()->count(3)->create();
     }
 }
 

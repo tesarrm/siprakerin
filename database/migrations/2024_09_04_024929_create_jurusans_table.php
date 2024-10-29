@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('jurusans', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('bidang_keahlian_id')->constrained('bidang_keahlians')->onDelete('cascade');
+
             $table->string('nama');
             $table->string('singkatan');
-            $table->foreignId('bidang_keahlian_id')->constrained('bidang_keahlians')->onDelete('cascade');
             $table->timestamps();
         });
     }

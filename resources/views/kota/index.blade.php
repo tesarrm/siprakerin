@@ -76,6 +76,8 @@
             $items[] = [
                 'id' => $d->id ?? '-',
                 'nama' => $d->nama ?? '-',
+                'biaya' => $d->biaya ?? '-',
+                'keterangan' => $d->keterangan ?? '-',
                 'action' => $d->id ?? '-',
             ];
         }
@@ -111,6 +113,8 @@
                             headings: [
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                                 "Nama",
+                                "Biaya",
+                                "Keterangan",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -134,7 +138,7 @@
                                 }
                             },
                             {
-                                select: 2,
+                                select: 4,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">

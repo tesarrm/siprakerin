@@ -1,24 +1,21 @@
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/flatpickr.min.css') }}">
     <script src="/assets/js/flatpickr.js"></script>
+    <script src="/assets/js/flatpickr-id.js"></script>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
     <script src="/assets/js/nouislider.min.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script src="/assets/js/jquery-3.4.1.slim.min.js"></script>
+    <link href="/assets/css/summernote/summernote-lite.min.css" rel="stylesheet">
+    <script src="/assets/js/summernote-lite.min.js"></script>
 
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-    <link
-        href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
-        rel="stylesheet"
-    />
+    <script src="/assets/js/filepond.js"></script>
+    <script src="/assets/js/filepond-plugin-image-preview.js"></script>
+    <link href="/assets/css/filepond.css" rel="stylesheet" />
+    <link href="/assets/css/filepond-plugin-image-preview.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
-
 
     <div>
         @if($libur)

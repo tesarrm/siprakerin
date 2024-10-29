@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('hasil_monitorings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('monitoring_id')->constrained('monitorings')->onDelete('cascade');
+            $table->foreignId('jadwal_monitoring_id')->constrained('jadwal_monitorings')->onDelete('cascade');
             $table->foreignId('siswa_id')->constrained('siswas')->onDelete('cascade');
+
             $table->float('hadir')->nullable();
             $table->float('izin')->nullable();
             $table->float('alpa')->nullable();

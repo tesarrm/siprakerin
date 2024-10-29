@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('kuota_industris', function (Blueprint $table) {
             $table->id();
             $table->foreignId('industri_id')->constrained('industris')->onDelete('cascade');
-            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
             $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('cascade');
+
+            $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan']);
             $table->integer('kuota');
             $table->timestamps();
         });

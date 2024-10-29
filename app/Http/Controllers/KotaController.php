@@ -34,6 +34,8 @@ class KotaController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string',
+            'biaya' => 'required',
+            'keterangan' => 'nullable|string',
         ]);
 
         $create = collect($validatedData);
@@ -58,6 +60,8 @@ class KotaController extends Controller
 
         $validatedData = $request->validate([
             'nama' => 'required|string',
+            'biaya' => 'required',
+            'keterangan' => 'nullable|string',
         ]);
 
         $update = collect($validatedData);

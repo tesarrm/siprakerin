@@ -265,8 +265,8 @@
         });
 
         // If there is an existing image, load it into FilePond
-        @if($data->gambar)
-        pond.addFile("{{ asset('storage/posts/' . $data->gambar) }}")
+        @if($data->user->gambar)
+        pond.addFile("{{ asset('storage/posts/' . $data->user->gambar) }}")
             .then(file => {
                 console.log('Existing file loaded', file);
             })

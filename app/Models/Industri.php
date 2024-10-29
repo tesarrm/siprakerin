@@ -16,6 +16,9 @@ class Industri extends Model
         'tahun_ajaran',
         'tanggal_awal',
         'tanggal_akhir',
+
+        'user_id',
+        'no_telp',
     ];
 
     public function kuotaIndustri()
@@ -38,8 +41,12 @@ class Industri extends Model
     {
         return $this->belongsToMany(Guru::class, 'guru_industri');
     }
-    public function monitorings()
+    public function jadwalMonitorings()
     {
-        return $this->hasMany(Monitoring::class);
+        return $this->hasMany(JadwalMonitoring::class);
+    }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

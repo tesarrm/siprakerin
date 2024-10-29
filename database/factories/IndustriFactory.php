@@ -24,6 +24,7 @@ class IndustriFactory extends Factory
             'tahun_ajaran' => '2024/2025',
             'tanggal_awal' => '11 Oktober 2024',
             'tanggal_akhir' => '31 Oktober 2024',
+            'user_id' => 1,
         ];
     }
 }

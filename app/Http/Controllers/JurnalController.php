@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
 use App\Models\Guru;
-use App\Models\Industri;
 use App\Models\Izin;
 use App\Models\Jurnal;
+use App\Models\Kehadiran;
 use App\Models\Kelas;
 use App\Models\PenempatanIndustri;
 use App\Models\Siswa;
@@ -65,20 +64,20 @@ class JurnalController extends Controller
                 ->where('siswa_id', $siswa->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
-            $attendances = Attendance::where('siswa_id', $siswa->id)->get();
-            $hadir = Attendance::where([
+            $attendances = Kehadiran::where('siswa_id', $siswa->id)->get();
+            $hadir = Kehadiran::where([
                 'siswa_id' => $siswa->id, 
                 'status' => 'hadir'
                 ])->get();
-            $izin = Attendance::where([
+            $izin = Kehadiran::where([
                 'siswa_id' => $siswa->id, 
                 'status' => 'izin'
                 ])->get();
-            $libur = Attendance::where([
+            $libur = Kehadiran::where([
                 'siswa_id' => $siswa->id, 
                 'status' => 'libur'
                 ])->get();
-            $alpa = Attendance::where([
+            $alpa = Kehadiran::where([
                 'siswa_id' => $siswa->id, 
                 'status' => 'alpa'
                 ])->get();

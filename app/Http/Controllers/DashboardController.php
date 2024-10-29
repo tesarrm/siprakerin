@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Attendance;
 use App\Models\CapaianPembelajaran;
 use App\Models\Guru;
-use App\Models\HasilMonitoring;
 use App\Models\Industri;
+use App\Models\JadwalMonitoring;
+use App\Models\Kehadiran;
 use App\Models\Kelas;
-use App\Models\Monitoring;
 use App\Models\PelanggaranSiswa;
 use App\Models\PenempatanIndustri;
 use App\Models\Siswa;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -158,7 +156,7 @@ class DashboardController extends Controller
 
             $pelanggaranRecent = PelanggaranSiswa::orderBy('created_at', 'asc')->with('siswa.kelas.jurusan')->get();
             // $monitoringRecent = Monitoring::orderBy('created_at', 'asc')->with('hasilMonitoring')->get();
-            $monitoringRecent = Monitoring::with(['hasilMonitoring', 'guru', 'industri'])
+            $monitoringRecent = JadwalMonitoring::with(['hasilMonitoring', 'guru', 'industri'])
                 ->whereHas('hasilMonitoring') // Mengambil hanya monitoring yang memiliki hasilMonitoring
                 ->orderBy('created_at', 'asc')
                 ->get();
@@ -374,19 +372,19 @@ class DashboardController extends Controller
 
             // $siswa = Siswa::with('kelas.jurusan')->findOrFail($siswa_id);
 
-                $hadir = Attendance::where([
+                $hadir = Kehadiran::where([
                     'siswa_id' => $siswa->id, 
                     'status' => 'hadir'
                     ])->get();
-                $izin = Attendance::where([
+                $izin = Kehadiran::where([
                     'siswa_id' => $siswa->id, 
                     'status' => 'izin'
                     ])->get();
-                $libur = Attendance::where([
+                $libur = Kehadiran::where([
                     'siswa_id' => $siswa->id, 
                     'status' => 'libur'
                     ])->get();
-                $alpa = Attendance::where([
+                $alpa = Kehadiran::where([
                     'siswa_id' => $siswa->id, 
                     'status' => 'alpa'
                     ])->get();
@@ -413,7 +411,7 @@ class DashboardController extends Controller
                 $tanggalHariIni = Carbon::now();
                 $sisa_hari = $tanggalHariIni->diffInDays($tanggalAkhir);
 
-                $attendances = Attendance::where('siswa_id', $siswa->id)->get();
+                $attendances = Kehadiran::where('siswa_id', $siswa->id)->get();
 
                 $pelanggaran = PelanggaranSiswa::with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])->where('siswa_id', $siswa->id)->get();
 

@@ -113,8 +113,8 @@
                                             @enderror
                                         </div> --}}
                                         <div>
-                                            <label for="nama">Nama Panggilan<span class="text-danger">*</span></label>
-                                            <input value="{{ $siswa->nama}}" required id="nama" type="text" name="nama" class="form-input w-full"
+                                            <label for="nama">Nama<span class="text-danger">*</span></label>
+                                            <input value="{{ $siswa->user->name}}" required id="nama" type="text" name="nama" class="form-input w-full"
                                                 placeholder="Isi Nama" />
                                             @error('nama')
                                                 <div class="mt-2 text-danger">{{ $message }}</div>
@@ -201,7 +201,7 @@
                                             @enderror
                                         </div>
                                         <div>
-                                            <label for="kelas_id">Jenis Kelamin<span class="text-danger">*</span></label>
+                                            <label for="kelas_id">Kelas<span class="text-danger">*</span></label>
                                             <input 
                                                 value="{{$siswa->kelas->nama . " " . $siswa->kelas->jurusan->singkatan . " " . $siswa->kelas->klasifikasi}}" 
                                                 required 

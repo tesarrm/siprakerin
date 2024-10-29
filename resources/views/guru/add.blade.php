@@ -71,7 +71,7 @@
                             </div>
                             <div>
                                 <label for="confirmation-password">Konfirmasi Password<span class="text-danger">*</span></label>
-                                <input required id="confirmation-password" type="confirmation-password" name="confirmation-password" class="form-input flex-1"
+                                <input required id="confirmation-password" type="password" name="confirmation-password" class="form-input flex-1"
                                     placeholder="Isi Konfirmasi Password" />
                             </div>
                         </div>

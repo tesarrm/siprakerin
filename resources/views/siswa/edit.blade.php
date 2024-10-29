@@ -46,17 +46,9 @@
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            {{-- <div>
-                                <label for="nama_lengkap">Nama Lengkap<span class="text-danger">*</span></label>
-                                <input value="{{ $data->nama_lengkap }}" required id="nama_lengkap" type="text" name="nama_lengkap" class="form-input w-full"
-                                    placeholder="Isi Nama Lengkap" />
-                                @error('nama_lengkap')
-                                    <div class="mt-2 text-danger">{{ $message }}</div>
-                                @enderror
-                            </div> --}}
                             <div>
                                 <label for="nama">Nama<span class="text-danger">*</span></label>
-                                <input value="{{ $data->nama }}" required id="nama" type="text" name="nama" class="form-input w-full"
+                                <input value="{{ $data->user->name }}" required id="nama" type="text" name="nama" class="form-input w-full"
                                     placeholder="Isi Nama" />
                                 @error('nama')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
@@ -149,72 +141,60 @@
                             </div>
                         </div>
                     </div>
-                    {{-- <hr>
+                    <hr>
                     <div class="px-4">
-                        <div class="text-lg font-semibold mt-4">Orangtua</div>
-                        <div class="grid mt-4">
-                            <div x-data="form" x-init="initialize()">
-                                <table class="table-auto w-full">
-                                    <thead>
-                                        <tr>
-                                            <th class="px-4 py-5">Nama Ortu</th>
-                                            <th class="px-4 py-5">Jenis Kelamin</th>
-                                            <th class="px-4 py-5">Email</th>
-                                            <th class="px-4 py-5">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <template x-for="(row, index) in tableData" :key="index">
-                                            <tr>
-                                                <td class="px-4 py-2">
-                                                    <select :name="'data['+index+'][ortu_id]'" x-model="row.ortu_id" @change="updateOrtu(row.ortu_id, index)" class="form-input w-full" style="border:none; padding: 5px; padding-right: 30px;">
-                                                        <option value="">Pilih Ortu</option>
-                                                        <template x-for="ortu in ortuData" :key="ortu.id">
-                                                            <option :value="ortu.id" x-text="ortu.nama"></option>
-                                                        </template>
-                                                    </select>
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="text" x-model="row.jenis_kelamin" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                                </td>
-                                                <td class="px-4 py-2">
-                                                    <input type="text" x-model="row.email" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                                </td>
-                                                <td class="px-4 py-2 text-center">
-                                                    <a href="javascript:;" x-tooltip="Delete" @click="removeRow(index)" >
-
-                                                        <svg width="24" height="24" viewBox="0 0 24 24"
-                                                            fill="none" xmlns="http://www.w3.org/2000/svg"
-                                                            class="w-5 h-5 text-danger">
-                                                            <circle opacity="0.5" cx="12" cy="12"
-                                                                r="10" stroke="currentColor"
-                                                                stroke-width="1.5" />
-                                                            <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
-                                                                stroke="currentColor" stroke-width="1.5"
-                                                                stroke-linecap="round" />
-                                                        </svg>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        </template>
-                                    </tbody>
-                                </table>
-                                <div class="flex mr-6">
-                                    <button type="button" @click="addRow" class="btn btn-dark w-10 h-10 p-0 rounded-full ml-auto">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        </svg>
-                                    </button>
-                                </div>
+                        <div class="text-lg font-semibold">Wali Siswa</div>
+                        <div class="grid grid-cols-1 mt-4 mb-6 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nama_wali">Nama Wali<span class="text-danger">*</span></label>
+                                <input value="{{$data->walisiswa->user->name}}" required id="nama_wali" type="text" name="nama_wali" class="form-input w-full" 
+                                    placeholder="Isi Nama Wali" />
+                                @error('nama_wali')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
                             </div>
-
-                            @error('data')
-                                <div class="mt-2 text-danger">{{ $message }}</div>
-                            @enderror
-
+                            <div>
+                                <label for="pekerjaan">Pekerjaan<span class="text-danger">*</span></label>
+                                <input value="{{$data->walisiswa->pekerjaan}}" required id="pekerjaan" type="text" name="pekerjaan" class="form-input w-full" 
+                                    placeholder="Isi Pekerjaan" />
+                                @error('pekerjaan')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="no_telp_wali">No Telp<span class="text-danger">*</span></label>
+                                <input value="{{$data->walisiswa->no_telp}}" required id="no_telp_wali" type="text" name="no_telp_wali" class="form-input w-full"
+                                    placeholder="Isi No Telp" />
+                                @error('no_telp_wali')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="jenis_kelamin_wali">Jenis Kelamin<span class="text-danger">*</span></label>
+                                <select required id="jenis_kelamin_wali" name="jenis_kelamin_wali" class="form-select w-full">
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="Laki-laki" @selected($data->walisiswa->jenis_kelamin == 'Laki-laki')>Laki-laki</option>
+                                    <option value="Perempuan" @selected($data->walisiswa->jenis_kelamin == 'Perempuan')>Perempuan</option>
+                                </select>
+                                @error('jenis_kelamin_wali')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="email_wali">Email Wali<span class="text-danger">*</span></label>
+                                <input value="{{ $data->walisiswa ? $data->walisiswa->user->email : '' }}" 
+                                    type="email" 
+                                    name="email_wali" 
+                                    class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" 
+                                    readonly
+                                    placeholder="Isi Email Siswa" />
+                                @error('email_wali')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
                         </div>
-                    </div> --}}
+                    </div>
+
                     {{-- button --}}
                     <div class="px-4">
                         <div class="flex justify-end items-center mt-8 gap-4">
@@ -295,7 +275,7 @@
 
         // If there is an existing image, load it into FilePond
         @if($data->gambar)
-        pond.addFile("{{ asset('storage/posts/' . $data->gambar) }}")
+        pond.addFile("{{ asset('storage/posts/' . $data->user->gambar) }}")
             .then(file => {
                 console.log('Existing file loaded', file);
             })
@@ -304,60 +284,7 @@
             });
         @endif
 
-        /*************
-         * ortu datatable 
-         */
-
-        // document.addEventListener("alpine:init", () => {
-        //     Alpine.data("form", () => ({
-        //         tableData: @json($siswa_ortu->ortus).map(ortu=> ({
-        //             ortu_id: ortu.id,
-        //             email: ortu.user?.email,
-        //             jenis_kelamin: ortu.jenis_kelamin,
-        //         })),
-        //         ortuData: @json($ortu),
-
-        //         initialize() {
-        //             this.tableData.forEach((row, index) => {
-        //                 this.$nextTick(() => {
-        //                     let selectElement = document.querySelector(`select[name="data[${index}][ortu_id]"]`);
-        //                     if (selectElement) {
-        //                         selectElement.value = row.ortu_id;
-        //                     }
-        //                 });
-        //             });
-        //         },
-
-        //         addRow() {
-        //             this.tableData.push({ email: '', jenis_kelamin: '' });
-        //         },
-
-        //         removeRow(index) {
-        //             this.tableData.splice(index, 1);
-        //         },
-
-        //         updateOrtu(id, index) {
-        //             const selectedOrtu = this.ortuData.find(s => s.id == id);
-
-        //             console.log(selectedOrtu)
-
-        //             // Check for duplicate
-        //             const isDuplicate = this.tableData.some((row, i) => row.ortu_id == id && i != index);
-        //             if (isDuplicate) {
-        //                 alert('Ortu sudah dipilih di baris lain.');
-        //                 this.tableData[index].ortu_id = '';
-        //                 return;
-        //             } 
-
-        //             if(selectedOrtu){
-        //                 this.tableData[index].email = selectedOrtu.user.email;
-        //                 this.tableData[index].jenis_kelamin = selectedOrtu.jenis_kelamin;
-        //             }
-                   
-        //         }
-        //     }));
-        // });
-
+ 
         /*************
          * tanggal lahir
          */

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('jurnals', function (Blueprint $table) {
             $table->id();
             $table->foreignId('siswa_id')->constrained('siswas')->onDelete('cascade');
+
             $table->string('tanggal_waktu')->nullable();
             $table->longText('kegiatan')->nullable();
             $table->longText('keterangan')->nullable();

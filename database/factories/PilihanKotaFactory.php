@@ -6,6 +6,7 @@ use App\Models\Kelas;
 use App\Models\Kota;
 use App\Models\Siswa;
 use App\Models\User;
+use App\Models\WaliSiswa;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 
@@ -43,6 +44,21 @@ class PilihanKotaFactory extends Factory
         // $kota3 = Kota::inRandomOrder()->whereNotIn('id', [$kota1->id, $kota2->id])->first();
 
         $user->assignRole('siswa');
+
+        $user1 = User::factory()->create([
+            'name' => $this->faker->name, // Menggunakan nama siswa yang sama
+            'email' => $this->faker->unique()->safeEmail,
+            'password' => Hash::make('password'), 
+        ]);
+
+        $walisiswa = WaliSiswa::factory()->create([
+            'no_telp' => $this->faker->phoneNumber,
+            'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
+            'user_id' => $user1->id,
+            'siswa_id' => $siswa->id,
+        ]);
+
+        $user1->assignRole('wali_siswa');
 
         return [
             'siswa_id' => $siswa->id,

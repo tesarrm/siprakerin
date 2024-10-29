@@ -1,4 +1,3 @@
-
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
@@ -80,6 +79,7 @@
             $items[] = [
                 'id' => $d->id ?? '-',
                 'nama' => $d->nama,
+                'singkatan' => $d->singkatan,
                 'bidang_keahlian' => $d->bidangKeahlian->nama ?? '-',
                 'action' => $d->id ?? '-',
             ];
@@ -116,6 +116,7 @@
                             headings: [
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                                 "Nama",
+                                "Singkatan",
                                 "Bidang Keahlian",
                                 "Aksi",
                             ],
@@ -132,7 +133,7 @@
                                 }
                             },
                             {
-                                select: 1,
+                                select: 2,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const id = row.cells[0].data; 
@@ -140,7 +141,7 @@
                                 }
                             },
                             {
-                                select: 2,
+                                select: 3,
                                 render: function(data, cell, row) {
                                     if(data != '-'){
                                         return `
@@ -156,7 +157,7 @@
                                 }
                             },
                             {
-                                select: 3,
+                                select: 4,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">

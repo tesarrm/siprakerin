@@ -197,6 +197,9 @@ class GuruController extends Controller
             }
         }
 
+        $user->name = $validatedData['nama'];
+        $user->save();
+
         // Update data guru
         $guru->update($guruData);
 
@@ -209,8 +212,8 @@ class GuruController extends Controller
         $guru = $this->model->findOrFail($id);
 
         // Hapus gambar dan foldernya dari storage
-        if ($guru->gambar) {
-            $folderPath = 'posts/' . dirname($guru->gambar);
+        if ($guru->user->gambar) {
+            $folderPath = 'posts/' . dirname($guru->user->gambar);
             Storage::deleteDirectory($folderPath);
         }
         $guru->delete();
@@ -267,8 +270,8 @@ class GuruController extends Controller
 
         foreach ($gurus as $guru) {
             // Hapus gambar dan foldernya dari storage
-            if ($guru->gambar) {
-                $folderPath = 'posts/' . dirname($guru->gambar);
+            if ($guru->user->gambar) {
+                $folderPath = 'posts/' . dirname($guru->user->gambar);
                 Storage::deleteDirectory($folderPath);
             }
 

@@ -253,7 +253,7 @@ public function index2(Request $request)
     public function buat()
     {
         $user_id = auth()->user()->id;
-        // dd($user_id);
+
         $siswa = Siswa::where('user_id', $user_id)
             ->with('kelas.jurusan')
             ->first();
@@ -266,34 +266,25 @@ public function index2(Request $request)
             $data->kota_id_3 = '';
         }
 
-        // $jurusan = Jurusan::with('kuotaIndustris.industri.kota')
-        //     ->has('kuotaIndustris') // Hanya ambil Jurusan yang memiliki kuotaIndustris
-        //     ->findOrFail($siswa->kelas->jurusan->id);
-
-        // // $kota = Kota::all();
-        // // Dapatkan kota yang hanya terkait dengan kuotaIndustris.industri.kota
-        // $kotaIds = $jurusan->pluck('kuotaIndustris.*.industri.kota.id')->flatten()->unique();
-
-        // $kota = Kota::whereIn('id', $kotaIds)->get();
-        
 
         // Ambil jurusan siswa beserta kuota industrinya yang memiliki relasi dengan kota industri
         $jurusan = Jurusan::with('kuotaIndustris.industri.kota')
             ->whereHas('kuotaIndustris')
-            ->findOrFail(4);
-
-        // Ambil ID kota yang terkait dengan kuotaIndustris.industri.kota
-        $kotaIds = $jurusan->kuotaIndustris
-            ->pluck('industri.kota.id') // Ambil ID kota secara langsung
-            ->filter() // Hilangkan null values jika ada industri tanpa kota
-            ->unique(); // Hilangkan ID kota yang duplikat
-
-        // Ambil data kota berdasarkan ID yang diperoleh
-        $kota = Kota::whereIn('id', $kotaIds)->get();
-
-
-        // $kota = Kota::get();
+            ->findOrFail($siswa->kelas->jurusan->id);
         
+        if($jurusan) {
+            // Ambil ID kota yang terkait dengan kuotaIndustris.industri.kota
+            $kotaIds = $jurusan->kuotaIndustris
+                ->pluck('industri.kota.id') // Ambil ID kota secara langsung
+                ->filter() // Hilangkan null values jika ada industri tanpa kota
+                ->unique(); // Hilangkan ID kota yang duplikat
+
+            // Ambil data kota berdasarkan ID yang diperoleh
+            $kota = Kota::whereIn('id', $kotaIds)->get();
+        } else {
+            $kota = Kota::get();
+        }
+
         // Pass data and kota to the view
         return view('pilihan_kota.buat', [
             'data' => $data,

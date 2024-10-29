@@ -32,13 +32,13 @@ class Siswa extends Model
     {
         return $this->hasOne(PilihanKota::class);
     }
+    public function walisiswa()
+    {
+        return $this->hasOne(WaliSiswa::class);
+    }
     public function penempatan()
     {
         return $this->hasOne(PenempatanIndustri::class);
-    }
-    public function ortus()
-    {
-        return $this->belongsToMany(Ortu::class, 'ortu_siswa');
     }
     public function user()
     {

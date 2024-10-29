@@ -99,7 +99,7 @@
                             </div>
                             <div>
                                 <label for="confirmation-password">Konfirmasi Password<span class="text-danger">*</span></label>
-                                <input required id="confirmation-password" type="confirmation-password" name="confirmation-password" class="form-input flex-1"
+                                <input required id="confirmation-password" type="password" name="confirmation-password" class="form-input flex-1"
                                     placeholder="Isi Konfirmasi Password" />
                             </div>
                         </div>
@@ -155,6 +155,65 @@
                                 @error('agama')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="px-4">
+                        <div class="text-lg font-semibold">Wali Siswa</div>
+                        <div class="grid grid-cols-1 mt-4 mb-6 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nama_wali">Nama Wali<span class="text-danger">*</span></label>
+                                <input required id="nama_wali" type="text" name="nama_wali" class="form-input w-full" 
+                                    placeholder="Isi Nama Wali" />
+                                @error('nama_wali')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="pekerjaan">Pekerjaan<span class="text-danger">*</span></label>
+                                <input required id="pekerjaan" type="text" name="pekerjaan" class="form-input w-full" 
+                                    placeholder="Isi Pekerjaan" />
+                                @error('pekerjaan')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="no_telp_wali">No Telp<span class="text-danger">*</span></label>
+                                <input required id="no_telp_wali" type="text" name="no_telp_wali" class="form-input w-full"
+                                    placeholder="Isi No Telp" />
+                                @error('no_telp_wali')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="jenis_kelamin_wali">Jenis Kelamin<span class="text-danger">*</span></label>
+                                <select required id="jenis_kelamin_wali" name="jenis_kelamin_wali" class="form-select w-full">
+                                    <option value="">Pilih Jenis Kelamin</option>
+                                    <option value="Laki-laki">Laki-laki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                                @error('jenis_kelamin_wali')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="email_wali">Email Wali<span class="text-danger">*</span></label>
+                                <input required id="email_wali" type="email" name="email_wali" class="form-input w-full"
+                                    placeholder="Isi Email Wali" />
+                                @error('email_wali')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="password_wali">Password<span class="text-danger">*</span></label>
+                                <input required id="password_wali" type="password" name="password_wali" class="form-input flex-1"
+                                    placeholder="Isi Password" />
+                            </div>
+                            <div>
+                                <label for="confirmation-password_wali">Konfirmasi Password<span class="text-danger">*</span></label>
+                                <input required id="confirmation-password_wali" type="password" name="confirmation-password_wali" class="form-input flex-1"
+                                    placeholder="Isi Konfirmasi Password" />
                             </div>
                         </div>
                     </div>

@@ -11,9 +11,71 @@ penempatan_industris
 jurnals
 kehadirans
 pelanggarans
-pkls
-capaians
-tujuans
+capaian_pembelajarans
+tujuan_pembelajarans
 nilais
 jadwal_monitorings
 monitorings
+
+========
+
+gurus
+    user_id
+
+bidang_keahlians
+
+jurusans
+    bidang_keahlian_id
+
+kelas
+    jurusan_id
+    guru_id
+
+siswas
+    user_id
+    kelas_id
+
+kotas
+
+industris
+    kota_id
+
+kuota_industris
+    industri_id
+    jurusan_id
+
+pilihan_kotas
+    siswa_id
+    kota_id_1
+    kota_id_2
+    kota_id_3
+
+penempatan_industris
+    industri_id
+    siswa_id
+
+jurnals
+    siswa_id
+
+kehadirans 
+    siswa_id
+
+pelanggarans
+    siswa_id
+
+capaian_pembelajarans
+    jurusan_id
+
+tujuan_pembelajrans
+    capaian_pembelajaran_id
+
+nilais
+    tujuan_pembelajaran_id
+
+jadwal_monitorings 
+    guru_id
+    industri_id
+
+hasil_monitorings 
+    monitoring_id
+    siswa_id

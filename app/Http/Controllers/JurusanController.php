@@ -19,7 +19,7 @@ class JurusanController extends Controller
      */
     public function index()
     {
-        $data = Jurusan::with('bidangKeahlian')->orderBy('nama', 'asc')->get();
+        $data = Jurusan::with(['bidangKeahlian'])->orderBy('nama', 'asc')->get();
 
         return view('jurusan.index', [
             'data' => $data

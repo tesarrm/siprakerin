@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Guru;
 use App\Models\HasilMonitoring;
+use App\Models\HasilMonitoringImage;
 use App\Models\Industri;
+use App\Models\JadwalMonitoring;
 use App\Models\Kelas;
 use App\Models\Monitoring;
 use App\Models\MonitoringImage;
@@ -31,7 +33,7 @@ class HasilMonitoringController extends Controller
 
         if(auth()->user()->hasRole('pembimbing')){
             $guru = Guru::where('user_id', auth()->user()->id)->first();
-            $data = Monitoring::with(['guru', 'industri'])
+            $data = JadwalMonitoring::with(['guru', 'industri'])
                 ->where('guru_id', $guru->id )
                 ->get();
 
@@ -41,7 +43,7 @@ class HasilMonitoringController extends Controller
                 $d->status = $hasil ? 'Sudah Monitoring' : 'Belum Monitoring';
             });
         } else {
-            $data = Monitoring::with([
+            $data = JadwalMonitoring::with([
                     'guru', 
                     'industri',
                     'hasilMonitoring'
@@ -62,14 +64,14 @@ class HasilMonitoringController extends Controller
             $hasil = HasilMonitoring::where('siswa_id', $siswa_id)
                 ->with([
                     'siswa.kelas.jurusan', 
-                    'monitoring.guru',
+                    'jadwalMonitoring.guru.user',
                     'siswa.penempatan.industri',
                     ])
                 ->get();
         } else if (auth()->user()->hasRole('koordinator')) {
             $hasil = HasilMonitoring::with([
                     'siswa.kelas.jurusan', 
-                    'monitoring.guru',
+                    'jadwalMonitoring.guru',
                     'siswa.penempatan.industri',
                     ])
                 ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at desc
@@ -84,7 +86,7 @@ class HasilMonitoringController extends Controller
 
             $hasil = HasilMonitoring::with([
                     'siswa.kelas.jurusan', 
-                    'monitoring.guru',
+                    'jadwalMonitoring.guru',
                     'siswa.penempatan.industri',
                     ])
                 ->whereHas('siswa.kelas', function ($query) use ($kelasId) {
@@ -95,7 +97,7 @@ class HasilMonitoringController extends Controller
         } else {
             $hasil = HasilMonitoring::with([
                     'siswa.kelas.jurusan', 
-                    'monitoring.guru.user',
+                    'jadwalMonitoring.guru.user',
                     'siswa.penempatan.industri',
                 ])
                 ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at desc
@@ -104,7 +106,7 @@ class HasilMonitoringController extends Controller
 
         $kelas = Kelas::where('aktif', 1)->get();
         $industri = Industri::where('aktif', 1)
-            ->whereHas('monitorings')
+            ->whereHas('jadwalMonitorings')
             ->get();
 
         return view('hasil_monitoring.index', [
@@ -148,13 +150,12 @@ class HasilMonitoringController extends Controller
      */
     public function edit($jadwal_monitoring_id)
     {
-        //
-        $jadwal_monitoring= Monitoring::with(['guru', 'industri'])
+        $jadwal_monitoring= JadwalMonitoring::with(['guru', 'industri'])
             ->findOrFail($jadwal_monitoring_id);
-        $monitoring_image = MonitoringImage::where('monitoring_id', $jadwal_monitoring_id)
+        $monitoring_image = HasilMonitoringImage::where('jadwal_monitoring_id', $jadwal_monitoring_id)
             ->first();
-        $hasil_monitoring = HasilMonitoring::where('monitoring_id', $jadwal_monitoring_id)
-            ->with(['siswa', 'monitoring'])
+        $hasil_monitoring = HasilMonitoring::where('jadwal_monitoring_id', $jadwal_monitoring_id)
+            ->with(['siswa', 'jadwalMonitoring'])
             ->get();
 
         $penempatan = PenempatanIndustri::where(
@@ -212,12 +213,12 @@ class HasilMonitoringController extends Controller
                 $path_gambar = $tmp_file->folder . '/' . $tmp_file->file;
 
                 // update gambar di monitoring
-                MonitoringImage::updateOrCreate(
+                HasilMonitoringImage::updateOrCreate(
                     [
-                        'monitoring_id' => $monitoring_id,
+                        'jadwal_monitoring_id' => $monitoring_id,
                     ],
                     [
-                        'monitoring_id' => $monitoring_id,
+                        'jadwal_monitoring_id' => $monitoring_id,
                         'gambar' => $path_gambar,
                     ]
                 );
@@ -227,13 +228,13 @@ class HasilMonitoringController extends Controller
             } 
         }
 
-        HasilMonitoring::where('monitoring_id', $monitoring_id)
+        HasilMonitoring::where('jadwal_monitoring_id', $monitoring_id)
                     ->delete();
                 
 
         foreach ($validated['data'] as $data) {
             HasilMonitoring::updateOrCreate([
-                    'monitoring_id' => $monitoring_id,
+                    'jadwal_monitoring_id' => $monitoring_id,
                     'siswa_id' => $data['siswa_id'],
                     'hadir' => $data['hadir'],
                     'izin' => $data['izin'],

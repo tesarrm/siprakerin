@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('cascade');
             $table->foreignId('guru_id')->nullable()->constrained('gurus')->onDelete('set null');
+
             $table->boolean('aktif')->default(1);
             $table->string('nama');
             $table->string('tahun_ajaran');

@@ -107,9 +107,11 @@ class UserController extends Controller
     {
         $siswa = Siswa::where('user_id', auth()->user()->id)->with(['kelas', 'user'])->first();
         $kelas = Kelas::with('jurusan.bidangKeahlian')->get();
-        $biodata = BiodataSiswa::with('siswa')->where('siswa_id', $siswa->id)->first();
+        $biodata = BiodataSiswa::with('siswa')
+            ->where('siswa_id', $siswa->id)
+            ->first();
 
-        return view('user.profile', [
+        return view('user.siswa_biodata', [
             'siswa' => $siswa,
             'kelas' => $kelas,
             'data' => $biodata,
@@ -193,34 +195,34 @@ class UserController extends Controller
             'penyakit',
         ]);
 
-        // Cek apakah ada gambar baru
-        if (!empty($request->gambar)) {
-            // Proses gambar baru
-            $tmp_file = TemporaryFile::where('folder', $request->gambar)->first();
+        // // Cek apakah ada gambar baru
+        // if (!empty($request->gambar)) {
+        //     // Proses gambar baru
+        //     $tmp_file = TemporaryFile::where('folder', $request->gambar)->first();
 
-            if ($tmp_file) {
-                // Hapus gambar lama jika ada
-                if ($siswa->gambar) {
-                    Storage::delete('posts/' . $siswa->gambar);
-                }
+        //     if ($tmp_file) {
+        //         // Hapus gambar lama jika ada
+        //         if ($siswa->gambar) {
+        //             Storage::delete('posts/' . $siswa->gambar);
+        //         }
 
-                // Pindahkan gambar baru ke direktori final
-                Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
+        //         // Pindahkan gambar baru ke direktori final
+        //         Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
 
-                // Update path gambar di database
-                $update2->put('gambar', $tmp_file->folder . '/' . $tmp_file->file);
+        //         // Update path gambar di database
+        //         $update2->put('gambar', $tmp_file->folder . '/' . $tmp_file->file);
 
-                // Hapus temporary file dan direktori
-                Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
-                $tmp_file->delete();
-            }
-        } else {
-            // Jika tidak ada gambar baru, set gambar menjadi null
-            if ($siswa->gambar) {
-                Storage::delete('posts/' . $siswa->gambar); // Hapus gambar lama
-            }
-            $update2->put('gambar', null);
-        }
+        //         // Hapus temporary file dan direktori
+        //         Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
+        //         $tmp_file->delete();
+        //     }
+        // } else {
+        //     // Jika tidak ada gambar baru, set gambar menjadi null
+        //     if ($siswa->gambar) {
+        //         Storage::delete('posts/' . $siswa->gambar); // Hapus gambar lama
+        //     }
+        //     $update2->put('gambar', null);
+        // }
 
         // Cek apakah ada gambar baru
         if (!empty($request->pas_foto)) {
@@ -253,7 +255,7 @@ class UserController extends Controller
 
         $siswa->update($update2->toArray());
 
-        return redirect('profile')->with('status', 'Data berhasil ditambah!');
+        return redirect('biodata')->with('status', 'Data berhasil ditambah!');
     }
 
     public function role($id, Request $request)

@@ -84,31 +84,31 @@ class MonitoringController extends Controller
     //     return redirect('monitoring')->with('status', 'Data berhasil ditambah!');
     // }
 
-public function store(Request $request)
-{
-    // Validasi input
-    $validatedData = $request->validate([
-        'guru' => 'required',
-        'industri_id' => 'required',
-        'tanggal' => 'required',
-    ]);
+    public function store(Request $request)
+    {
+        // Validasi input
+        $validatedData = $request->validate([
+            'guru' => 'required',
+            'industri_id' => 'required',
+            'tanggal' => 'required',
+        ]);
 
-    // Cari guru berdasarkan nama
-    $guru = Guru::where('id', $validatedData['guru'])->first();
+        // Cari guru berdasarkan nama
+        $guru = Guru::where('id', $validatedData['guru'])->first();
 
-    if (!$guru) {
-        return redirect()->back()->withErrors(['guru' => 'Guru tidak ditemukan'])->withInput();
+        if (!$guru) {
+            return redirect()->back()->withErrors(['guru' => 'Guru tidak ditemukan'])->withInput();
+        }
+
+        // Tambahkan guru_id ke data yang akan disimpan
+        $validatedData['guru_id'] = $guru->id;
+
+        // Buat record baru menggunakan model dan data yang sudah ditambah guru_id
+        $this->model->create($validatedData);
+
+        // Redirect dengan pesan sukses
+        return redirect('monitoring')->with('status', 'Data berhasil ditambah!');
     }
-
-    // Tambahkan guru_id ke data yang akan disimpan
-    $validatedData['guru_id'] = $guru->id;
-
-    // Buat record baru menggunakan model dan data yang sudah ditambah guru_id
-    $this->model->create($validatedData);
-
-    // Redirect dengan pesan sukses
-    return redirect('monitoring')->with('status', 'Data berhasil ditambah!');
-}
 
     /**
      * Display the specified resource.

@@ -29,7 +29,7 @@
                                 <input type="text" name="monitoring_id" value="{{ $jadwal_monitoring->id }}" class="hidden">
                                 <div class="mb-5">
                                     <label for="nama_guru" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Nama Guru</span></label>
-                                    <input value="{{ $jadwal_monitoring->guru->nama }}" id="nama_guru" type="text" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
+                                    <input value="{{ $jadwal_monitoring->guru->user->name}}" id="nama_guru" type="text" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                     @error('nama_guru')
                                         <div class="mt-2 text-danger">{{ $message }}</div>
                                     @enderror

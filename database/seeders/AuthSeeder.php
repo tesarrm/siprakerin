@@ -31,25 +31,25 @@ class AuthSeeder extends Seeder
             ['name' => 'wali_kelas'],
             ['name' => 'wali_kelas']
         );
-        $role_guru = Role::updateOrCreate(
-            ['name' => 'guru'],
-            ['name' => 'guru']
-        );
-        $role_kabeng = Role::updateOrCreate(
-            ['name' => 'kabeng'],
-            ['name' => 'kabeng']
-        );
         $role_siswa = Role::updateOrCreate(
             ['name' => 'siswa'],
             ['name' => 'siswa']
         );
+        $role_guru = Role::updateOrCreate(
+            ['name' => 'guru'],
+            ['name' => 'guru']
+        );
+        $role_karyawan = Role::updateOrCreate(
+            ['name' => 'karyawan'],
+            ['name' => 'karyawan']
+        );
+        $role_wali_siswa = Role::updateOrCreate(
+            ['name' => 'wali_siswa'],
+            ['name' => 'wali_siswa']
+        );
         $role_industri = Role::updateOrCreate(
             ['name' => 'industri'],
             ['name' => 'industri']
-        );
-        $role_ortu = Role::updateOrCreate(
-            ['name' => 'ortu'],
-            ['name' => 'ortu']
         );
 
 // dash
@@ -73,21 +73,21 @@ class AuthSeeder extends Seeder
             ['name' => 'r_dashguru'],
             ['name' => 'r_dashguru']
         );
-        $permission_r_dashkabeng = Permission::updateOrCreate(
-            ['name' => 'r_dashkabeng'],
-            ['name' => 'r_dashkabeng']
-        );
         $permission_r_dashsiswa = Permission::updateOrCreate(
             ['name' => 'r_dashsiswa'],
             ['name' => 'r_dashsiswa']
+        );
+        $permission_r_dashkaryawan = Permission::updateOrCreate(
+            ['name' => 'r_dashkaryawan'],
+            ['name' => 'r_dashkaryawan']
         );
         $permission_r_dashindustri = Permission::updateOrCreate(
             ['name' => 'r_dashindustri'],
             ['name' => 'r_dashindustri']
         );
-        $permission_r_dashortu = Permission::updateOrCreate(
-            ['name' => 'r_dashortu'],
-            ['name' => 'r_dashortu']
+        $permission_r_dashwalisiswa = Permission::updateOrCreate(
+            ['name' => 'r_dashwalisiswa'],
+            ['name' => 'r_dashwalisiswa']
         );
 // guru
         $permission_c_guru = Permission::updateOrCreate(
@@ -446,6 +446,40 @@ class AuthSeeder extends Seeder
             ['name' => 'd_pengaturan'],
             ['name' => 'd_pengaturan']
         );
+// karyawan 
+        $permission_c_karyawan = Permission::updateOrCreate(
+            ['name' => 'c_karyawan'],
+            ['name' => 'c_karyawan']
+        );
+        $permission_r_karyawan = Permission::updateOrCreate(
+            ['name' => 'r_karyawan'],
+            ['name' => 'r_karyawan']
+        );
+        $permission_u_karyawan = Permission::updateOrCreate(
+            ['name' => 'u_karyawan'],
+            ['name' => 'u_karyawan']
+        );
+        $permission_d_karyawan = Permission::updateOrCreate(
+            ['name' => 'd_karyawan'],
+            ['name' => 'd_karyawan']
+        );
+// wali siswa 
+        $permission_c_wali_siswa = Permission::updateOrCreate(
+            ['name' => 'c_wali_siswa'],
+            ['name' => 'c_wali_siswa']
+        );
+        $permission_r_wali_siswa = Permission::updateOrCreate(
+            ['name' => 'r_wali_siswa'],
+            ['name' => 'r_wali_siswa']
+        );
+        $permission_u_wali_siswa = Permission::updateOrCreate(
+            ['name' => 'u_wali_siswa'],
+            ['name' => 'u_wali_siswa']
+        );
+        $permission_d_wali_siswa = Permission::updateOrCreate(
+            ['name' => 'd_wali_siswa'],
+            ['name' => 'd_wali_siswa']
+        );
 
 // =================================================================
 // =================================================================
@@ -458,8 +492,7 @@ class AuthSeeder extends Seeder
         $role_guru->givePermissionTo($permission_r_dashguru);
         $role_siswa->givePermissionTo($permission_r_dashsiswa);
         $role_industri->givePermissionTo($permission_r_dashindustri);
-        $role_ortu->givePermissionTo($permission_r_dashortu);
-        $role_kabeng->givePermissionTo($permission_r_dashkabeng);
+        $role_wali_siswa->givePermissionTo($permission_r_dashwalisiswa);
 
 // admin
         $role_admin->givePermissionTo($permission_c_guru);
@@ -561,6 +594,16 @@ class AuthSeeder extends Seeder
         $role_admin->givePermissionTo($permission_u_pengaturan);
         $role_admin->givePermissionTo($permission_d_pengaturan);
 
+        $role_admin->givePermissionTo($permission_c_wali_siswa);
+        $role_admin->givePermissionTo($permission_r_wali_siswa);
+        $role_admin->givePermissionTo($permission_u_wali_siswa);
+        $role_admin->givePermissionTo($permission_d_wali_siswa);
+
+        $role_admin->givePermissionTo($permission_c_karyawan);
+        $role_admin->givePermissionTo($permission_r_karyawan);
+        $role_admin->givePermissionTo($permission_u_karyawan);
+        $role_admin->givePermissionTo($permission_d_karyawan);
+
 // koordinator 
         $role_koordinator->givePermissionTo($permission_r_pilihan_kota);
         $role_koordinator->givePermissionTo($permission_u_pilihan_kota);
@@ -615,6 +658,18 @@ class AuthSeeder extends Seeder
 
         $role_pembimbing->givePermissionTo($permission_r_pkl);
 
+// siswa 
+        $role_siswa->givePermissionTo($permission_c_pilihan_kota);
+        $role_siswa->givePermissionTo($permission_r_pilihan_kota);
+        $role_siswa->givePermissionTo($permission_u_pilihan_kota);
+        $role_siswa->givePermissionTo($permission_d_pilihan_kota);
+
+        $role_siswa->givePermissionTo($permission_c_jurnal);
+        $role_siswa->givePermissionTo($permission_r_jurnal);
+        $role_siswa->givePermissionTo($permission_u_jurnal);
+
+        $role_siswa->givePermissionTo($permission_r_hasil_monitoring);
+
 // wali kelas 
         $role_wali_kelas->givePermissionTo($permission_r_penempatan_industri);
 
@@ -629,39 +684,102 @@ class AuthSeeder extends Seeder
         $role_wali_kelas->givePermissionTo($permission_r_hasil_monitoring);
 
 // guru
+        $role_guru->givePermissionTo($permission_r_industri);
+
+        $role_guru->givePermissionTo($permission_r_kuota_industri);
+
+        $role_guru->givePermissionTo($permission_r_pilihan_kota);
+
+        $role_guru->givePermissionTo($permission_r_penempatan_industri);
+
         $role_guru->givePermissionTo($permission_r_jurnal);
 
-// kabeng 
-        $role_kabeng->givePermissionTo($permission_c_penempatan_industri);
-        $role_kabeng->givePermissionTo($permission_r_penempatan_industri);
-        $role_kabeng->givePermissionTo($permission_u_penempatan_industri);
-        $role_kabeng->givePermissionTo($permission_d_penempatan_industri);
+        $role_guru->givePermissionTo($permission_r_kehadiran);
 
-        $role_kabeng->givePermissionTo($permission_c_hasil_monitoring);
-        $role_kabeng->givePermissionTo($permission_r_hasil_monitoring);
-        $role_kabeng->givePermissionTo($permission_u_hasil_monitoring);
-        $role_kabeng->givePermissionTo($permission_d_hasil_monitoring);
-// siswa 
-        $role_siswa->givePermissionTo($permission_c_pilihan_kota);
-        $role_siswa->givePermissionTo($permission_r_pilihan_kota);
-        $role_siswa->givePermissionTo($permission_u_pilihan_kota);
-        $role_siswa->givePermissionTo($permission_d_pilihan_kota);
+        $role_guru->givePermissionTo($permission_r_pelanggaran);
 
-        $role_siswa->givePermissionTo($permission_c_jurnal);
-        $role_siswa->givePermissionTo($permission_r_jurnal);
-        $role_siswa->givePermissionTo($permission_u_jurnal);
+        $role_guru->givePermissionTo($permission_r_pkl);
 
-        $role_siswa->givePermissionTo($permission_r_hasil_monitoring);
+        $role_guru->givePermissionTo($permission_r_nilai);
+
+        $role_guru->givePermissionTo($permission_r_jadwal_monitoring);
+
+        $role_guru->givePermissionTo($permission_r_hasil_monitoring);
+
+// karyawan 
+        $role_karyawan->givePermissionTo($permission_r_industri);
+
+        $role_karyawan->givePermissionTo($permission_r_kuota_industri);
+
+        $role_karyawan->givePermissionTo($permission_r_pilihan_kota);
+
+        $role_karyawan->givePermissionTo($permission_r_penempatan_industri);
+
+        $role_karyawan->givePermissionTo($permission_r_jurnal);
+
+        $role_karyawan->givePermissionTo($permission_r_kehadiran);
+
+        $role_karyawan->givePermissionTo($permission_r_pelanggaran);
+
+        $role_karyawan->givePermissionTo($permission_r_pkl);
+
+        $role_karyawan->givePermissionTo($permission_r_nilai);
+
+        $role_karyawan->givePermissionTo($permission_r_jadwal_monitoring);
+
+        $role_karyawan->givePermissionTo($permission_r_hasil_monitoring);
+
+// wali siswa 
+
+        $role_wali_siswa->givePermissionTo($permission_r_industri);
+
+        $role_wali_siswa->givePermissionTo($permission_r_kuota_industri);
+
+        $role_wali_siswa->givePermissionTo($permission_r_pilihan_kota);
+
+        $role_wali_siswa->givePermissionTo($permission_r_penempatan_industri);
+
+        $role_wali_siswa->givePermissionTo($permission_r_jurnal);
+
+        $role_wali_siswa->givePermissionTo($permission_r_kehadiran);
+
+        $role_wali_siswa->givePermissionTo($permission_r_pelanggaran);
+
+        $role_wali_siswa->givePermissionTo($permission_r_pkl);
+
+        $role_wali_siswa->givePermissionTo($permission_r_nilai);
+
+        $role_wali_siswa->givePermissionTo($permission_r_jadwal_monitoring);
+
+        $role_wali_siswa->givePermissionTo($permission_r_hasil_monitoring);
+
+// industri 
+        $role_industri->givePermissionTo($permission_r_industri);
+
+        $role_industri->givePermissionTo($permission_r_kuota_industri);
+
+        $role_industri->givePermissionTo($permission_r_pilihan_kota);
+
+        $role_industri->givePermissionTo($permission_r_penempatan_industri);
+
+        $role_industri->givePermissionTo($permission_r_jurnal);
+
+        $role_industri->givePermissionTo($permission_r_kehadiran);
+
+        $role_industri->givePermissionTo($permission_r_pelanggaran);
+
+        $role_industri->givePermissionTo($permission_r_pkl);
+
+        $role_industri->givePermissionTo($permission_r_nilai);
+
+        $role_industri->givePermissionTo($permission_r_jadwal_monitoring);
+
+        $role_industri->givePermissionTo($permission_r_hasil_monitoring);
+
 
 // assign role to user
         $admin = User::find(1);
-        // $kabeng = User::find(2);
-        // $wali_kelas = User::find(3);
-        // $siswa = User::find(4);
 
         $admin->assignRole('admin');
-        // $kabeng->assignRole('kabeng');
-        // $wali_kelas->assignRole('wali_kelas');
-        // $siswa->assignRole('siswa');
     }
 }

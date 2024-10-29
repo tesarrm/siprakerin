@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\KehadiranController;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -24,7 +25,7 @@ class Kernel extends ConsoleKernel
         // })->everyMinute();
 
         $schedule->call(function () {
-            AttendanceController::storeCron();
+            KehadiranController::storeCron();
         // })->dailyAt('01:00'); 
         })->everyMinute();
     }

@@ -33,9 +33,9 @@ class Guru extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function monitorings()
+    public function jadwalMonitorings()
     {
-        return $this->hasMany(Monitoring::class);
+        return $this->hasMany(JadwalMonitoring::class);
     }
     public function hoKelas()
     {

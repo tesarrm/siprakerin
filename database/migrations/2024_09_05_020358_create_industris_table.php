@@ -14,12 +14,16 @@ return new class extends Migration
         Schema::create('industris', function (Blueprint $table) {
             $table->id();
             $table->foreignId('kota_id')->constrained('kotas')->onDelete('cascade');
+
             $table->boolean('aktif')->default(1);
             $table->string('nama')->nullable();
             $table->text('alamat')->nullable();
             $table->string('tahun_ajaran')->nullable();
             $table->string('tanggal_awal')->nullable();
             $table->string('tanggal_akhir')->nullable();
+
+            $table->foreignId('user_id')->nullable()->constrained('users');
+            $table->string('no_telp')->nullable();
             $table->timestamps();
         });
     }

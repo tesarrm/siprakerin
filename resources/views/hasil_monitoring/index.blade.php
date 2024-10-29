@@ -323,10 +323,10 @@
         ){
             foreach ($hasil as $d) {
                 $dHasil[] = [
-                    'nama' => $d->monitoring->guru->user->name?? '-',
+                    'nama' => $d->jaddwalMonitoring->guru->user->name?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama?? '-',
-                    'tanggal' => $d->monitoring->tanggal?? '-',
+                    'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
                     'hadir' => $d->hadir ?? '-',
                     'izin' => $d->izin ?? '-',
                     'alpa' => $d->alpa ?? '-',
@@ -338,10 +338,10 @@
         ) {
             foreach ($hasil as $d) {
                 $dHasil[] = [
-                    'nama' => $d->monitoring->guru->user->name?? '-',
+                    'nama' => $d->jadwalMonitoring->guru->user->name?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama?? '-',
-                    'tanggal' => $d->monitoring->tanggal?? '-',
+                    'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
                     'hadir' => $d->hadir ?? '-',
                     'izin' => $d->izin ?? '-',
                     'alpa' => $d->alpa ?? '-',
@@ -354,7 +354,7 @@
                     'nama' => $d->siswa->user->name?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama?? '-',
-                    'tanggal' => $d->monitoring->tanggal?? '-',
+                    'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
                     'hadir' => $d->hadir ?? '-',
                     'izin' => $d->izin ?? '-',
                     'alpa' => $d->alpa ?? '-',

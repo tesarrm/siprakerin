@@ -11,7 +11,7 @@ class HasilMonitoring extends Model
     use HasFactory;
 
     protected $fillable = [
-        'monitoring_id',
+        'jadwal_monitoring_id',
         'siswa_id',
         'hadir',
         'izin',
@@ -19,9 +19,9 @@ class HasilMonitoring extends Model
         'catatan'
     ];
 
-    public function monitoring()
+    public function jadwalMonitoring()
     {
-        return $this->belongsTo(Monitoring::class);
+        return $this->belongsTo(JadwalMonitoring::class);
     }
 
     public function siswa()

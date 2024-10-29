@@ -14,7 +14,7 @@
             @method('PUT')
             <div class="flex xl:flex-row flex-col gap-2.5">
                 <div class="panel xl:w-[800px] px-0 w-full xl:mt-0 mt-6">
-                    <div class="px-4">
+                    <div class="px-4 mb-6">
                         <div class="text-lg font-semibold mb-4">Data Industri</div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
@@ -105,6 +105,40 @@
                             </div>
                         </div>
 
+                    </div>
+                    <hr>
+                    <div class="px-4">
+                        <div class="text-lg font-semibold mt-4">Informasi Akun</div>
+                        <div class="grid grid-cols-1 mt-4 mb-6 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label for="nama_akun">Nama</label>
+                                <input value="{{$data->user ? $data->user->name : ''}}" required id="nama_akun" type="text" name="nama_akun" class="form-input w-full"
+                                    placeholder="Isi Nama" />
+                                @error('nama_akun')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="no_telp">No Telp</label>
+                                <input value="{{$data->no_telp}}" id="no_telp" type="text" name="no_telp" class="form-input w-full" 
+                                    placeholder="Isi No Telp" />
+                                @error('no_telp')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="email">Email<span class="text-danger">*</span></label>
+                                <input value="{{ $data->user ? $data->user->email : '' }}" 
+                                    type="email" 
+                                    name="email" 
+                                    class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" 
+                                    readonly
+                                    placeholder="Isi Email" />
+                                @error('email')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
                     </div>
 
                     <div class="mt-8 px-4">

@@ -6,7 +6,11 @@ use App\Models\Industri;
 use App\Models\Kota;
 use App\Models\LiburMingguan;
 use App\Models\Pengaturan;
+use App\Models\TemporaryFile;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class IndustriController extends Controller
 {
@@ -61,6 +65,12 @@ class IndustriController extends Controller
             'tahun_ajaran' => 'required|string',
             'tanggal_awal' => 'nullable|string',
             'tanggal_akhir' => 'nullable|string',
+
+            'nama_akun' => 'required',
+            'no_telp' => 'required|string|unique:wali_siswas,no_telp',
+
+            'email' => 'required|string|unique:users,email|max:255',
+            'password' => 'required',
         ]);
 
         $create = collect($validatedData);
@@ -80,6 +90,54 @@ class IndustriController extends Controller
 
         LiburMingguan::create($create2->toArray());
 
+        // ========
+
+        // Create user data
+        $userData = [
+            'name' => $validatedData['nama_akun'],
+            'email' => $validatedData['email'],
+            'password' => Hash::make($validatedData['password']),
+        ];
+
+        // kondisi cek gambar
+        if (!empty($validatedData['gambar'])) {
+            $tmp_file = TemporaryFile::where('folder', $validatedData['gambar'])->first();
+
+            if ($tmp_file) {
+                Storage::copy('posts/tmp/' . $tmp_file->folder . '/'.$tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
+
+                $userData['gambar'] = $tmp_file->folder . '/' . $tmp_file->file;
+
+                Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
+                $tmp_file->delete();
+            }
+        } else {
+            $userData['gambar'] = null;
+        }
+
+        // Create user
+        $user = User::create($userData);
+        
+        // Assign role
+        $user->assignRole('industri');
+
+        // create siswa 
+        $industriData = collect($validatedData)->except([
+            'gambar', 
+            'email', 
+            'password',
+
+            // 'nama',
+            // 'alamat',
+            // 'kota_id',
+            // 'tahun_ajaran',
+            // 'tanggal_awal',
+            // 'tanggal_akhir',
+            // 'nama_akun',
+            ])->toArray();
+        $industriData['user_id'] = $user->id;
+        Industri::create($industriData);
+
         return redirect('industri')->with('status', 'Data berhasil ditambah!');
     }
 
@@ -98,6 +156,7 @@ class IndustriController extends Controller
     {
         $kota = Kota::get();
         $libur = LiburMingguan::where('industri_id', $industri->id)->first();
+        $industri = Industri::with('user')->findOrFail($industri->id);
 
         return view('industri.edit', [
             'data' => $industri,
@@ -112,7 +171,8 @@ class IndustriController extends Controller
 public function update($id, Request $request)
 {
     // Ambil data industri berdasarkan id
-    $industri = Industri::findOrFail($id);
+    $industri = Industri::with('user')->findOrFail($id);
+    $user = $industri->user;
 
     // Validasi data industri
     $validatedData = $request->validate([
@@ -122,10 +182,15 @@ public function update($id, Request $request)
         'tahun_ajaran' => 'required|string',
         'tanggal_awal' => 'nullable|string',
         'tanggal_akhir' => 'nullable|string',
+
+        'nama_akun' => 'required',
+        'no_telp' => 'required|string|unique:wali_siswas,no_telp',
     ]);
 
+    $industriData = collect($validatedData)->except(['nama_akun'])->toArray();
+
     // Update data industri
-    $update = collect($validatedData);
+    $update = collect($industriData);
     $industri->update($update->toArray());
 
     // hapus libur mingguan lama
@@ -146,6 +211,9 @@ public function update($id, Request $request)
         'tahun_ajaran',
         'tanggal_awal',
         'tanggal_akhir',
+
+        'nama_akun',
+        'no_telp',
     ]);
 
     // Tambahkan industri_id ke data libur mingguan
@@ -157,6 +225,10 @@ public function update($id, Request $request)
     } else {
         LiburMingguan::create($update2->toArray());
     }
+
+    $user->name = $validatedData['nama_akun'];
+    $user->save();
+
 
     // Redirect dengan pesan status
     return redirect('industri')->with('status', 'Data berhasil diedit!');
@@ -192,6 +264,33 @@ public function update($id, Request $request)
         if ($data) {
             $data->aktif = 1;
             $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
+    public function indexAkun()
+    {
+        $data = Industri::with(['kota', 'user'])
+            ->where('aktif', 1)
+            ->orderBy('nama', 'asc')
+            ->whereHas('user')
+            ->paginate(100);
+
+        return view('industri.index_akun', [
+            'data' => $data
+        ]);
+    }
+
+    public function resetPassword($user_id)
+    {
+        $user = User::find($user_id);
+
+        if ($user) {
+            $user->password = Hash::make('password');
+            $user->save();
 
             return response()->json(['success' => true]);
         } else {
