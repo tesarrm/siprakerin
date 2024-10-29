@@ -36,7 +36,6 @@ class PilihanKotaFactory extends Factory
             'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
             'kelas_id' => Kelas::inRandomOrder()->first()->id,
             'user_id' => $user->id,
-            'gambar' => null, // Gambar di-set null
         ]);
 
         $kota1 = Kota::inRandomOrder()->first();

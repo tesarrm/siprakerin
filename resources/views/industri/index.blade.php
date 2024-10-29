@@ -177,6 +177,14 @@
                                 }
                             },
                             {
+                                select: 1,
+                                sortable: false,
+                                render: function(data, cell, row) {
+                                    const id = row.cells[0].data; 
+                                    return `<a href="/industri/${id}/edit" class="hover:underline">${ data }</a>`;
+                                }
+                            },
+                            {
                                 select: 3,
                                 render: function(data, cell, row) {
                                     if(data != '-'){

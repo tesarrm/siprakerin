@@ -651,13 +651,13 @@ class AuthSeeder extends Seeder
 
 // assign role to user
         $admin = User::find(1);
-        $kabeng = User::find(2);
-        $wali_kelas = User::find(3);
-        $siswa = User::find(4);
+        // $kabeng = User::find(2);
+        // $wali_kelas = User::find(3);
+        // $siswa = User::find(4);
 
         $admin->assignRole('admin');
-        $kabeng->assignRole('kabeng');
-        $wali_kelas->assignRole('wali_kelas');
-        $siswa->assignRole('siswa');
+        // $kabeng->assignRole('kabeng');
+        // $wali_kelas->assignRole('wali_kelas');
+        // $siswa->assignRole('siswa');
     }
 }

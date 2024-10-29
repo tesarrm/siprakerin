@@ -2,16 +2,14 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
 
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-    <link
-        href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
-        rel="stylesheet"
-    />
+    <script src="/assets/js/filepond.js"></script>
+    <script src="/assets/js/filepond-plugin-image-preview.js"></script>
+    <link href="/assets/css/filepond.css" rel="stylesheet" />
+    <link href="/assets/css/filepond-plugin-image-preview.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/flatpickr.min.css') }}">
     <script src="/assets/js/flatpickr.js"></script>
+    <script src="/assets/js/flatpickr-id.js"></script>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
     <script src="/assets/js/nouislider.min.js"></script>
 

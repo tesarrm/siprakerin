@@ -26,7 +26,6 @@ class GuruFactory extends Factory
             'nama' => $user->name,
             'jenis_kelamin' => $this->faker->randomElement(['Laki-Laki', 'Perempuan']),
             'user_id' => $user->id,
-            'gambar' => null,
         ];
     }
 }

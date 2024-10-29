@@ -221,6 +221,15 @@
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
+                                select: 0,
+                                sortable: false,
+                                render: function(data, cell, row) {
+                                    const select = 4 + {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}};
+                                    const id = row.cells[select].data; 
+                                    return `<a href="/kuotaindustri/${id}/edit" class="hover:underline">${ data }</a>`;
+                                }
+                            },
+                            {
                                 select: 2,
                                 render: function(data, cell, row) {
                                     if(data != '-'){
@@ -253,7 +262,7 @@
                                 }
                             },
                             {
-                                select: this.dataArr[0].length - 1,
+                                select: 4 + {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}},
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">

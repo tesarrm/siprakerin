@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->boolean('aktif')->default(1);
-            $table->text('gambar')->nullable();
             $table->string('nip')->nullable();
             $table->string('no_ktp')->nullable();
             $table->string('nama')->nullable();

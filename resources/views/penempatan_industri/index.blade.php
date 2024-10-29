@@ -464,6 +464,15 @@
                         perPageSelect: [10, 20, 30, 50, 100],
                         columns: [
                             {
+                                select: 0,
+                                sortable: false,
+                                render: function(data, cell, row) {
+                                    const select = 6 + {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}};
+                                    const id = row.cells[select].data; 
+                                    return `<a href="/penempatan/${id}/edit" class="hover:underline">${ data }</a>`;
+                                }
+                            },
+                            {
                                 select: 2,
                                 render: function(data, cell, row) {
                                     if(data != '-'){

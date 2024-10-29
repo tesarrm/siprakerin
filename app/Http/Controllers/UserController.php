@@ -6,6 +6,7 @@ use App\Models\BiodataSiswa;
 use App\Models\Guru;
 use App\Models\Industri;
 use App\Models\Kelas;
+use App\Models\Kota;
 use App\Models\Siswa;
 use App\Models\TemporaryFile;
 use App\Models\User;
@@ -349,5 +350,209 @@ public function guruIndustriIndex()
         $guru->industris()->sync($validated['industri_id']); 
 
         return redirect('guruindustri')->with('success', 'Industri berhasil ditambahkan!');
+    }
+
+    public function editPengaturanAkun()
+    {
+        if(auth()->user()->hasRole('admin')){
+            $user = User::
+                findOrFail(auth()->user()->id);
+            return view('user.pengaturan_akun', compact(
+                'user',
+            ));
+        } else if(auth()->user()->hasRole('siswa')){
+            $siswa = Siswa::
+                where('user_id', auth()->user()->id)
+                ->with(['kelas.jurusan', 'user'])
+                ->first();
+
+            return view('user.pengaturan_akun', compact(
+                'siswa',
+            ));
+        } else if(auth()->user()->hasRole('guru')){
+            $guru = Guru::
+                where('user_id', auth()->user()->id)
+                ->with(['user'])
+                ->first();
+
+            return view('user.pengaturan_akun', compact(
+                'guru',
+            ));
+        }
+    }
+
+    public function updatePengaturanAkun(Request $request)
+    {
+        if(auth()->user()->hasRole('admin')){
+            $user = User::findOrFail(auth()->user()->id);
+
+            $validatedData = $request->validate([
+                'gambar' => 'nullable|string',
+                'nama' => 'required|string|max:255',
+            ]);
+
+            // Cek apakah ada gambar baru
+            if (!empty($validatedData['gambar'])) {
+                $tmp_file = TemporaryFile::
+                    where('folder', $validatedData['gambar'])
+                    ->first();
+
+                if ($tmp_file) {
+                    // Hapus gambar lama dari user jika ada
+                    if ($user->gambar) {
+                        Storage::delete('posts/' . $user->gambar);
+                    }
+
+                    // Pindahkan gambar baru ke direktori final
+                    $path = 'posts/' . $tmp_file->folder . '/' . $tmp_file->file;
+                    Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, $path);
+
+                    // Update gambar pada user
+                    $user->gambar = $tmp_file->folder . '/' . $tmp_file->file;
+                    $user->save();
+
+                    // Hapus temporary file dan direktori
+                    Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
+                    $tmp_file->delete();
+                }
+            } else {
+                // Jika tidak ada gambar baru, hapus gambar lama jika ada
+                if ($user->gambar) {
+                    Storage::delete('posts/' . $user->gambar);
+                    $user->gambar = null;
+                    $user->save();
+                }
+            }
+
+            // update user
+            $user->name = $validatedData['nama'];
+            $user->save();
+
+            return redirect()->back()->with('success', 'Data berhasil diubah!');
+        } else if(auth()->user()->hasRole('guru')){
+            $user = User::findOrFail(auth()->user()->id);
+            $guru = Guru::with('user')
+                ->where('user_id', auth()->user()->id)
+                ->first();
+
+            $validatedData = $request->validate([
+                'gambar' => 'nullable|string',
+                'nip' => 'required|unique:gurus,nip,' . $guru->id,
+                'no_ktp' => 'nullable|string',
+                'nama' => 'required|string|max:255',
+                'tempat_lahir' => 'nullable|string',
+                'tanggal_lahir' => 'nullable|string',
+                'golongan_darah' => 'nullable|string',
+                'kecamatan' => 'nullable|string',
+                'alamat' => 'nullable|string',
+                'rt' => 'nullable|string',
+                'rw' => 'nullable|string',
+                'kode_pos' => 'nullable|string',
+                'no_telp' => 'nullable|string',
+                'no_hp' => 'nullable|string',
+                'agama' => 'nullable|string',
+            ]);
+
+            $guruData = collect($validatedData)
+                ->except(['gambar'])->toArray();
+
+            // Cek apakah ada gambar baru
+            if (!empty($validatedData['gambar'])) {
+                $tmp_file = TemporaryFile::
+                    where('folder', $validatedData['gambar'])
+                    ->first();
+
+                if ($tmp_file) {
+                    // Hapus gambar lama dari user jika ada
+                    if ($user->gambar) {
+                        Storage::delete('posts/' . $user->gambar);
+                    }
+
+                    // Pindahkan gambar baru ke direktori final
+                    $path = 'posts/' . $tmp_file->folder . '/' . $tmp_file->file;
+                    Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, $path);
+
+                    // Update gambar pada user
+                    $user->gambar = $tmp_file->folder . '/' . $tmp_file->file;
+                    $user->save();
+
+                    // Hapus temporary file dan direktori
+                    Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
+                    $tmp_file->delete();
+                }
+            } else {
+                // Jika tidak ada gambar baru, hapus gambar lama jika ada
+                if ($user->gambar) {
+                    Storage::delete('posts/' . $user->gambar);
+                    $user->gambar = null;
+                    $user->save();
+                }
+            }
+
+            // update user
+            $guru->update($guruData);
+
+            return redirect()->back()->with('success', 'Data berhasil diubah!');
+        } else if(auth()->user()->hasRole('siswa')){
+            $user = User::findOrFail(auth()->user()->id);
+            $siswa = Siswa::with('user')
+                ->where('user_id', auth()->user()->id)
+                ->first();
+
+            // Validasi input
+            $validatedData = $request->validate([
+                'gambar' => 'nullable|string',
+                'nis' => 'required|unique:siswas,nis,' . $siswa->id,
+                'nisn' => 'nullable|string',
+                'nama_lengkap' => 'nullable|string',
+                'nama' => 'required|string|max:255',
+                'tempat_lahir' => 'nullable|string',
+                'tanggal_lahir' => 'nullable|string',
+                'agama' => 'nullable|string',
+                'alamat' => 'nullable|string',
+                'no_telp' => 'nullable|string',
+            ]);
+
+            $siswaData = collect($validatedData)
+                ->except(['gambar'])->toArray();
+
+            // Cek apakah ada gambar baru
+            if (!empty($validatedData['gambar'])) {
+                $tmp_file = TemporaryFile::
+                    where('folder', $validatedData['gambar'])
+                    ->first();
+
+                if ($tmp_file) {
+                    // Hapus gambar lama dari user jika ada
+                    if ($user->gambar) {
+                        Storage::delete('posts/' . $user->gambar);
+                    }
+
+                    // Pindahkan gambar baru ke direktori final
+                    $path = 'posts/' . $tmp_file->folder . '/' . $tmp_file->file;
+                    Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, $path);
+
+                    // Update gambar pada user
+                    $user->gambar = $tmp_file->folder . '/' . $tmp_file->file;
+                    $user->save();
+
+                    // Hapus temporary file dan direktori
+                    Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
+                    $tmp_file->delete();
+                }
+            } else {
+                // Jika tidak ada gambar baru, hapus gambar lama jika ada
+                if ($user->gambar) {
+                    Storage::delete('posts/' . $user->gambar);
+                    $user->gambar = null;
+                    $user->save();
+                }
+            }
+
+            // update user
+            $siswa->update($siswaData);
+
+            return redirect()->back()->with('success', 'Data berhasil diubah!');
+        }
     }
 }

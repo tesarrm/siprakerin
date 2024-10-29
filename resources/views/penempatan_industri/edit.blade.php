@@ -3,29 +3,6 @@
     <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
     <script src="/assets/js/nice-select2.js"></script>
 
-    {{-- <link href="https://cdn.jsdelivr.net/npm/tom-select@2.0.1/dist/css/tom-select.default.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/tom-select@2.0.1/dist/js/tom-select.complete.min.js"></script> --}}
-
-
-
-
-                        <select  id="seachable-select1" class="selectize">
-                            <option selected value="orange">Orange</option>
-                            <option value="White">White</option>
-                            <option value="Purple">Purple</option>
-                        </select>
-
-        <script>
-
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("seachable-select1"), options);
-        });
-
-        </script>
-
     {{-- atur data info --}}
     @php
         $items = [];
@@ -579,13 +556,4 @@
             };
         }
     </script>
-    {{-- <script>
-        document.addEventListener("DOMContentLoaded", function(e) {
-            // seachable
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("seachable-select"), options);
-        });
-    </script> --}}
 </x-layout.default>

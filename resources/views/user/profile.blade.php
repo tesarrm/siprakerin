@@ -211,9 +211,6 @@
                                                 <td class="px-4">
                                                     <input type="text" :name="`tempat_${row.id}`" x-model="row.tempat" class="form-input w-full" />
                                                 </td>
-                                                {{-- <td class="px-4">
-                                                    <input type="text" :name="`berijasah_${row.id}`" x-model="row.berijasah" class="form-input w-full" />
-                                                    </td> --}}
                                                 <td class="px-4">
                                                     <select :name="`berijasah_${row.id}`" x-model="row.berijasah" class="form-input w-full" >
                                                         <option value="Berijasah">Berijasah</option>

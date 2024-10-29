@@ -29,8 +29,6 @@ class GuruController extends Controller
 
     }
 
-    // dd(auth()->user()->getRoleNames());
-    // dd(auth()->user()->getAllPermissions());
     public function index()
     {
         // Ambil semua data guru beserta user dan role terkait
@@ -38,14 +36,6 @@ class GuruController extends Controller
             ->where('aktif', 1)
             ->orderBy('nama', 'asc')
             ->paginate(100);
-            // ->get()->map(function ($guru) {
-            //     // Ambil peran dari user yang terkait dengan guru
-            //     $guru->user->peran = $guru->user->roles->isNotEmpty() 
-            //         ? $guru->user->roles->pluck('name')->implode(', ')
-            //         : '-';
-            //     return $guru;
-            // });
-        
 
         // Kirim data ke view
         return view('guru.index', [
@@ -89,27 +79,12 @@ class GuruController extends Controller
             'password' => 'required',
         ]);
 
-        // buat data user
-        $user = User::create([
-            'name' => $validatedData['nama'], 
+        // Create user data
+        $userData = [
+            'name' => $validatedData['nama'],
             'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']), 
-        ]);
-
-        // assign role
-        $user->assignRole('guru');
-        // if (!empty($request->peran_admin)) {
-        //     $user->assignRole('admin');
-        // }
-        // if (!empty($request->peran_kabeng)) {
-        //     $user->assignRole('kabeng');
-        // }
-        // if (!empty($request->peran_ortu)) {
-        //     $user->assignRole('ortu');
-        // }
-
-        // colect data sesaui dengan fillable
-        $create = collect($validatedData);
+            'password' => Hash::make($validatedData['password']),
+        ];
 
         // kondisi cek gambar
         if (!empty($validatedData['gambar'])) {
@@ -118,18 +93,25 @@ class GuruController extends Controller
             if ($tmp_file) {
                 Storage::copy('posts/tmp/' . $tmp_file->folder . '/'.$tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
 
-                $create->put('gambar', $tmp_file->folder . '/' . $tmp_file->file);
+                $userData['gambar'] = $tmp_file->folder . '/' . $tmp_file->file;
 
                 Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
                 $tmp_file->delete();
             }
         } else {
-            $create->put('gambar', null); // atau $create->forget('gambar');
+            $userData['gambar'] = null;
         }
 
+        // Create user
+        $user = User::create($userData);
+        
+        // Assign role
+        $user->assignRole('guru');
+
         // create guru
-        $create->put('user_id', $user->id);
-        Guru::create($create->toArray());
+        $guruData = collect($validatedData)->except(['gambar', 'email', 'password'])->toArray();
+        $guruData['user_id'] = $user->id;
+        Guru::create($guruData);
 
         return redirect('guru')->with('status', 'Data berhasil ditambah!');
     }
@@ -153,6 +135,7 @@ class GuruController extends Controller
     public function update($id, Request $request)
     {
         $guru = Guru::with('user')->findOrFail($id);
+        $user = $guru->user;
 
         $validatedData = $request->validate([
             'aktif' => 'nullable|string',
@@ -174,39 +157,42 @@ class GuruController extends Controller
             'agama' => 'nullable|string',
         ]);
 
-        $update = collect($validatedData);
+        // $update = collect($validatedData);
+        $guruData = collect($validatedData)->except(['gambar'])->toArray();
 
         // Cek apakah ada gambar baru
         if (!empty($validatedData['gambar'])) {
-            // Proses gambar baru
             $tmp_file = TemporaryFile::where('folder', $validatedData['gambar'])->first();
 
             if ($tmp_file) {
-                // Hapus gambar lama jika ada
-                if ($guru->gambar) {
-                    Storage::delete('posts/' . $guru->gambar);
+                // Hapus gambar lama dari user jika ada
+                if ($user->gambar) {
+                    Storage::delete('posts/' . $user->gambar);
                 }
 
                 // Pindahkan gambar baru ke direktori final
-                Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
+                $path = 'posts/' . $tmp_file->folder . '/' . $tmp_file->file;
+                Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, $path);
 
-                // Update path gambar di database
-                $update->put('gambar', $tmp_file->folder . '/' . $tmp_file->file);
+                // Update gambar pada user
+                $user->gambar = $tmp_file->folder . '/' . $tmp_file->file;
+                $user->save();
 
                 // Hapus temporary file dan direktori
                 Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
                 $tmp_file->delete();
             }
         } else {
-            // Jika tidak ada gambar baru, set gambar menjadi null
-            if ($guru->gambar) {
-                Storage::delete('posts/' . $guru->gambar); // Hapus gambar lama
+            // Jika tidak ada gambar baru, hapus gambar lama jika ada
+            if ($user->gambar) {
+                Storage::delete('posts/' . $user->gambar);
+                $user->gambar = null;
+                $user->save();
             }
-            $update->put('gambar', null);
         }
 
-        // Update data guru di database
-        $guru->update($update->toArray());
+        // Update data guru
+        $guru->update($guruData);
 
         return redirect('guru')->with('status', 'Data berhasil diubah!');
     }

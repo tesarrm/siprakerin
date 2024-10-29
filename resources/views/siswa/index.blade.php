@@ -287,20 +287,20 @@
         foreach ($data as $d) {
             $items[] = [
                 'id' => $d->id ?? '-',
-                'nis' => $d->nis ?? '-',
                 'nama' => $d->nama_lengkap ?? '-',
+                'nis' => $d->nis ?? '-',
                 'email' => $d->user->email ?? '-',
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                 'agama' => $d->agama ?? '-',
                 'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
                 'tahun_ajaran' => $pengaturan->tahun_ajaran ?? '-',
-                'gambar' => $d->gambar, 
+                'gambar' => $d->user->gambar, 
                 'action' => $d->id ?? '-', 
 
                 '_user_id' => $d->user_id ?? '-', // 10
                 '_kelas_id' => $d->kelas->nama ?? '-',
                 '_aktif' => $d->aktif ?? '-',
-                '_gambar' => $d->gambar,
+                '_gambar' => $d->user->gambar,
                 '_nis' => $d->nis ?? '-',
                 '_nisn' => $d->nisn ?? '-',
                 '_nama_lengkap' => $d->nama_lengkap ?? '-',
@@ -384,8 +384,8 @@
                         data: {
                             headings: [
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
-                                "NIS",
                                 "Nama",
+                                "NIS",
                                 "Email",
                                 "Jenis Kelamin",
                                 "Agama",
@@ -427,15 +427,17 @@
                                 }
                             },
                             {
-                                select: 2,
+                                select: 1,
                                 render: function(data, cell, row) {
                                     const gambar = row.cells[8].data; 
-                                    // const gambar = ''
-                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/storage/blank_profile.png'; // Ganti dengan path gambar default
+                                    const id = row.cells[0].data; 
+                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/assets/images/blank_profile.png'; // Ganti dengan path gambar default
+
                                     return `<div class="flex items-center font-semibold">
                                                 <div class="p-0.5 bg-white-dark/30 rounded-full w-max ltr:mr-2 rtl:ml-2">
                                                     <img class="h-8 w-8 rounded-full object-cover" src="${imageUrl}" alt="Profile Image"/>
-                                                </div>${data}
+                                                </div>
+                                                <a href="/siswa/${id}/edit" class="hover:underline">${ data }</a>
                                             </div>`;
                                 }
                             },
@@ -472,7 +474,7 @@
                                     const rowId = `row-${data}`; // Buat unique row ID berdasarkan data
 
                                     const gambar = row.cells[13].data; 
-                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/storage/blank_profile.png'; 
+                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/assets/images/blank_profile.png'; 
 
                                     return `<div class="items-center">
                                                 <div x-data="dropdown" @click.outside="open = false"

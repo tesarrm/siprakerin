@@ -25,6 +25,7 @@ use App\Http\Controllers\PenempatanIndustriController;
 use App\Http\Controllers\PengaturanController;
 use App\Http\Controllers\PilihanKotaController;
 use App\Http\Controllers\PrakerinController;
+use App\Http\Controllers\PusatUnduhanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\UserController;
 
@@ -46,6 +47,10 @@ Route::post('profile', [UserController::class, 'updateProfile']);
 Route::post('user/{id}/role', [UserController::class, 'role']);
 Route::get('guruindustri', [UserController::class, 'guruIndustriIndex']);
 Route::post('guruindustri/{id}/industri', [UserController::class, 'storeGuruIndustri']);
+
+Route::get('pengaturan-akun', [UserController::class, 'editPengaturanAkun']);
+Route::post('pengaturan-akun', [UserController::class, 'updatePengaturanAkun']);
+Route::post('ubah-password', [AuthController::class, 'updateUbahPassword']);
 
 Route::get('nonaktif', [NonaktifController::class, 'index']);
 Route::post('/tmp-upload', [GuruController::class, 'tmpUpload']);
@@ -145,3 +150,9 @@ Route::get('pernyataan-pdf', [PdfController::class, 'pernyataan']);
 Route::resource('nilai', NilaiController::class);
 Route::post('nilai', [NilaiController::class, 'storeOrUpdate']);
 Route::get('nilai/{id}/show', [NilaiController::class, 'show']);
+
+Route::get('pusat-unduhan', [DashboardController::class, 'indexPusatUnduhan']);
+
+Route::resource('pusatunduhan', PusatUnduhanController::class);
+Route::post('/tmp-upload-pusatunduhan', [PusatUnduhanController::class, 'tmpUpload']);
+Route::delete('/tmp-delete-pusatunduhan', [PusatUnduhanController::class, 'tmpDelete']);

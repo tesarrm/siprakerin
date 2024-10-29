@@ -228,7 +228,7 @@
             $items[] = [
                 'id' => $d->id ?? '-',
                 'user_id' => $d->user_id ?? '-',
-                'gambar' => $d->gambar,
+                'gambar' => $d->user->gambar,
                 'nama' => $d->nama ?? '-',
                 'nip' => $d->nip ?? '-',
                 'email' => $d->user->email ?? '-',
@@ -242,7 +242,7 @@
 
                 '_user_id' => $d->user_id ?? '-', //11
                 '_aktif' => $d->aktif ?? '-',
-                '_gambar' => $d->gambar,
+                '_gambar' => $d->user->gambar,
                 '_nip' => $d->nip ?? '-',
                 '_no_ktp' => $d->no_ktp ?? '-',
                 '_nama' => $d->nama ?? '-',
@@ -356,12 +356,14 @@
                                 select: 3,
                                 render: function(data, cell, row) {
                                     const gambar = row.cells[2].data; 
-                                    // const gambar = ''
-                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/storage/blank_profile.png'; // Ganti dengan path gambar default
+                                    const id = row.cells[0].data; 
+
+                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/assets/images/blank_profile.png'; 
                                     return `<div class="flex items-center font-semibold">
                                                 <div class="p-0.5 bg-white-dark/30 rounded-full w-max ltr:mr-2 rtl:ml-2">
                                                     <img class="h-8 w-8 rounded-full object-cover" src="${imageUrl}" alt="Profile Image"/>
-                                                </div>${data}
+                                                </div>
+                                                <a href="/guru/${id}/edit" class="hover:underline">${ data }</a>
                                             </div>`;
                                 }
                             },
@@ -394,7 +396,7 @@
                                     const rowId = `row-${data}`; // Buat unique row ID berdasarkan data
 
                                     const gambar = row.cells[13].data; 
-                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/storage/blank_profile.png'; 
+                                    const imageUrl = gambar ? `/storage/posts/${gambar}` : '/assets/images/blank_profile.png'; 
 
                                     return `<div class="items-center">
                                                 <div x-data="dropdown" @click.outside="open = false"

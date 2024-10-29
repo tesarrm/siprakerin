@@ -1,3 +1,8 @@
+@php
+    $gambar = auth()->user()->gambar;
+    $imageUrl = $gambar ? '/storage/posts/'.$gambar : '/assets/images/blank_profile.png'; 
+@endphp
+
 <header class="z-40" :class="{ 'dark': $store.app.semidark && $store.app.menu === 'horizontal' }">
     <div class="shadow-sm">
         <div class="relative bg-white flex w-full items-center px-5 py-2.5 dark:bg-[#0e1726]">
@@ -176,8 +181,10 @@
                 </div>
                 <div class="dropdown flex-shrink-0" x-data="dropdown" @click.outside="open = false">
                     <a href="javascript:;" class="relative group" @click="toggle()">
-                        <span><img class="w-9 h-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
-                                src="/assets/images/user-profile.jpeg" alt="image" /></span>
+                        <span>
+                            <img class="w-9 h-9 rounded-full object-cover saturate-50 group-hover:saturate-100"
+                                src="{{$imageUrl}}" alt="image" />
+                        </span>
                     </a>
                     <ul x-cloak x-show="open" x-transition x-transition.duration.300ms
                         class="ltr:right-0 rtl:left-0 text-dark dark:text-white-dark top-11 !py-0 w-[230px] font-semibold dark:text-white-light/90">
@@ -185,30 +192,11 @@
                             <div class="flex items-center px-4 py-4">
                                 <div class="flex-none">
                                     <img class="rounded-md w-10 h-10 object-cover"
-                                        src="/assets/images/user-profile.jpeg"
+                                        src="{{$imageUrl}}"
                                         alt="image" />
                                 </div>
                                 <div class="ltr:pl-4 rtl:pr-4 truncate">
                                     <h4 class="text-base">{{auth()->user()->name}}
-                                        @if(auth()->user()->hasRole('admin'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Admin</span>
-                                        @elseif(auth()->user()->hasRole('koordinator'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Koordinator</span>
-                                        @elseif(auth()->user()->hasRole('pembimbing'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pembimbing</span>
-                                        @elseif(auth()->user()->hasRole('wali_kelas'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Wali Kelas</span>
-                                        @elseif(auth()->user()->hasRole('siswa'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Siswa</span>
-                                        @elseif(auth()->user()->hasRole('guru'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Guru</span>
-                                        @elseif(auth()->user()->hasRole('karyawan'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Karyawan</span>
-                                        @elseif(auth()->user()->hasRole('ortu'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Ortu</span>
-                                        @elseif(auth()->user()->hasRole('industri'))
-                                            <span class="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Industri</span>
-                                        @endif
                                     </h4>
                                     <a class="text-black/60  hover:text-primary dark:text-dark-light/60 dark:hover:text-white"
                                         href="javascript:;">{{auth()->user()->email}}</a>
@@ -216,7 +204,7 @@
                             </div>
                         </li>
                         <li>
-                            <a href="/users/profile" class="dark:hover:text-white" @click="toggle">
+                            <a href="/pengaturan-akun" class="dark:hover:text-white" @click="toggle">
                                 <svg class="w-4.5 h-4.5 ltr:mr-2 rtl:ml-2 shrink-0" width="18" height="18"
                                     viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <circle cx="12" cy="6" r="4" stroke="currentColor"
@@ -225,7 +213,27 @@
                                         d="M20 17.5C20 19.9853 20 22 12 22C4 22 4 19.9853 4 17.5C4 15.0147 7.58172 13 12 13C16.4183 13 20 15.0147 20 17.5Z"
                                         stroke="currentColor" stroke-width="1.5" />
                                 </svg>
-                                Profile</a>
+                                Akun 
+                                @if(auth()->user()->hasRole('admin'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Admin</span>
+                                @elseif(auth()->user()->hasRole('koordinator'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Koordinator</span>
+                                @elseif(auth()->user()->hasRole('pembimbing'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pembimbing</span>
+                                @elseif(auth()->user()->hasRole('wali_kelas'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Wali Kelas</span>
+                                @elseif(auth()->user()->hasRole('siswa'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Siswa</span>
+                                @elseif(auth()->user()->hasRole('guru'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Guru</span>
+                                @elseif(auth()->user()->hasRole('karyawan'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Karyawan</span>
+                                @elseif(auth()->user()->hasRole('ortu'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Ortu</span>
+                                @elseif(auth()->user()->hasRole('industri'))
+                                    <span class="ml-2 text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Industri</span>
+                                @endif
+                            </a>
                         </li>
                         <li class="border-t border-white-light dark:border-white-light/10">
                             <form id="logout-form" action="{{ route('logout') }}" method="POST" >

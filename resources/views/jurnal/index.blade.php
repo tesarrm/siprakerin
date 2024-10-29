@@ -2,7 +2,7 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    <script src='/assets/js/index.global.min.js'></script>
 
     <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
     <script src="/assets/js/nice-select2.js"></script>
@@ -482,53 +482,101 @@
             }
         }
 
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     var calendarEl = document.getElementById('calendar');
+
+        //     calendar = new FullCalendar.Calendar(calendarEl, {
+        //         initialView: 'dayGridMonth',
+        //         height: 600,
+        //         events: function(fetchInfo, successCallback, failureCallback) {
+        //             // Ambil data dari endpoint backend (Laravel)
+        //             fetch('/attendance-data')
+        //                 .then(response => response.json())
+        //                 .then(data => {
+        //                     // Map data ke format FullCalendar
+        //                     var events = data.map(event => {
+        //                         let color;
+        //                         switch(event.title) {
+        //                             case 'hadir':
+        //                                 color = '#2196f3';
+        //                                 break;
+        //                             case 'izin':
+        //                                 color = '#00ab55';
+        //                                 break;
+        //                             case 'alpa':
+        //                                 color = '#e7515a';
+        //                                 break;
+        //                             case 'libur':
+        //                                 color = '#3b3f5c';
+        //                                 break;
+        //                             default:
+        //                                 color = 'gray'; // Warna default jika status tidak terdefinisi
+        //                         }
+
+        //                         return {
+        //                             title: event.title,
+        //                             start: event.start,
+        //                             end: event.end,
+        //                             backgroundColor: color, // Set warna berdasarkan status
+        //                             borderColor: color,     // Sama seperti warna background
+        //                             textColor: 'white'      // Set warna teks agar terlihat jelas
+        //                         };
+        //                     });
+        //                     successCallback(events); // Berhasil mengambil dan merender event
+        //                 })
+        //                 .catch(error => failureCallback(error)); // Tangani error
+        //         }
+        //     });
+
+        // });
+
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
 
-            calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                height: 600,
-                events: function(fetchInfo, successCallback, failureCallback) {
-                    // Ambil data dari endpoint backend (Laravel)
-                    fetch('/attendance-data')
-                        .then(response => response.json())
-                        .then(data => {
-                            // Map data ke format FullCalendar
-                            var events = data.map(event => {
-                                let color;
-                                switch(event.title) {
-                                    case 'hadir':
-                                        color = '#2196f3';
-                                        break;
-                                    case 'izin':
-                                        color = '#00ab55';
-                                        break;
-                                    case 'alpa':
-                                        color = '#e7515a';
-                                        break;
-                                    case 'libur':
-                                        color = '#3b3f5c';
-                                        break;
-                                    default:
-                                        color = 'gray'; // Warna default jika status tidak terdefinisi
-                                }
-
-                                return {
-                                    title: event.title,
-                                    start: event.start,
-                                    end: event.end,
-                                    backgroundColor: color, // Set warna berdasarkan status
-                                    borderColor: color,     // Sama seperti warna background
-                                    textColor: 'white'      // Set warna teks agar terlihat jelas
-                                };
-                            });
-                            successCallback(events); // Berhasil mengambil dan merender event
-                        })
-                        .catch(error => failureCallback(error)); // Tangani error
-                }
-            });
-
+            if (calendarEl) { // Pastikan elemen ada
+                calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    height: 600,
+                    events: function(fetchInfo, successCallback, failureCallback) {
+                        fetch('/attendance-data')
+                            .then(response => response.json())
+                            .then(data => {
+                                var events = data.map(event => {
+                                    let color;
+                                    switch(event.title) {
+                                        case 'hadir':
+                                            color = '#2196f3';
+                                            break;
+                                        case 'izin':
+                                            color = '#00ab55';
+                                            break;
+                                        case 'alpa':
+                                            color = '#e7515a';
+                                            break;
+                                        case 'libur':
+                                            color = '#3b3f5c';
+                                            break;
+                                        default:
+                                            color = 'gray';
+                                    }
+                                    return {
+                                        title: event.title,
+                                        start: event.start,
+                                        end: event.end,
+                                        backgroundColor: color,
+                                        borderColor: color,
+                                        textColor: 'white'
+                                    };
+                                });
+                                successCallback(events);
+                            })
+                            .catch(error => failureCallback(error));
+                    }
+                });
+                calendar.render();
+            }
         });
+
 
         /*************
          * datatable jurnal

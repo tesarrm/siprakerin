@@ -445,4 +445,9 @@ class DashboardController extends Controller
             return view('index');
         }
     }
+
+    public function indexPusatUnduhan()
+    {
+        return view('pusat_unduhan.index');
+    }
 }

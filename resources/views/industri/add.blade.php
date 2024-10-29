@@ -4,6 +4,7 @@
 
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/flatpickr.min.css') }}">
     <script src="/assets/js/flatpickr.js"></script>
+    <script src="/assets/js/flatpickr-id.js"></script>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
     <script src="/assets/js/nouislider.min.js"></script>
 

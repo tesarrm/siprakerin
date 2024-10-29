@@ -2,40 +2,36 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
     <script src="/assets/js/highlight.min.js"></script>
 
+    <script src="/assets/js/filepond.js"></script>
+    <script src="/assets/js/filepond-plugin-image-preview.js"></script>
+    <link href="/assets/css/filepond.css" rel="stylesheet" />
+    <link href="/assets/css/filepond-plugin-image-preview.css" rel="stylesheet" />
+
     <div>
-        <form action="{{ url('jurusan/' . $data->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ url('pusatunduhan') }}" method="POST" enctype="multipart/form-data">
             @csrf
-            @method('PUT')
             <div class="flex xl:flex-row flex-col gap-2.5">
                 <div class="panel xl:w-[600px] px-0 w-full xl:mt-0 mt-6">
                     <div class=" px-4">
-                        <div class="text-lg font-semibold mb-4">Data Jurusan</div>
+                        <div class="text-lg font-semibold mb-4">Data Pusat Unduhan</div>
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="nama">Nama<span class="text-danger">*</span></label>
-                                <input value="{{$data->nama}}" required id="nama" type="text" name="nama" class="form-input w-full" 
+                                <input required id="nama" type="text" name="nama" class="form-input w-full" 
                                 placeholder="Isi Nama"/>
                                 @error('nama')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div>
-                                <label for="singkatan">Singkatan<span class="text-danger">*</span></label>
-                                <input value="{{$data->singkatan}}" required id="singkatan" type="text" name="singkatan" class="form-input w-full" 
-                                placeholder="Isi Singkatan"/>
-                                @error('singkatan')
-                                    <div class="mt-2 text-danger">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div>
-                                <label for="bidang_keahlian_id">Bidang Keahlian<span class="text-danger">*</span></label>
-                                <select required id="bidang_keahlian_id" name="bidang_keahlian_id" class="form-select w-full">
-                                    <option value="">Pilih Bidang Keahlian</option>
-                                    @foreach($bk as $item)
-                                        <option value="{{ $item->id }}" @selected($data->bidang_keahlian_id == $item->id)>{{ $item->nama }}</option>
-                                    @endforeach
-                                </select>
-                                @error('bidang_keahlian_id')
+                                <label for="file">File<span class="text-danger">*</span></label>
+                                <input 
+                                    id="file" 
+                                    type="file" 
+                                    name="file" 
+                                    class="form-input file:py-2 file:px-4 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file:ml-5 file:text-white file:hover:bg-primary" 
+                                    required />
+                                @error('file')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -58,7 +54,7 @@
                                 </svg>
                                 Simpan </button>
 
-                            <a href="{{url('jurusan')}}" class="btn btn-outline-danger gap-2">
+                            <a href="{{url('pusatunduhan')}}" class="btn btn-outline-danger gap-2">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
                                     xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2 shrink-0">
                                     <path opacity="0.5" d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" 
@@ -75,5 +71,4 @@
             </div>
         </form>
     </div>
-
 </x-layout.default>

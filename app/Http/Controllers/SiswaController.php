@@ -13,7 +13,6 @@ use App\Models\TemporaryFile;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Storage;
@@ -87,18 +86,12 @@ class SiswaController extends Controller
         ]);
 
 
-        // buat data user
-        $user = User::create([
-            'name' => $validatedData['nama'], 
+        // Create user data
+        $userData = [
+            'name' => $validatedData['nama'],
             'email' => $validatedData['email'],
-            'password' => Hash::make($validatedData['password']), 
-        ]);
-
-        // assign role
-        $user->assignRole('siswa');
-
-        // colect data sesaui dengan fillable
-        $create = collect($validatedData);
+            'password' => Hash::make($validatedData['password']),
+        ];
 
         // kondisi cek gambar
         if (!empty($validatedData['gambar'])) {
@@ -107,18 +100,25 @@ class SiswaController extends Controller
             if ($tmp_file) {
                 Storage::copy('posts/tmp/' . $tmp_file->folder . '/'.$tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
 
-                $create->put('gambar', $tmp_file->folder . '/' . $tmp_file->file);
+                $userData['gambar'] = $tmp_file->folder . '/' . $tmp_file->file;
 
                 Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
                 $tmp_file->delete();
             }
         } else {
-            $create->put('gambar', null); // atau $create->forget('gambar');
+            $userData['gambar'] = null;
         }
 
+        // Create user
+        $user = User::create($userData);
+        
+        // Assign role
+        $user->assignRole('guru');
+
         // create siswa 
-        $create->put('user_id', $user->id);
-        Siswa::create($create->toArray());
+        $siswaData = collect($validatedData)->except(['gambar', 'email', 'password'])->toArray();
+        $siswaData['user_id'] = $user->id;
+        Siswa::create($siswaData);
 
         return redirect('siswa')->with('status', 'Data berhasil ditambah!');
     }
@@ -155,7 +155,8 @@ class SiswaController extends Controller
      */
     public function update($id, Request $request)
     {
-        $data = Siswa::findOrFail($id);
+        $siswa = Siswa::with('user')->findOrFail($id);
+        $user = $siswa->user;
 
         // Validasi input
         $validatedData = $request->validate([
@@ -175,58 +176,56 @@ class SiswaController extends Controller
             'no_telp' => 'nullable|string',
         ]);
 
-        // $update = collect($validatedData);
-        $update = collect($validatedData)->except('data');
+        $siswaData = collect($validatedData)->except(['gambar'])->toArray();
 
         // Cek apakah ada gambar baru
         if (!empty($validatedData['gambar'])) {
-            // Proses gambar baru
             $tmp_file = TemporaryFile::where('folder', $validatedData['gambar'])->first();
 
             if ($tmp_file) {
-                // Hapus gambar lama jika ada
-                if ($data->gambar) {
-                    Storage::delete('posts/' . $data->gambar);
+                // Hapus gambar lama dari user jika ada
+                if ($user->gambar) {
+                    Storage::delete('posts/' . $user->gambar);
                 }
 
                 // Pindahkan gambar baru ke direktori final
-                Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
+                $path = 'posts/' . $tmp_file->folder . '/' . $tmp_file->file;
+                Storage::copy('posts/tmp/' . $tmp_file->folder . '/' . $tmp_file->file, $path);
 
-                // Update path gambar di database
-                $update->put('gambar', $tmp_file->folder . '/' . $tmp_file->file);
+                // Update gambar pada user
+                $user->gambar = $tmp_file->folder . '/' . $tmp_file->file;
+                $user->save();
 
                 // Hapus temporary file dan direktori
                 Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
                 $tmp_file->delete();
             }
         } else {
-            // Jika tidak ada gambar baru, set gambar menjadi null
-            if ($data->gambar) {
-                Storage::delete('posts/' . $data->gambar); // Hapus gambar lama
-            }
-            $update->put('gambar', null);
-        }
-
-        if(isset($validatedData['data'])) {
-            OrtuSiswa::where('siswa_id', $id)
-                        ->delete();
-            foreach ($validatedData['data'] as $item) {
-                OrtuSiswa::updateOrCreate([
-                        'siswa_id' => $id,
-                        'ortu_id' => $item['ortu_id'],
-                    ],
-                );
+            // Jika tidak ada gambar baru, hapus gambar lama jika ada
+            if ($user->gambar) {
+                Storage::delete('posts/' . $user->gambar);
+                $user->gambar = null;
+                $user->save();
             }
         }
 
-        $data->update($update->toArray());
+        // if(isset($validatedData['data'])) {
+        //     OrtuSiswa::where('siswa_id', $id)
+        //                 ->delete();
+        //     foreach ($validatedData['data'] as $item) {
+        //         OrtuSiswa::updateOrCreate([
+        //                 'siswa_id' => $id,
+        //                 'ortu_id' => $item['ortu_id'],
+        //             ],
+        //         );
+        //     }
+        // }
+
+        $siswa->update($siswaData);
 
         return redirect('siswa')->with('status', 'Data berhasil diubah!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy($id)
     {
         $data = $this->model->findOrFail($id);

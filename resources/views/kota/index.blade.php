@@ -126,6 +126,14 @@
                                 }
                             },
                             {
+                                select: 1,
+                                sortable: false,
+                                render: function(data, cell, row) {
+                                    const id = row.cells[0].data; 
+                                    return `<a href="/kota/${id}/edit" class="hover:underline">${ data }</a>`;
+                                }
+                            },
+                            {
                                 select: 2,
                                 sortable: false,
                                 render: function(data, cell, row) {

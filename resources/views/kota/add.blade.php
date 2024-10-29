@@ -1,4 +1,7 @@
 <x-layout.default>
+    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
+    <script src="/assets/js/highlight.min.js"></script>
+
     <div>
         <form action="{{ url('kota') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -56,8 +59,5 @@
     {{-- BOTTOM --}}
     {{-- =========================== --}}
 
-
-    <link rel="stylesheet" href="{{ Vite::asset('resources/css/highlight.min.css') }}">
-    <script src="/assets/js/highlight.min.js"></script>
 
 </x-layout.default>
