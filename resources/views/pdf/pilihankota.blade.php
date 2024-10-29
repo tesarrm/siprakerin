@@ -54,7 +54,7 @@
 <body>
 <div style="width: 813.70px; height: 1247.40px; position: relative; background: white">
   <img style="width: 811.83px; height: 1243.68px; left: 0px; top: 0px; position: absolute" src="{{ $base64 }}" />
-  <div style="width: 269px; left: 139px; top: 236px; position: absolute; text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">{{ $siswa->nama_lengkap }}</div>
+  <div style="width: 269px; left: 139px; top: 236px; position: absolute; text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">{{ $siswa->user->name}}</div>
   <div style="width: 269px; left: 533px; top: 236px; position: absolute; text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">{{ $siswa->kelas->jurusan->singkatan . " " . $siswa->kelas->klasifikasi }}</div>
   <div class="container-table">
     <table style="text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">
@@ -155,7 +155,7 @@
                     <br>
                     <br>
                     <br>
-                    ( {{ $siswa->nama_lengkap }} )
+                    ( {{ $siswa->user->name }} )
                 </td>
             </tr>
         </table>

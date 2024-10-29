@@ -421,7 +421,7 @@ class PrakerinController extends Controller
         $items = [];
         foreach ($siswa as $d) {
             $items[] = [
-                'nama' => $d->nama_lengkap ?? '-',
+                'nama' => $d->user-name?? '-',
                 'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
                 'industri' => $d->penempatan->industri->nama ?? '-',
                 'tanggal_awal' => $d->penempatan->industri->tanggal_awal ?? '-',

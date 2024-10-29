@@ -16,8 +16,6 @@ class Siswa extends Model
         'pas_foto',
         'nis',
         'nisn',
-        'nama_lengkap',
-        'nama',
         'tempat_lahir',
         'tanggal_lahir',
         'jenis_kelamin',

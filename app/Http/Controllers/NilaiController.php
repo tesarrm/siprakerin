@@ -92,7 +92,7 @@ class NilaiController extends Controller
                 return [
                     'siswa' => [
                         'id' => $siswa->id,
-                        'nama_lengkap' => $siswa->nama_lengkap,
+                        'nama_lengkap' => $siswa->user->name,
                         'jenis_kelamin' => $siswa->jenis_kelamin,
                         'kelas' => [
                             'nama' => $siswa->kelas->nama,
@@ -138,7 +138,7 @@ class NilaiController extends Controller
                 return [
                     'siswa' => [
                         'id' => $siswa->id,
-                        'nama_lengkap' => $siswa->nama_lengkap,
+                        'nama_lengkap' => $siswa->user->name,
                         'jenis_kelamin' => $siswa->jenis_kelamin,
                         'kelas' => [
                             'nama' => $siswa->kelas->nama,
@@ -358,7 +358,7 @@ class NilaiController extends Controller
             return [
                 'siswa' => [
                     'id' => $siswa->id,
-                    'nama_lengkap' => $siswa->nama_lengkap,
+                    'nama_lengkap' => $siswa->user->name,
                     'jenis_kelamin' => $siswa->jenis_kelamin,
                     'kelas' => [
                         'nama' => $siswa->kelas->nama,

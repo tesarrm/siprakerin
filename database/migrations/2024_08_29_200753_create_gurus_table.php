@@ -17,7 +17,6 @@ return new class extends Migration
             $table->boolean('aktif')->default(1);
             $table->string('nip')->nullable();
             $table->string('no_ktp')->nullable();
-            $table->string('nama')->nullable();
             $table->string('tempat_lahir')->nullable();
             $table->string('tanggal_lahir')->nullable();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();

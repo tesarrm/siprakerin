@@ -287,7 +287,7 @@
         foreach ($data as $d) {
             $items[] = [
                 'id' => $d->id ?? '-',
-                'nama' => $d->nama_lengkap ?? '-',
+                'nama' => $d->user->name ?? '-',
                 'nis' => $d->nis ?? '-',
                 'email' => $d->user->email ?? '-',
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
@@ -303,8 +303,8 @@
                 '_gambar' => $d->user->gambar,
                 '_nis' => $d->nis ?? '-',
                 '_nisn' => $d->nisn ?? '-',
-                '_nama_lengkap' => $d->nama_lengkap ?? '-',
-                '_nama' => $d->nama ?? '-',
+                '_nama_lengkap' => $d->user->name ?? '-',
+                '_nama' => $d->user->name ?? '-',
                 '_tempat_lahir' => $d->tempat_lahir ?? '-',
                 '_tanggal_lahir' => $d->tanggal_lahir ?? '-',
                 '_jenis_kelamin' => $d->jenis_kelamin ?? '-', //20

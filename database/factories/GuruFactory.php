@@ -23,7 +23,6 @@ class GuruFactory extends Factory
 
         return [
             'nip' => $this->faker->unique()->numerify('#############'), 
-            'nama' => $user->name,
             'jenis_kelamin' => $this->faker->randomElement(['Laki-Laki', 'Perempuan']),
             'user_id' => $user->id,
         ];

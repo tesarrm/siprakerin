@@ -241,7 +241,7 @@
         foreach ($siswa as $d) {
             $dSiswa[] = [
                 'nis' => $d->nis,
-                'nama' => $d->nama_lengkap ?? '-',
+                'nama' => $d->user->name?? '-',
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                 'agama' => $d->agama ?? '-',
                 'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',

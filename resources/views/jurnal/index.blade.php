@@ -358,7 +358,7 @@
                 $items[] = [
                     'id' => $d->id ?? '-',
                     'nis' => $d->siswa->nis ?? '-',
-                    'siswa' => $d->siswa->nama_lengkap ?? '-',
+                    'siswa' => $d->siswa->user->name ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'tanggal_waktu' => $d->tanggal_waktu ?? '-',
                     'kegiatan' => $d->kegiatan ?? '-',
@@ -370,7 +370,7 @@
             foreach ($data as $d) {
                 $items[] = [
                     'nis' => $d->siswa->nis ?? '-',
-                    'siswa' => $d->siswa->nama_lengkap ?? '-',
+                    'siswa' => $d->siswa->user->name ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'tanggal_waktu' => $d->tanggal_waktu ?? '-',
                     'kegiatan' => $d->kegiatan ?? '-',
@@ -383,7 +383,7 @@
             foreach ($data as $d) {
                 $items[] = [
                     'nis' => $d->siswa->nis ?? '-',
-                    'siswa' => $d->siswa->nama_lengkap ?? '-',
+                    'siswa' => $d->siswa->user->name ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => isset($d->siswa->penempatan->industri) ? $d->siswa->penempatan->industri->nama : '-',
                     'tanggal_waktu' => $d->tanggal_waktu ?? '-',
@@ -1274,7 +1274,7 @@
             foreach ($dataIzin as $d) {
                 $dIzin [] = [
                     'nis' => $d->siswa->nis ?? '-',
-                    'nama' => $d->siswa->nama_lengkap ?? '-',
+                    'nama' => $d->siswa->user->name?? '-',
                     'jenis_kelamin' => $d->siswa->jenis_kelamin ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'tanggal' => $d->tanggal ?? '-',

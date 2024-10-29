@@ -41,7 +41,7 @@
   <div style="width: 236px; height: 19px; left: 517px; top: 828px; position: absolute; background: white"></div>
   <div style="width: 53px; height: 23px; left: 348px; top: 221px; position: absolute; background: white"></div>
   <div style="width: 268px; height: 49px; left: 328px; top: 240px; position: absolute; background: white"></div>
-  <div style="left: 330px; top: 313px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->siswa->nama_lengkap }}</div>
+  <div style="left: 330px; top: 313px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->siswa->user->name }}</div>
   <div style="left: 348px; top: 222px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->siswa->kelas->jurusan->singkatan ." ". $data->siswa->kelas->klasifikasi }}</div>
   <div style="left: 420px; top: 222px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $pengaturan->tahun_ajaran }}</div>
   <div style="left: 328px; top: 241px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->siswa->kelas->jurusan->nama }}</div>
@@ -67,7 +67,7 @@
   <div style="left: 315px; top: 955px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->alamat_2 }}</div>
   <div style="left: 350px; top: 1001px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->penyakit }}</div>
   <div style="left: 582px; top: 1035px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $today }}</div>
-  <div style="left: 526px; top: 1155px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->siswa->nama_lengkap }}</div>
+  <div style="left: 526px; top: 1155px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->siswa->user->name }}</div>
   <div style="left: 512px; top: 920px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->no_telp_0 }}</div>
   <div style="left: 512px; top: 938px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->no_telp_1 }}</div>
   <div style="left: 512px; top: 955px; position: absolute; color: black; font-size: 13px; font-family: Abhaya Libre Medium; font-weight: 400; word-wrap: break-word">{{ $data->no_telp_2 }}</div>

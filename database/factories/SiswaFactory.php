@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Models\Kelas;
 use App\Models\Kota;
 use App\Models\PilihanKota;
-use App\Models\Siswa;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -38,7 +37,6 @@ class SiswaFactory extends Factory
         // Mengembalikan data siswa dengan user_id yang sesuai
         return [
             'nis' => $this->faker->unique()->numerify('##########'), // 10 digit
-            'nama_lengkap' => $namaSiswa, // Nama siswa yang sama dengan nama user
             'jenis_kelamin' => $this->faker->randomElement(['Laki-laki', 'Perempuan']),
             'kelas_id' => Kelas::inRandomOrder()->first()->id,
             'user_id' => $user->id,

@@ -31,10 +31,16 @@ class GuruController extends Controller
 
     public function index()
     {
-        // Ambil semua data guru beserta user dan role terkait
+        // // Ambil semua data guru beserta user dan role terkait
+        // $guru = Guru::with(['user.roles', 'hoKelas.jurusan'])
+        //     ->where('aktif', 1)
+        //     ->orderBy('nama', 'asc')
+        //     ->paginate(100);
         $guru = Guru::with(['user.roles', 'hoKelas.jurusan'])
             ->where('aktif', 1)
-            ->orderBy('nama', 'asc')
+            ->join('users', 'gurus.user_id', '=', 'users.id') // Menyambungkan dengan tabel users
+            ->orderBy('users.name', 'asc') // Mengurutkan berdasarkan nama di tabel users
+            ->select('gurus.*') // Memilih kolom dari tabel gurus agar tidak terjadi duplikasi
             ->paginate(100);
 
         // Kirim data ke view

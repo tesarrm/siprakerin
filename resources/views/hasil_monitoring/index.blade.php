@@ -351,7 +351,7 @@
         } else {
             foreach ($hasil as $d) {
                 $dHasil[] = [
-                    'nama' => $d->siswa->nama_lengkap ?? '-',
+                    'nama' => $d->siswa->user->name?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama?? '-',
                     'tanggal' => $d->monitoring->tanggal?? '-',

@@ -356,7 +356,7 @@
         foreach ($penempatan as $d) {
             $dSiswa[] = [
                 'nis' => $d->siswa->nis ?? '-',
-                'nama' => $d->siswa->nama_lengkap ?? '-',
+                'nama' => $d->siswa->user->name?? '-',
                 'jenis_kelamin' => $d->siswa->jenis_kelamin ?? '-',
                 'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                 'industri' => $d->industri->nama ?? '-',

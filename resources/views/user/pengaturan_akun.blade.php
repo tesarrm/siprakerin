@@ -104,14 +104,14 @@
                                 <div class="px-4">
                                     <div class="text-lg font-semibold mt-6">Indentitas Diri</div>
                                     <div class="grid grid-cols-1 mt-4 mb-6 sm:grid-cols-2 gap-4">
-                                        <div>
+                                        {{-- <div>
                                             <label for="nama_lengkap">Nama Lengkap<span class="text-danger">*</span></label>
                                             <input value="{{ $siswa->nama_lengkap }}" required id="nama_lengkap" type="text" name="nama_lengkap" class="form-input w-full"
                                                 placeholder="Isi Nama Lengkap" />
                                             @error('nama_lengkap')
                                                 <div class="mt-2 text-danger">{{ $message }}</div>
                                             @enderror
-                                        </div>
+                                        </div> --}}
                                         <div>
                                             <label for="nama">Nama Panggilan<span class="text-danger">*</span></label>
                                             <input value="{{ $siswa->nama}}" required id="nama" type="text" name="nama" class="form-input w-full"
@@ -448,9 +448,9 @@
                                     <div class="text-lg font-semibold">Indentitas Diri</div>
                                     <div class="grid grid-cols-1 mt-4 mb-6 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label for="nama">Nama Lengkap<span class="text-danger">*</span></label>
+                                            <label for="nama">Nama<span class="text-danger">*</span></label>
                                             <input value="{{ $user->name}}" required id="nama" type="text" name="nama" class="form-input w-full"
-                                                placeholder="Isi Nama Lengkap" />
+                                                placeholder="Isi Nama" />
                                             @error('nama')
                                                 <div class="mt-2 text-danger">{{ $message }}</div>
                                             @enderror

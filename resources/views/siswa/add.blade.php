@@ -45,16 +45,16 @@
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div>
+                            {{-- <div>
                                 <label for="nama_lengkap">Nama Lengkap<span class="text-danger">*</span></label>
                                 <input required id="nama_lengkap" type="text" name="nama_lengkap" class="form-input w-full"
                                     placeholder="Isi Nama Lengkap" />
                                 @error('nama_lengkap')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
                             <div>
-                                <label for="nama">Nama Panggilan<span class="text-danger">*</span></label>
+                                <label for="nama">Nama<span class="text-danger">*</span></label>
                                 <input required id="nama" type="text" name="nama" class="form-input w-full"
                                     placeholder="Isi Nama" />
                                 @error('nama')

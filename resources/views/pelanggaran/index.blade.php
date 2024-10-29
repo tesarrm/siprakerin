@@ -118,7 +118,7 @@
             foreach ($data as $d) {
                 $items[] = [
                     'id' => $d->id ?? '-',
-                    'nama' => $d->siswa->nama_lengkap ?? '-',
+                    'nama' => $d->siswa->user->name ?? '-',
                     'tanggal' => $d->tanggal ?? '-',
                     'no_telp' => $d->siswa->no_telp ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
@@ -131,7 +131,7 @@
         } else {
             foreach ($data as $d) {
                 $items[] = [
-                    'nama' => $d->siswa->nama_lengkap ?? '-',
+                    'nama' => $d->siswa->user->name ?? '-',
                     'tanggal' => $d->tanggal ?? '-',
                     'no_telp' => $d->siswa->no_telp ?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',

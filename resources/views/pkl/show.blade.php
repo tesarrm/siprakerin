@@ -44,7 +44,7 @@
                     <div class="flex flex-col justify-center items-center">
                         <img src="{{ $siswa->gambar ? asset('storage/posts/' . $siswa->gambar) : asset('storage/blank_profile.png') }}" 
                             alt="image" class="w-24 h-24 rounded-full object-cover mb-5" />
-                        <p class="font-semibold text-primary text-xl">{{ $siswa->nama_lengkap }}</p>
+                        <p class="font-semibold text-primary text-xl">{{ $siswa->user->name}}</p>
                     </div>
                         <ul class="mt-5 flex flex-col space-y-4 font-semibold text-white-dark">
                             <li class="border-b pb-2">

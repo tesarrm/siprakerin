@@ -36,7 +36,10 @@ class SiswaController extends Controller
     {
         $data = $this->model->with(['kelas', 'user'])
             ->where('aktif', 1)
-            ->orderBy('nama_lengkap', 'asc')
+            // ->orderBy('nama_lengkap', 'asc')
+            ->join('users', 'siswas.user_id', '=', 'users.id') // Menyambungkan dengan tabel users
+            ->orderBy('users.name', 'asc') // Mengurutkan berdasarkan nama di tabel users
+            ->select('siswas.*') // Memilih kolom dari tabel gurus agar tidak terjadi duplikasi
             ->paginate(250);
         $pengaturan = Pengaturan::first();
         $kelas = Kelas::with('jurusan')->get();
@@ -72,7 +75,6 @@ class SiswaController extends Controller
             'gambar' => 'nullable|string',
             'nis' => 'required|unique:siswas,nis',
             'nisn' => 'nullable|string',
-            'nama_lengkap' => 'nullable|string',
             'nama' => 'required|string|max:255',
             'tempat_lahir' => 'nullable|string',
             'tanggal_lahir' => 'nullable|string',
@@ -166,7 +168,6 @@ class SiswaController extends Controller
             'gambar' => 'nullable|string',
             'nis' => 'required|unique:siswas,nis,' . $id,
             'nisn' => 'nullable|string',
-            'nama_lengkap' => 'nullable|string',
             'nama' => 'required|string|max:255',
             'tempat_lahir' => 'nullable|string',
             'tanggal_lahir' => 'nullable|string',
@@ -369,7 +370,7 @@ class SiswaController extends Controller
                 '_gambar' => $d->gambar,
                 '_nis' => $d->nis ?? '-',
                 '_nisn' => $d->nisn ?? '-',
-                '_nama_lengkap' => $d->nama_lengkap ?? '-',
+                '_nama_lengkap' => $d->user->name?? '-',
                 '_nama' => $d->nama ?? '-',
                 '_tempat_lahir' => $d->tempat_lahir ?? '-',
                 '_tanggal_lahir' => $d->tanggal_lahir ?? '-',

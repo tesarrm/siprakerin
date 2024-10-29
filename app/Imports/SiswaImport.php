@@ -74,7 +74,7 @@ class SiswaImport implements ToCollection, WithHeadingRow
                 'kelas_id' => $kelas->id,
                 'nis' => $row['nis'],
                 'nisn' => $row['nisn'],
-                'nama_lengkap' => $row['nama'],
+                // 'nama_lengkap' => $row['nama'],
                 // 'nama' => $row['nama'],
                 'tempat_lahir' => $row['tempat_lahir'],
                 'tanggal_lahir' => $row['tanggal_lahir'],

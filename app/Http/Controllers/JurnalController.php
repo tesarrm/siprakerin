@@ -380,7 +380,7 @@ class JurnalController extends Controller
         foreach ($siswa as $d) {
             $items[] = [
                 'nis' => $d->siswa->nis ?? '-',
-                'siswa' => $d->siswa->nama_lengkap ?? '-',
+                'siswa' => $d->siswa->user->name ?? '-',
                 'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                 'industri' => isset($d->siswa->penempatan->industri) ? $d->siswa->penempatan->industri->nama : '-',
                 'tanggal_waktu' => $d->tanggal_waktu ?? '-',

@@ -130,7 +130,7 @@ class UserController extends Controller
         $update->forget('_token');
         $update->forget('gambar');
         $update->forget('pas_foto');
-        $update->forget('nama_lengkap');
+        // $update->forget('nama_lengkap');
         $update->forget('nama');
         $update->forget('nis');
         $update->forget('nisn');
@@ -504,7 +504,7 @@ public function guruIndustriIndex()
                 'gambar' => 'nullable|string',
                 'nis' => 'required|unique:siswas,nis,' . $siswa->id,
                 'nisn' => 'nullable|string',
-                'nama_lengkap' => 'nullable|string',
+                // 'nama_lengkap' => 'nullable|string',
                 'nama' => 'required|string|max:255',
                 'tempat_lahir' => 'nullable|string',
                 'tanggal_lahir' => 'nullable|string',

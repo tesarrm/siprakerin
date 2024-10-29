@@ -15,7 +15,6 @@ class Guru extends Model
         'aktif',
         'nip', //
         'no_ktp',
-        'nama', //
         'tempat_lahir',
         'tanggal_lahir',
         'jenis_kelamin', //
