@@ -58,7 +58,7 @@
                                 <select required id="guru_id" name="guru_id" class="selectize w-full">
                                     <option value="">Pilih Wali Kelas</option>
                                     @foreach($guru as $item)
-                                        <option value="{{ $item->id }}" @selected($data->guru_id == $item->id)>{{ $item->nama }}</option>
+                                        <option value="{{ $item->id }}" @selected($data->guru_id == $item->id)>{{ $item->user->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('guru_id')

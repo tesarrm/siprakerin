@@ -1,6 +1,7 @@
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/flatpickr.min.css') }}">
     <script src="/assets/js/flatpickr.js"></script>
+    <script src="/assets/js/flatpickr-id.js"></script>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
     <script src="/assets/js/nouislider.min.js"></script>
 
@@ -42,10 +43,14 @@
                             <div>
                                 <label for="guru">Guru<span class="text-danger">*</span></label>
                                 <input 
+                                    type="hidden" 
+                                    name="guru" 
+                                    :value="guruId"
+                                />
+                                <input 
                                     required 
                                     id="guru" 
                                     type="text" 
-                                    name="guru" 
                                     class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" 
                                     placeholder="Guru Pembimbing" 
                                     x-model="guruName" 
@@ -128,6 +133,7 @@
             return {
                 selectedIndustri: '', // Menyimpan ID industri yang dipilih
                 guruName: '', // Guru yang akan diisi otomatis
+                guruId: '', // Guru yang akan diisi otomatis
 
                 // Data industri dengan guru terkait (diambil dari backend Laravel)
                 industries: @json($industri),
@@ -138,9 +144,11 @@
                     // console.log(this.industries);
                     const selectedIndustri = this.industries.find(item => item.id == this.selectedIndustri);
                     if (selectedIndustri && selectedIndustri.gurus.length > 0) {
-                        this.guruName = selectedIndustri.gurus[0].nama; // Isi guru dengan guru pertama yang terkait
+                        this.guruName = selectedIndustri.gurus[0].user.name; // Isi guru dengan guru pertama yang terkait
+                        this.guruId = selectedIndustri.gurus[0].id; // Isi guru dengan guru pertama yang terkait
                     } else {
                         this.guruName = ''; // Kosongkan jika tidak ada guru
+                        this.guruId= ''; // Kosongkan jika tidak ada guru
                     }
                 }
             }

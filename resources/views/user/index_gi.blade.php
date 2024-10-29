@@ -59,7 +59,7 @@
             $industriCount = $d->industri ? count(explode(',', $d->industri)) : 0;
             
             $items[] = [
-                'nama' => $d->nama ?? '-',
+                'nama' => $d->user->name?? '-',
                 'guru_id' => $d->id ?? '-',
                 'industri_count' => $industriCount,
                 'action' => $d->id ?? '-',

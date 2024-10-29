@@ -303,6 +303,11 @@
                     </div>
                 </a>
             </li>
+            @php
+
+                $user = auth()->user();
+
+            @endphp
             <li class="menu nav-item relative">
                 <a href="/jurnal" class="nav-link">
                     <div class="flex items-center">

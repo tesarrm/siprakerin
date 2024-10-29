@@ -562,6 +562,10 @@ class AuthSeeder extends Seeder
         $role_admin->givePermissionTo($permission_d_pengaturan);
 
 // koordinator 
+        $role_koordinator->givePermissionTo($permission_r_pilihan_kota);
+        $role_koordinator->givePermissionTo($permission_u_pilihan_kota);
+        $role_koordinator->givePermissionTo($permission_d_pilihan_kota);
+
         $role_koordinator->givePermissionTo($permission_c_penempatan_industri);
         $role_koordinator->givePermissionTo($permission_r_penempatan_industri);
         $role_koordinator->givePermissionTo($permission_u_penempatan_industri);

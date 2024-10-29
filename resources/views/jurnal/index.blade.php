@@ -259,10 +259,13 @@
                                                 </select>
                                             </div>
                                             <div style="width: 225px">
-                                                <select id="filterSiswa" x-model="selectedSiswa" @change="filterBySiswa" class="selectize">
+                                                <select id="filterSiswa" 
+                                                    x-model="selectedSiswa" 
+                                                    @change="filterBySiswa" 
+                                                    class="selectize">
                                                     <option selected value="">Pilih Siswa</option>
                                                     <template x-for="siswa in siswaOptions" :key="siswa.id">
-                                                        <option :value="siswa.id" x-text="siswa.nama_lengkap"></option>
+                                                        <option :value="siswa.id" x-text="siswa.user.name"></option>
                                                     </template>
                                                 </select>
                                             </div>
@@ -424,34 +427,26 @@
          * filter kelas 
          */
 
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("filterKelas"), options);
-        });
+        @if(!auth()->user()->hasRole('siswa'))
+            document.addEventListener("DOMContentLoaded", function(e) {
+                var options = {
+                    searchable: true
+                };
+                NiceSelect.bind(document.getElementById("filterKelas"), options);
+            });
 
-        /*************
-         * filter kelas 1 
-         */
+            /*************
+             * filter kelas 1 
+             */
 
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("filterKelas1"), options);
-        });
+            document.addEventListener("DOMContentLoaded", function(e) {
+                var options = {
+                    searchable: true
+                };
+                NiceSelect.bind(document.getElementById("filterKelas1"), options);
+            });
+        @endif
 
-        /*************
-         * filter siswa 
-         */
-
-        // document.addEventListener("DOMContentLoaded", function(e) {
-        //     var options = {
-        //         searchable: true
-        //     };
-        //     NiceSelect.bind(document.getElementById("filterSiswa"), options);
-        // });
 
         /*************
          * tab 
@@ -994,14 +989,16 @@
                         this.setTableData();
                         this.initializeTable();
                     });
-                    this.$nextTick(() => {
-                        let selectElement = document.getElementById('filterSiswa');
+                    @if(!auth()->user()->hasRole('siswa'))
+                        this.$nextTick(() => {
+                            let selectElement = document.getElementById('filterSiswa');
 
-                        var options = {
-                            searchable: true
-                        };
-                        NiceSelect.bind(selectElement, options);
-                    });
+                            var options = {
+                                searchable: true
+                            };
+                            NiceSelect.bind(selectElement, options);
+                        });
+                    @endif
                 },
 
                 initializeTable() {
@@ -1063,24 +1060,23 @@
                     this.datatable.destroy();
                     this.setTableData();
                     this.initializeTable();
-                    this.$nextTick(() => {
-                        let selectElement = document.getElementById('filterSiswa');
+                    @if(!auth()->user()->hasRole('siswa'))
+                        this.$nextTick(() => {
+                            let selectElement = document.getElementById('filterSiswa');
 
-                        // if (selectElement && selectElement.nextElementSibling && selectElement.nextElementSibling.classList.contains('nice-select')) {
-                        //     NiceSelect.destroy(selectElement);
-                        // }
-                        if (selectElement && selectElement.nextElementSibling && selectElement.nextElementSibling.classList.contains('nice-select')) {
-                            // Hapus elemen dropdown NiceSelect secara manual
-                            selectElement.nextElementSibling.remove();
-                            // Tampilkan kembali elemen select asli
-                            selectElement.style.display = "inline-block";
-                        }
+                            if (selectElement && selectElement.nextElementSibling && selectElement.nextElementSibling.classList.contains('nice-select')) {
+                                // Hapus elemen dropdown NiceSelect secara manual
+                                selectElement.nextElementSibling.remove();
+                                // Tampilkan kembali elemen select asli
+                                selectElement.style.display = "inline-block";
+                            }
 
-                        var options = {
-                            searchable: true
-                        };
-                        NiceSelect.bind(selectElement, options);
-                    });
+                            var options = {
+                                searchable: true
+                            };
+                            NiceSelect.bind(selectElement, options);
+                        });
+                    @endif
                 },
 
                 filterBySiswa() {
@@ -1126,6 +1122,7 @@
                         })
                         .then(response => response.json())
                         .then(data => {
+                            // console.log(data);
                             this.siswaOptions = data;  // Perbarui siswaOptions dengan data dari server
                             this.selectedSiswa = '';   // Reset pilihan siswa setelah kelas diubah
                             this.refreshTable();

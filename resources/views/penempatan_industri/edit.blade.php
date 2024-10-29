@@ -171,7 +171,7 @@
                                                     <option value="">Pilih Siswa</option>
                                                     <template x-for="siswa in siswaData" :key="siswa.id">
                                                         <option :value="siswa.id" :selected="row.id_siswa == siswa.id">
-                                                            <span x-text="siswa.nama_lengkap + ' | '"></span>
+                                                            <span x-text="siswa.user.name + ' | '"></span>
                                                             <span x-text="siswa.kelas.nama + ' ' + siswa.kelas.jurusan.singkatan + ' ' + siswa.kelas.klasifikasi + ' | '"></span>
                                                             {{-- Logika pengecekan kota --}}
                                                             <span x-show="siswa.pilihankota.kota1.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota2.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota3.nama === '{{ $industri->kota->nama }}'">

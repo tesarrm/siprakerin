@@ -37,7 +37,7 @@ class KelasController extends Controller
     public function create()
     {
         $jurusan = Jurusan::get();
-        $guru = Guru::get();
+        $guru = Guru::with('user')->get();
         $pengaturan = Pengaturan::first();
 
         return view('kelas.add', [
@@ -73,7 +73,7 @@ class KelasController extends Controller
 
         $kelas = Kelas::findOrFail($id);
         $jurusan = Jurusan::get();
-        $guru = Guru::get();
+        $guru = Guru::with('user')->get();
         $pengaturan = Pengaturan::first();
 
         return view('kelas.edit', [

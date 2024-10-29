@@ -1,7 +1,7 @@
 <x-layout.default>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/flatpickr.min.css') }}">
     <script src="/assets/js/flatpickr.js"></script>
-
+    <script src="/assets/js/flatpickr-id.js"></script>
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/nouislider.min.css') }}">
     <script src="/assets/js/nouislider.min.js"></script>
 
@@ -32,7 +32,17 @@
 
                             <div>
                                 <label for="guru">Guru<span class="text-danger">*</span></label>
-                                <input required id="guru" type="text" name="guru" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" placeholder="Guru Pembimbing" x-model="guruName" readonly />
+                                <input 
+                                    type="hidden" 
+                                    name="guru" 
+                                    :value="guruId"
+                                />
+                                <input required 
+                                    id="guru" 
+                                    type="text" 
+                                    class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" placeholder="Guru Pembimbing" 
+                                    x-model="guruName" 
+                                    readonly />
                                 @error('guru')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
@@ -105,7 +115,8 @@
         function industriesData() {
             return {
                 selectedIndustri: @json($data->industri_id), // Set industri yang sudah tersimpan
-                guruName: @json($data->guru->nama), // Set nama guru dari data yang sudah tersimpan
+                guruName: @json($data->guru->user->name), // Set nama guru dari data yang sudah tersimpan
+                guruId: @json($data->guru->id),// Kosongkan jika tidak ada guru
 
                 // Data industri dan guru terkait
                 industries: @json($industri), // Industri dan guru dari backend
@@ -114,9 +125,11 @@
                 updateGuru() {
                     const selectedIndustri = this.industries.find(item => item.id == this.selectedIndustri);
                     if (selectedIndustri && selectedIndustri.gurus.length > 0) {
-                        this.guruName = selectedIndustri.gurus[0].nama; // Isi guru dengan guru pertama yang terkait
+                        this.guruName = selectedIndustri.gurus[0].user.name; // Isi guru dengan guru pertama yang terkait
+                        this.guruId = selectedIndustri.gurus[0].id; // Isi guru dengan guru pertama yang terkait
                     } else {
                         this.guruName = ''; // Kosongkan jika tidak ada guru
+                        this.guruId= ''; // Kosongkan jika tidak ada guru
                     }
                 }
             }

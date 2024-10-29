@@ -31,17 +31,11 @@ class MonitoringController extends Controller
 
         $guru = Guru::where('aktif', 1)
             ->whereHas('monitorings')
+            ->with('user')
             ->get();
         $industri = Industri::where('aktif', 1)
             ->whereHas('monitorings')
             ->get();
-
-        // $guru = Guru::with('user')->findOrFail(1);
-        ///dd($guru->user->getRoleNames());
-
-        
-        // dd(auth()->user()->getRoleNames());
-        // dd(auth()->user()->getAllPermissions());
 
         return view('monitoring.index', [
             'data' => $data,
@@ -55,8 +49,8 @@ class MonitoringController extends Controller
      */
     public function create()
     {
-        $guru = Guru::get();
-        $industri = Industri::with('gurus')
+        $guru = Guru::with('user')->get();
+        $industri = Industri::with('gurus.user')
             ->whereHas('penempatanIndustri')
             ->get();
 
@@ -100,7 +94,7 @@ public function store(Request $request)
     ]);
 
     // Cari guru berdasarkan nama
-    $guru = Guru::where('nama', $validatedData['guru'])->first();
+    $guru = Guru::where('id', $validatedData['guru'])->first();
 
     if (!$guru) {
         return redirect()->back()->withErrors(['guru' => 'Guru tidak ditemukan'])->withInput();
@@ -130,7 +124,7 @@ public function store(Request $request)
     public function edit(Monitoring $monitoring)
     {
         $guru = Guru::get();
-        $industri = Industri::with('gurus')
+        $industri = Industri::with('gurus.user')
             ->whereHas('penempatanIndustri')
             ->get();
 
@@ -154,7 +148,7 @@ public function store(Request $request)
             'tanggal' => 'required',
         ]);
 
-        $guru = Guru::where('nama', $validatedData['guru'])->first();
+        $guru = Guru::where('id', $validatedData['guru'])->first();
 
         if (!$guru) {
             return redirect()->back()->withErrors(['guru' => 'Guru tidak ditemukan'])->withInput();

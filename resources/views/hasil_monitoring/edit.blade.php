@@ -3,13 +3,10 @@
     <script src="/assets/js/highlight.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
 
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-    <script src="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.js"></script>
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
-    <link
-        href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
-        rel="stylesheet"
-    />
+    <script src="/assets/js/filepond.js"></script>
+    <script src="/assets/js/filepond-plugin-image-preview.js"></script>
+    <link href="/assets/css/filepond.css" rel="stylesheet" />
+    <link href="/assets/css/filepond-plugin-image-preview.css" rel="stylesheet" />
 
     <div>
         <form action="{{ url('hasilmonitoring') }}" method="POST" enctype="multipart/form-data">
@@ -158,7 +155,7 @@
                     // Jika data monitoring ditemukan, gunakan nilainya, jika tidak gunakan nilai dari penempatan
                     return {
                         siswa_id: penempatan.siswa.id,
-                        nama: penempatan.siswa.nama_lengkap,
+                        nama: penempatan.siswa.user.name,
                         jenis_kelamin: penempatan.siswa.jenis_kelamin,
                         kelas: penempatan.siswa.kelas.nama + " " + penempatan.siswa.kelas.jurusan.singkatan + " " + penempatan.siswa.kelas.klasifikasi,
                         hadir: monitoring ? monitoring.hadir : penempatan.hadir,

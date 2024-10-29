@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\Ortu;
 use App\Models\OrtuSiswa;
 use App\Models\Pengaturan;
+use App\Models\PilihanKota;
 use App\Models\Siswa;
 use App\Models\TemporaryFile;
 use App\Models\User;
@@ -115,7 +116,7 @@ class SiswaController extends Controller
         $user = User::create($userData);
         
         // Assign role
-        $user->assignRole('guru');
+        $user->assignRole('siswa');
 
         // create siswa 
         $siswaData = collect($validatedData)->except(['gambar', 'email', 'password'])->toArray();
@@ -276,6 +277,19 @@ class SiswaController extends Controller
         }
     }
 
+    public function unconfirm($id){
+        $data = PilihanKota::where('siswa_id', $id)->first();
+
+        if ($data) {
+            $data->status = null;
+            $data->save();
+
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false]);
+        }
+    }
+
     public function nonaktif($id){
         $data = $this->model->find($id);
 
@@ -328,13 +342,6 @@ class SiswaController extends Controller
     {
         $kelas = $request->kelas; // Ambil parameter kelas dari request
         
-
-        // // Jika kelas tidak kosong, tambahkan kondisi filter
-        // if (!empty($kelas)) {
-        //     $query->whereHas('kelas', function($q) use ($kelas) {
-        //         $q->where(DB::raw("CONCAT(kelas.nama, ' ', jurusan.singkatan, ' ', kelas.klasifikasi)"), $kelas);
-        //     });
-        // }
 
         $kelas = Kelas::with('jurusan.bidangKeahlian')
             ->get()

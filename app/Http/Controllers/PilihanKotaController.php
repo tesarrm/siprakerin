@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Jurusan;
 use App\Models\Kelas;
 use App\Models\Kota;
 use App\Models\PilihanKota;
 use App\Models\Siswa;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class PilihanKotaController extends Controller
 {
@@ -16,8 +16,8 @@ class PilihanKotaController extends Controller
     {
         $this->model = $a;
 
-        $this->middleware('can:c_pilihan_kota')->only(['index', 'show']);
-        $this->middleware('can:r_pilihan_kota')->only(['create', 'store']);
+        $this->middleware('can:r_pilihan_kota')->only(['index', 'show']);
+        $this->middleware('can:c_pilihan_kota')->only(['create', 'store']);
         $this->middleware('can:u_pilihan_kota')->only(['edit', 'update']);
         $this->middleware('can:d_pilihan_kota')->only('destroy');
     }
@@ -39,7 +39,11 @@ class PilihanKotaController extends Controller
 public function index()
 {
     // Ambil semua data siswa
-    $siswa = Siswa::with('pilihanKota')->get();
+    $siswa = Siswa::with(['pilihanKota', 'user'])
+        ->join('users', 'siswas.user_id', '=', 'users.id') // Menyambungkan dengan tabel users
+        ->orderBy('users.name', 'asc') // Mengurutkan berdasarkan nama di tabel users
+        ->select('siswas.*') // Memilih kolom dari tabel gurus agar tidak terjadi duplikasi
+        ->paginate(250);
     $kelas = Kelas::get();
 
     // Looping melalui semua siswa untuk memeriksa apakah mereka punya data pemilihan kota
@@ -66,6 +70,7 @@ public function index()
     });
 
     // dd($data);
+    $data = [];
 
     return view('pilihan_kota.index', [
         'data' => $data,
@@ -73,6 +78,69 @@ public function index()
     ]);
 }
 
+public function index2(Request $request)
+{
+    $kelas = $request->kelas; // Ambil parameter kelas dari request
+    
+
+    $kelas = Kelas::with('jurusan.bidangKeahlian')
+        ->get()
+        ->first(function ($k) use ($kelas) {
+            // Gabungkan nama kelas dengan jurusan dan klasifikasi untuk dibandingkan
+            $nama = $k->nama . " " . $k->jurusan->singkatan . " " . $k->klasifikasi;
+            return $kelas == $nama; // Bandingkan nama yang sudah dibentuk dengan row
+        });
+
+    // Ambil semua data siswa
+    $siswa = Siswa::with(['pilihanKota', 'user'])
+        ->whereHas('pilihankota')
+        ->where('kelas_id', $kelas->id) 
+        ->join('users', 'siswas.user_id', '=', 'users.id') // Menyambungkan dengan tabel users
+        ->orderBy('users.name', 'asc') // Mengurutkan berdasarkan nama di tabel users
+        ->select('siswas.*') // Memilih kolom dari tabel gurus agar tidak terjadi duplikasi
+        ->paginate(250);
+    $kelas = Kelas::get();
+
+    // Looping melalui semua siswa untuk memeriksa apakah mereka punya data pemilihan kota
+    $data = $siswa->map(function($siswa) {
+        if ($siswa->pilihanKota) {
+            // Jika siswa memiliki data pemilihan kota
+            return [
+                'siswa' => $siswa,
+                'kota1' => $siswa->pilihanKota->kota1->nama ?? '-',
+                'kota2' => $siswa->pilihanKota->kota2->nama ?? '-',
+                'kota3' => $siswa->pilihanKota->kota3->nama ?? '-',
+                'status' => $siswa->pilihanKota->status ?? 'proses',
+            ];
+        } else {
+            // Jika siswa tidak memiliki data pemilihan kota, beri nilai default
+            return [
+                'siswa' => $siswa,
+                'kota1' => '-',
+                'kota2' => '-',
+                'kota3' => '-',
+                'status' => 'proses',
+            ];
+        }
+    });
+
+    $items = [];
+    foreach ($data as $d) {
+        $items[] = [
+            'siswa' => $d['siswa']->user->name,
+            'kelas' => $d['siswa']->kelas->nama . " " . $d['siswa']->kelas->jurusan->singkatan . " " . $d['siswa']->kelas->klasifikasi,
+            'kota_1' => $d['kota1'],
+            'kota_2' => $d['kota2'],
+            'kota_3' => $d['kota3'],
+            'status' => $d['status'],
+            'action' => $d['siswa']->id, // Gunakan ID ini untuk aksi
+        ];
+    }
+
+    // dd($data);
+
+    return response()->json($items);
+}
 
 
     /**
@@ -186,7 +254,9 @@ public function index()
     {
         $user_id = auth()->user()->id;
         // dd($user_id);
-        $siswa = Siswa::where('user_id', $user_id)->first();
+        $siswa = Siswa::where('user_id', $user_id)
+            ->with('kelas.jurusan')
+            ->first();
         $data = PilihanKota::where('siswa_id', $siswa->id)->first();
         
         if (!$data) {
@@ -196,7 +266,33 @@ public function index()
             $data->kota_id_3 = '';
         }
 
-        $kota = Kota::all();
+        // $jurusan = Jurusan::with('kuotaIndustris.industri.kota')
+        //     ->has('kuotaIndustris') // Hanya ambil Jurusan yang memiliki kuotaIndustris
+        //     ->findOrFail($siswa->kelas->jurusan->id);
+
+        // // $kota = Kota::all();
+        // // Dapatkan kota yang hanya terkait dengan kuotaIndustris.industri.kota
+        // $kotaIds = $jurusan->pluck('kuotaIndustris.*.industri.kota.id')->flatten()->unique();
+
+        // $kota = Kota::whereIn('id', $kotaIds)->get();
+        
+
+        // Ambil jurusan siswa beserta kuota industrinya yang memiliki relasi dengan kota industri
+        $jurusan = Jurusan::with('kuotaIndustris.industri.kota')
+            ->whereHas('kuotaIndustris')
+            ->findOrFail(4);
+
+        // Ambil ID kota yang terkait dengan kuotaIndustris.industri.kota
+        $kotaIds = $jurusan->kuotaIndustris
+            ->pluck('industri.kota.id') // Ambil ID kota secara langsung
+            ->filter() // Hilangkan null values jika ada industri tanpa kota
+            ->unique(); // Hilangkan ID kota yang duplikat
+
+        // Ambil data kota berdasarkan ID yang diperoleh
+        $kota = Kota::whereIn('id', $kotaIds)->get();
+
+
+        // $kota = Kota::get();
         
         // Pass data and kota to the view
         return view('pilihan_kota.buat', [
@@ -205,6 +301,7 @@ public function index()
             'kota' => $kota
         ]);
     }
+
     public function membuat($siswa_id, Request $request)
     {
         $request->validate([

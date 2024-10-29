@@ -97,7 +97,7 @@
         foreach ($data as $d) {
             $items[] = [
                 'id' => $d->id ?? '-',
-                'nama_guru' => $d->guru->nama ?? '-',
+                'nama_guru' => $d->guru->user->name ?? '-',
                 'nama_industri' => $d->industri->nama ?? '-',
                 'tanggal' => $d->tanggal ?? '-',
                 'action' => $d->id ?? '-',
@@ -420,22 +420,22 @@
          * filter guru 
          */
 
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("filterGuru"), options);
-        });
+            document.addEventListener("DOMContentLoaded", function(e) {
+                var options = {
+                    searchable: true
+                };
+                NiceSelect.bind(document.getElementById("filterGuru"), options);
+            });
 
-        /*************
-         * filter industri 
-         */
+            /*************
+             * filter industri 
+             */
 
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("filterIndustri"), options);
-        });
+            document.addEventListener("DOMContentLoaded", function(e) {
+                var options = {
+                    searchable: true
+                };
+                NiceSelect.bind(document.getElementById("filterIndustri"), options);
+            });
     </script>
 </x-layout.default>

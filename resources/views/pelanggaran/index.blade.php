@@ -559,11 +559,13 @@
          * filter kelas 
          */
 
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("filterKelas"), options);
-        });
+        @if(!auth()->user()->hasRole('siswa'))
+            document.addEventListener("DOMContentLoaded", function(e) {
+                var options = {
+                    searchable: true
+                };
+                NiceSelect.bind(document.getElementById("filterKelas"), options);
+            });
+        @endif
     </script>
 </x-layout.default>

@@ -337,33 +337,14 @@ class JurnalController extends Controller
                 return $kelas == $nama; // Bandingkan nama yang sudah dibentuk dengan row
             });
 
-        // $siswa = Jurnal::with(['siswa.kelas', 'siswa.penempatan.industri'])->get();
-        // // saya ingin filter siswa dari kelas id
         $siswa = Siswa::with(['kelas', 'user'])
             ->where('aktif', 1)
             ->where('kelas_id', $kelas->id) 
-            ->orderBy('created_at', 'desc') 
+            // ->orderBy('created_at', 'desc') 
+            ->join('users', 'siswas.user_id', '=', 'users.id') // Menyambungkan dengan tabel users
+            ->orderBy('users.name', 'asc') // Mengurutkan berdasarkan nama di tabel users
+            ->select('siswas.*') // Memilih kolom dari tabel gurus agar tidak terjadi duplikasi
             ->get();
-
-        // Ambil data siswa dari Jurnal yang terhubung dengan kelas tertentu
-        // $siswa = Jurnal::with(['siswa.kelas', 'siswa.penempatan.industri'])
-        //     ->whereHas('siswa', function ($query) use ($kelas) {
-        //         $query->where('kelas_id', $kelas->id); // Filter berdasarkan kelas_id
-        //     })
-        //     ->get();
-
-        // $items = [];
-        // foreach ($siswa as $d) {
-        //     $items[] = [
-        //         'nis' => $d->siswa->nis,
-        //         'siswa' => $d->siswa->nama,
-        //         'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
-        //         'industri' => isset($d->siswa->penempatan->industri) ? $d->siswa->penempatan->industri->nama : '-',
-        //         'tanggal_waktu' => $d->tanggal_waktu,
-        //         'kegiatan' => $d->kegiatan,
-        //         'keterangan' => $d->keterangan,
-        //     ];
-        // }
 
         // Return data dalam format JSON untuk di-render oleh simple-datatables
         return response()->json($siswa);

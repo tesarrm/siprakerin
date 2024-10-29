@@ -76,7 +76,7 @@ class HasilMonitoringController extends Controller
                 ->paginate(250);
         } else if (auth()->user()->hasRole('wali_kelas')) {
             $guru = Guru::where('user_id', auth()->user()->id)
-                ->with('hoKelas')  // Ambil kelas yang berelasi dengan guru
+                ->with(['hoKelas', 'user'])  // Ambil kelas yang berelasi dengan guru
                 ->first();
 
             // Ambil ID kelas yang berelasi dengan guru
@@ -95,7 +95,7 @@ class HasilMonitoringController extends Controller
         } else {
             $hasil = HasilMonitoring::with([
                     'siswa.kelas.jurusan', 
-                    'monitoring.guru',
+                    'monitoring.guru.user',
                     'siswa.penempatan.industri',
                 ])
                 ->orderBy('created_at', 'desc') // Urutkan berdasarkan created_at desc
@@ -159,7 +159,7 @@ class HasilMonitoringController extends Controller
 
         $penempatan = PenempatanIndustri::where(
             'industri_id', $jadwal_monitoring->industri->id)
-            ->with('siswa.kelas.jurusan')
+            ->with(['siswa.kelas.jurusan', 'siswa.user'])
             ->get();
 
         return view('hasil_monitoring.edit', [

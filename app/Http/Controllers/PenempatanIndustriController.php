@@ -134,7 +134,7 @@ class PenempatanIndustriController extends Controller
         $kota_id = $industri->kota->id;
 
         // // Filter siswa berdasarkan pilihan_kotas yang kota_id_1, kota_id_2, atau kota_id_3 cocok dengan kota_id industri
-        $siswa = Siswa::with(['kelas.jurusan', 'pilihankota.kota1', 'pilihankota.kota2', 'pilihankota.kota3', 'penempatan'])
+        $siswa = Siswa::with(['user', 'kelas.jurusan', 'pilihankota.kota1', 'pilihankota.kota2', 'pilihankota.kota3', 'penempatan'])
             ->whereHas('pilihankota', function ($query) use ($kota_id) {
                 $query->where('kota_id_1', $kota_id)
                     ->orWhere('kota_id_2', $kota_id)

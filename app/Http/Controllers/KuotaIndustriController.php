@@ -64,9 +64,15 @@ class KuotaIndustriController extends Controller
         $kuotas = [];
         foreach ($jurusans as $jurusan) {
             // Cari kuota laki-laki
-            $kuotaLaki = $kuotaIndustri->where('jurusan_id', $jurusan->id)->where('jenis_kelamin', 'Laki-laki')->first();
+            $kuotaLaki = $kuotaIndustri
+                ->where('jurusan_id', $jurusan->id)
+                ->where('jenis_kelamin', 'Laki-laki')
+                ->first();
             // Cari kuota perempuan
-            $kuotaPerempuan = $kuotaIndustri->where('jurusan_id', $jurusan->id)->where('jenis_kelamin', 'Perempuan')->first();
+            $kuotaPerempuan = $kuotaIndustri
+                ->where('jurusan_id', $jurusan->id)
+                ->where('jenis_kelamin', 'Perempuan')
+                ->first();
 
             // Simpan nilai kuota, jika tidak ada, beri nilai 0
             $kuotas[$jurusan->id]['laki'] = $kuotaLaki ? $kuotaLaki->kuota : 0;
@@ -102,7 +108,11 @@ class KuotaIndustriController extends Controller
             // Laki-laki
             if (isset($data['laki_kuota'])) {
                 KuotaIndustri::updateOrCreate(
-                    ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => 'Laki-laki'],
+                    [
+                        'industri_id' => $industri_id, 
+                        'jurusan_id' => $data['jurusan_id'], 
+                        'jenis_kelamin' => 'Laki-laki'
+                    ],
                     ['kuota' => $data['laki_kuota']]
                 );
             }
@@ -110,7 +120,11 @@ class KuotaIndustriController extends Controller
             // Perempuan
             if (isset($data['perempuan_kuota'])) {
                 KuotaIndustri::updateOrCreate(
-                    ['industri_id' => $industri_id, 'jurusan_id' => $data['jurusan_id'], 'jenis_kelamin' => 'Perempuan'],
+                    [
+                        'industri_id' => $industri_id, 
+                        'jurusan_id' => $data['jurusan_id'], 
+                        'jenis_kelamin' => 'Perempuan'
+                    ],
                     ['kuota' => $data['perempuan_kuota']]
                 );
             }

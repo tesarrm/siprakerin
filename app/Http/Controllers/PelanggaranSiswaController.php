@@ -57,7 +57,11 @@ class PelanggaranSiswaController extends Controller
      */
     public function create()
     {
-        $siswa = Siswa::with('kelas')->orderBy('nama', 'asc')->get();
+        $siswa = Siswa::with(['kelas', 'user'])
+            ->join('users', 'siswas.user_id', '=', 'users.id') // Menyambungkan dengan tabel users
+            ->orderBy('users.name', 'asc') // Mengurutkan berdasarkan nama di tabel users
+            ->select('siswas.*') // Memilih kolom dari tabel gurus agar tidak terjadi duplikasi
+            ->get();
         $kelas = Kelas::get();
 
         return view('pelanggaran.add', compact([

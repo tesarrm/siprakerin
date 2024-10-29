@@ -304,7 +304,7 @@
         $items = [];
         foreach ($data as $d) {
             $items[] = [
-                'nama_guru' => $d->guru->nama ?? '-',
+                'nama_guru' => $d->guru->user->name ?? '-',
                 'nama_industri' => $d->industri->nama ?? '-',
                 'tanggal' => $d->tanggal ?? '-',
                 'status' => $d->status ?? '-',
@@ -323,7 +323,7 @@
         ){
             foreach ($hasil as $d) {
                 $dHasil[] = [
-                    'nama' => $d->monitoring->guru->nama ?? '-',
+                    'nama' => $d->monitoring->guru->user->name?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama?? '-',
                     'tanggal' => $d->monitoring->tanggal?? '-',
@@ -338,7 +338,7 @@
         ) {
             foreach ($hasil as $d) {
                 $dHasil[] = [
-                    'nama' => $d->monitoring->guru->nama ?? '-',
+                    'nama' => $d->monitoring->guru->user->name?? '-',
                     'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
                     'industri' => $d->siswa->penempatan->industri->nama?? '-',
                     'tanggal' => $d->monitoring->tanggal?? '-',
@@ -754,22 +754,26 @@
          * filter industri 
          */
 
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("filterIndustri"), options);
-        });
+        @if(!auth()->user()->hasRole('siswa'))
+            @if(!auth()->user()->hasRole('koordinator'))
+                document.addEventListener("DOMContentLoaded", function(e) {
+                    var options = {
+                        searchable: true
+                    };
+                    NiceSelect.bind(document.getElementById("filterIndustri"), options);
+                });
+            @endif
 
-        /*************
-         * filter kelas 
-         */
+            /*************
+             * filter kelas 
+             */
 
-        document.addEventListener("DOMContentLoaded", function(e) {
-            var options = {
-                searchable: true
-            };
-            NiceSelect.bind(document.getElementById("filterKelas"), options);
-        });
+            document.addEventListener("DOMContentLoaded", function(e) {
+                var options = {
+                    searchable: true
+                };
+                NiceSelect.bind(document.getElementById("filterKelas"), options);
+            });
+        @endif
     </script>
 </x-layout.default>

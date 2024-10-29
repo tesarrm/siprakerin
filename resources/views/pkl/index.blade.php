@@ -7,7 +7,8 @@
     <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
     <script src="/assets/js/nice-select2.js"></script>
 
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+    {{-- calendar --}}
+    <script src='/assets/js/index.global.min.js'></script> 
     <script src="/assets/js/simple-datatables.js"></script>
 
 

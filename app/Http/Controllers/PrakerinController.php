@@ -307,7 +307,9 @@ class PrakerinController extends Controller
         } else {
             $siswa = [];
             $kelas = Kelas::get();
-            $industri = Industri::with('kota')->get();
+            $industri = Industri::with('kota')
+                ->orderBy('nama', 'asc')
+                ->get();
 
             return view('pkl.index', compact(['siswa', 'industri', 'kelas', ]));
         }
@@ -341,6 +343,9 @@ class PrakerinController extends Controller
                 'pilihankota.kota3'])
             ->whereHas('penempatan')
             ->where('kelas_id', $kelas)
+            ->join('users', 'siswas.user_id', '=', 'users.id') // Menyambungkan dengan tabel users
+            ->orderBy('users.name', 'asc') // Mengurutkan berdasarkan nama di tabel users
+            ->select('siswas.*') // Memilih kolom dari tabel gurus agar tidak terjadi duplikasi
             ->get();
 
         // $industri = Industri::with('kota')->get();
@@ -421,7 +426,7 @@ class PrakerinController extends Controller
         $items = [];
         foreach ($siswa as $d) {
             $items[] = [
-                'nama' => $d->user-name?? '-',
+                'nama' => $d->user->name?? '-',
                 'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
                 'industri' => $d->penempatan->industri->nama ?? '-',
                 'tanggal_awal' => $d->penempatan->industri->tanggal_awal ?? '-',
@@ -439,9 +444,6 @@ class PrakerinController extends Controller
 
         return response()->json($items);
 
-        // $kelas = Kelas::get();
-
-        // return view('pkl.index', compact(['siswa', 'industri', 'kelas', ]));
     }
 
     /**

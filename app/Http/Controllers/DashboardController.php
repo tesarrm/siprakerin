@@ -365,82 +365,103 @@ class DashboardController extends Controller
             ));
         } else if (auth()->user()->hasRole('siswa')) {
             $siswa = Siswa::where('user_id', auth()->user()->id)
-                ->with('kelas.jurusan')
+                ->with(['kelas.jurusan', 'penempatan'])
                 ->first();
 
             $siswa_id = $siswa->id;
 
+            if($siswa->penempatan) {
+
             // $siswa = Siswa::with('kelas.jurusan')->findOrFail($siswa_id);
 
-            $hadir = Attendance::where([
-                'siswa_id' => $siswa->id, 
-                'status' => 'hadir'
-                ])->get();
-            $izin = Attendance::where([
-                'siswa_id' => $siswa->id, 
-                'status' => 'izin'
-                ])->get();
-            $libur = Attendance::where([
-                'siswa_id' => $siswa->id, 
-                'status' => 'libur'
-                ])->get();
-            $alpa = Attendance::where([
-                'siswa_id' => $siswa->id, 
-                'status' => 'alpa'
-                ])->get();
+                $hadir = Attendance::where([
+                    'siswa_id' => $siswa->id, 
+                    'status' => 'hadir'
+                    ])->get();
+                $izin = Attendance::where([
+                    'siswa_id' => $siswa->id, 
+                    'status' => 'izin'
+                    ])->get();
+                $libur = Attendance::where([
+                    'siswa_id' => $siswa->id, 
+                    'status' => 'libur'
+                    ])->get();
+                $alpa = Attendance::where([
+                    'siswa_id' => $siswa->id, 
+                    'status' => 'alpa'
+                    ])->get();
 
-            $months = [
-                'Januari' => 'January',
-                'Februari' => 'February',
-                'Maret' => 'March',
-                'April' => 'April',
-                'Mei' => 'May',
-                'Juni' => 'June',
-                'Juli' => 'July',
-                'Agustus' => 'August',
-                'September' => 'September',
-                'Oktober' => 'October',
-                'November' => 'November',
-                'Desember' => 'December',
-            ];
+                $months = [
+                    'Januari' => 'January',
+                    'Februari' => 'February',
+                    'Maret' => 'March',
+                    'April' => 'April',
+                    'Mei' => 'May',
+                    'Juni' => 'June',
+                    'Juli' => 'July',
+                    'Agustus' => 'August',
+                    'September' => 'September',
+                    'Oktober' => 'October',
+                    'November' => 'November',
+                    'Desember' => 'December',
+                ];
 
-            $penempatan = PenempatanIndustri::with('industri.libur')->where('siswa_id', $siswa->id)->first();
+                $penempatan = PenempatanIndustri::with('industri.libur')->where('siswa_id', $siswa->id)->first();
 
-            $tanggalAkhir = strtr($penempatan->industri->tanggal_akhir, $months);
-            $tanggalAkhir = Carbon::createFromFormat('j F Y', $tanggalAkhir);
-            $tanggalHariIni = Carbon::now();
-            $sisa_hari = $tanggalHariIni->diffInDays($tanggalAkhir);
+                $tanggalAkhir = strtr($penempatan->industri->tanggal_akhir, $months);
+                $tanggalAkhir = Carbon::createFromFormat('j F Y', $tanggalAkhir);
+                $tanggalHariIni = Carbon::now();
+                $sisa_hari = $tanggalHariIni->diffInDays($tanggalAkhir);
 
-            $attendances = Attendance::where('siswa_id', $siswa->id)->get();
+                $attendances = Attendance::where('siswa_id', $siswa->id)->get();
 
-            $pelanggaran = PelanggaranSiswa::with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])->where('siswa_id', $siswa->id)->get();
+                $pelanggaran = PelanggaranSiswa::with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])->where('siswa_id', $siswa->id)->get();
 
-            $nilai = CapaianPembelajaran::whereHas('tujuanPembelajaran.nilai', function ($query) use ($siswa_id) {
-                $query->where('siswa_id', $siswa_id);
-            })->with('tujuanPembelajaran.nilai')->get();
+                $nilai = CapaianPembelajaran::whereHas('tujuanPembelajaran.nilai', function ($query) use ($siswa_id) {
+                    $query->where('siswa_id', $siswa_id);
+                })->with('tujuanPembelajaran.nilai')->get();
 
 
-            $guruCount = Guru::where('aktif', 1)->get()->count();
-            $siswaCount = Siswa::where('aktif', 1)->get()->count();
-            $kelasCount = Kelas::where('aktif', 1)->get()->count();
-            $industriCount = Industri::where('aktif', 1)->get()->count();
+                $guruCount = Guru::where('aktif', 1)->get()->count();
+                $siswaCount = Siswa::where('aktif', 1)->get()->count();
+                $kelasCount = Kelas::where('aktif', 1)->get()->count();
+                $industriCount = Industri::where('aktif', 1)->get()->count();
 
-            return view('index', compact([
-                'siswa',
-                'hadir',
-                'izin',
-                'libur',
-                'alpa',
-                'sisa_hari',
-                'attendances',
-                'pelanggaran',
-                'nilai',
+                return view('index', compact([
+                    'siswa',
+                    'hadir',
+                    'izin',
+                    'libur',
+                    'alpa',
+                    'sisa_hari',
+                    'attendances',
+                    'pelanggaran',
+                    'nilai',
 
-                'guruCount',
-                'siswaCount',
-                'kelasCount',
-                'industriCount',
-            ]));
+                    'guruCount',
+                    'siswaCount',
+                    'kelasCount',
+                    'industriCount',
+                ]));
+
+            } else {
+                $guruCount = Guru::where('aktif', 1)->get()->count();
+                $siswaCount = Siswa::where('aktif', 1)->get()->count();
+                $kelasCount = Kelas::where('aktif', 1)->get()->count();
+                $industriCount = Industri::where('aktif', 1)->get()->count();
+
+                return view('index', compact([
+                    'siswa',
+
+                    'guruCount',
+                    'siswaCount',
+                    'kelasCount',
+                    'industriCount',
+                ]));
+
+            }
+
+ 
         } else {
             return view('index');
         }

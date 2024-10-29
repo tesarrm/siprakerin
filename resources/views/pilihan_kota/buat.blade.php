@@ -237,7 +237,7 @@
                                                 Nama
                                             </label>
                                             <div class="flex-1">
-                                                <input value="{{ old('nama', $siswa->nama) }}" required id="reciever-name" type="text" name="nama" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly  />
+                                                <input value="{{ old('nama', $siswa->user->name) }}" required id="reciever-name" type="text" name="nama" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly  />
                                                 @error('nama')
                                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                                 @enderror

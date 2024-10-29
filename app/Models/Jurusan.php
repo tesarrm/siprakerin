@@ -24,4 +24,9 @@ class Jurusan extends Model
     {
         return $this->hasMany(CapaianPembelajaran::class);
     }
+
+    public function kuotaIndustris()
+    {
+        return $this->hasMany(KuotaIndustri::class);
+    }
 }

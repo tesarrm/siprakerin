@@ -28,6 +28,7 @@ use App\Http\Controllers\PrakerinController;
 use App\Http\Controllers\PusatUnduhanController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\UserController;
+use App\Models\PilihanKota;
 
 Route::get('/', [DashboardController::class, 'index']);
 Route::view('/tabel', 'tabel');
@@ -88,12 +89,14 @@ Route::get('siswa/{siswaId}/delete', [SiswaController::class, 'destroy']);
 Route::post('siswa/delete-multiple', [SiswaController::class, 'deleteMultiple']);
 Route::post('siswa/{user_id}/reset', [SiswaController::class, 'resetPassword']);
 Route::post('siswa/{id}/nonaktif', [SiswaController::class, 'nonaktif']);
+Route::post('siswa/{id}/unconfirm', [SiswaController::class, 'unconfirm']);// pilihan kota
 Route::post('siswa/{id}/aktif', [SiswaController::class, 'aktif']);
 Route::get('siswa-pdf', [PdfController::class, 'siswa']);
 Route::get('siswa-export', [SiswaController::class, 'export']);
 Route::post('siswa-import', [SiswaController::class, 'import']);
 Route::get('siswa-template', [SiswaController::class, 'downloadTemplate']);
 Route::post('siswa/filter', [SiswaController::class, 'filter'])->name('siswa.filter');
+Route::post('pilihankota/filter', [PilihanKotaController::class, 'index2'])->name('pilihankota.filter');
 
 Route::resource('kota', KotaController::class);
 Route::get('kota/{id}/delete', [KotaController::class, 'destroy']);
