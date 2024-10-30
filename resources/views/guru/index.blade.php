@@ -472,10 +472,6 @@
                                                                                     <input value="${row.cells[19].data}" required id="jenis_kelamin" type="text" name="jenis_kelamin" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
                                                                                 </div>
                                                                                 <div>
-                                                                                    <label for="peran">Peran<span class="text-danger">*</span></label>
-                                                                                    <input value="${row.cells[8].data}" required id="peran" type="text" name="peran" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
-                                                                                </div>
-                                                                                <div>
                                                                                     <label for="email">Email<span class="text-danger">*</span></label>
                                                                                     <input value="${row.cells[5].data}" required id="email" type="text" name="email" class="form-input disabled:pointer-events-none disabled:bg-[#eee] dark:disabled:bg-[#1b2e4b] cursor-not-allowed" disabled />
                                                                                 </div>

@@ -136,7 +136,7 @@ class SiswaController extends Controller
             'nama_wali',
             'pekerjaan',
             'no_telp_wali',
-            'jenis_kelamin',
+            'jenis_kelamin_wali',
             ])->toArray();
         $siswaData['user_id'] = $user->id;
         $siswa = Siswa::create($siswaData);

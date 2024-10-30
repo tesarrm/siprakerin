@@ -497,6 +497,23 @@ class AuthSeeder extends Seeder
             ['name' => 'd_pusat_unduhan'],
             ['name' => 'd_pusat_unduhan']
         );
+// tahun ajaran 
+        $permission_c_tahun_ajaran = Permission::updateOrCreate(
+            ['name' => 'c_tahun_ajaran'],
+            ['name' => 'c_tahun_ajaran']
+        );
+        $permission_r_tahun_ajaran = Permission::updateOrCreate(
+            ['name' => 'r_tahun_ajaran'],
+            ['name' => 'r_tahun_ajaran']
+        );
+        $permission_u_tahun_ajaran = Permission::updateOrCreate(
+            ['name' => 'u_tahun_ajaran'],
+            ['name' => 'u_tahun_ajaran']
+        );
+        $permission_d_tahun_ajaran = Permission::updateOrCreate(
+            ['name' => 'd_tahun_ajaran'],
+            ['name' => 'd_tahun_ajaran']
+        );
 
 // =================================================================
 // =================================================================
@@ -625,6 +642,11 @@ class AuthSeeder extends Seeder
         $role_admin->givePermissionTo($permission_r_pusat_unduhan);
         $role_admin->givePermissionTo($permission_u_pusat_unduhan);
         $role_admin->givePermissionTo($permission_d_pusat_unduhan);
+
+        $role_admin->givePermissionTo($permission_c_tahun_ajaran);
+        $role_admin->givePermissionTo($permission_r_tahun_ajaran);
+        $role_admin->givePermissionTo($permission_u_tahun_ajaran);
+        $role_admin->givePermissionTo($permission_d_tahun_ajaran);
 
 // koordinator 
         $role_koordinator->givePermissionTo($permission_r_pilihan_kota);

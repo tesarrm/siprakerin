@@ -23,13 +23,45 @@ class GuruImport implements ToCollection, WithHeadingRow
     public function collection(Collection $rows)
     {
         foreach ($rows as $row){
+            // // Validasi setiap baris data
+            // $validator = Validator::make($row->toArray(), [
+            //     'nip' => 'required',
+            //     'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            // ]);
+            // // Terapkan validasi unique hanya jika email ada
+            // $validator->sometimes('email', 'required|string|email|unique:users,email|max:255', function ($input) {
+            //     return !empty($input->email);
+            // });
+            // // Terapkan validasi unique hanya jika username ada
+            // $validator->sometimes('username', 'required|string|unique:users,username|max:255', function ($input) {
+            //     return !empty($input->username);
+            // });
+            // // Jika validasi gagal, tambahkan error ke dalam array $errors
+            // if ($validator->fails()) {
+            //     $this->errors[] = $validator->errors()->all();
+            //     continue; // lewati row ini jika validasi gagal
+            // }
 
             // Validasi setiap baris data
             $validator = Validator::make($row->toArray(), [
-                'nip' => 'required',
-                'email' => 'required|string|unique:users,email|max:255',
-                'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+                // 'nip' => 'required_without_all:email,username',
+                // 'jenis_kelamin' => 'required|in:L,P',
+
+                // 'email' => 'nullable|string|email|unique:users,email|max:255',
+                // 'username' => 'nullable|string|unique:users,username|max:255',
+                'nip' => 'nullable',
+                'jenis_kelamin' => 'required|in:L,P',
+                'email' => 'nullable|string|email|max:255|unique:users,email',
+                'username' => 'nullable|string|max:255|unique:users,username',
             ]);
+
+            // Tambahkan validasi untuk memastikan salah satu dari email, username, atau nip harus ada
+            $validator->after(function ($validator) use ($row) {
+                if (empty($row['email']) && empty($row['username']) && empty($row['nip'])) {
+                    $validator->errors()->add('required_fields', 'Salah satu dari email, username, atau NIP harus diisi.');
+                }
+            });
+
 
             // Jika validasi gagal, tambahkan error ke dalam array $errors
             if ($validator->fails()) {
@@ -37,13 +69,23 @@ class GuruImport implements ToCollection, WithHeadingRow
                 continue; // lewati row ini jika validasi gagal
             }
 
-            // buat data user
-            $user = User::create([
-                'name' => $row['nama'], 
-                'email' => $row['email'],
-                'password' => Hash::make('password123#'), 
-            ]);
-
+            // Konversi Collection menjadi array
+            $rowArray = $row->toArray();
+            // Inisialisasi data untuk User
+            $userData = [
+                'name' => $rowArray['nama'],
+                'password' => Hash::make('password'),
+            ];
+            // Tambahkan email jika kunci 'email' ada dan tidak kosong
+            if (array_key_exists('email', $rowArray) && !empty($rowArray['email'])) {
+                $userData['email'] = $rowArray['email'];
+            }
+            // Tambahkan username jika kunci 'username' ada dan tidak kosong
+            if (array_key_exists('username', $rowArray) && !empty($rowArray['username'])) {
+                $userData['username'] = $rowArray['username'];
+            }
+            // Buat data User dengan data yang valid
+            $user = User::create($userData);
             // assign role
             $user->assignRole('guru');
 
@@ -55,7 +97,7 @@ class GuruImport implements ToCollection, WithHeadingRow
                 'nama' => $row['nama'],
                 'tempat_lahir' => $row['tempat_lahir'],
                 'tanggal_lahir' => $row['tanggal_lahir'],
-                'jenis_kelamin' => $row['jenis_kelamin'],
+                'jenis_kelamin' => $row['jenis_kelamin'] == 'L' ? 'Laki-laki' : 'Perempuan',
                 'golongan_darah' => $row['golongan_darah'],
                 'kecamatan' => $row['kecamatan'],
                 'alamat' => $row['alamat'],

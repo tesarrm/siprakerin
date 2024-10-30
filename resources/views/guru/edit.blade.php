@@ -40,7 +40,7 @@
                             </div>
                             <div>
                                 <label for="nama">Nama<span class="text-danger">*</span></label>
-                                <input value="{{$data->nama}}" required id="nama" type="text" name="nama" class="form-input w-full"
+                                <input value="{{$data->user->name}}" required id="nama" type="text" name="nama" class="form-input w-full"
                                     placeholder="Isi Nama" />
                                 @error('nama')
                                     <div class="mt-2 text-danger">{{ $message }}</div>

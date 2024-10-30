@@ -38,14 +38,18 @@ class AuthController extends Controller
     {
         // Validasi password selalu ada
         $request->validate([
+            'login' => 'required',
             'password' => 'required',
         ]);
+
 
         $loginField = $request->input('login');
         $password = $request->input('password');
         
         // Cek login berdasarkan email di tabel users
-        $user = User::where('email', $loginField)->first();
+        $user = User::where('email', $loginField)
+            ->orWhere('username', $loginField)
+            ->first();
 
         // Jika tidak ditemukan, cek NIS di tabel siswa
         if (!$user) {
