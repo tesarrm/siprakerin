@@ -60,38 +60,38 @@ class DatabaseSeeder extends Seeder
         $this->call([
             AuthSeeder::class,
         ]);
-        \App\Models\Pengaturan::factory()->count(1)->create();
-        \App\Models\Guru::factory()->count(10)->create();
-        \App\Models\BidangKeahlian::factory()->count(3)->create();
-        \App\Models\Jurusan::factory()->count(5)->create();
-        \App\Models\Kelas::factory()->count(5)->create();
-        \App\Models\Kota::factory()->count(5)->create();
-        \App\Models\Industri::factory()->count(10)->create();
+        // \App\Models\Pengaturan::factory()->count(1)->create();
+        // \App\Models\Guru::factory()->count(10)->create();
+        // \App\Models\BidangKeahlian::factory()->count(3)->create();
+        // \App\Models\Jurusan::factory()->count(5)->create();
+        // \App\Models\Kelas::factory()->count(5)->create();
+        // \App\Models\Kota::factory()->count(5)->create();
+        // \App\Models\Industri::factory()->count(10)->create();
 
-        // ====== Buat data kuota industri
-        $industris = Industri::all();
-        $jurusans = Jurusan::all();
-        $jenisKelamin = ['Laki-laki', 'Perempuan'];
-        foreach ($industris as $industri) {
-            foreach ($jenisKelamin as $kelamin) {
-                foreach ($jurusans as $jurusan) {
-                    // $probabilitas = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2];
-                    $probabilitas = [0, 0, 1, 2];
-                    $kuota = $probabilitas[array_rand($probabilitas)];
-                    KuotaIndustri::create([
-                        'industri_id' => $industri->id,
-                        'jenis_kelamin' => $kelamin,
-                        'jurusan_id' => $jurusan->id,
-                        'kuota' => $kuota, 
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                }
-            }
-        }
+        // // ====== Buat data kuota industri
+        // $industris = Industri::all();
+        // $jurusans = Jurusan::all();
+        // $jenisKelamin = ['Laki-laki', 'Perempuan'];
+        // foreach ($industris as $industri) {
+        //     foreach ($jenisKelamin as $kelamin) {
+        //         foreach ($jurusans as $jurusan) {
+        //             // $probabilitas = [0, 0, 0, 0, 0, 0, 0, 0, 1, 2];
+        //             $probabilitas = [0, 0, 1, 2];
+        //             $kuota = $probabilitas[array_rand($probabilitas)];
+        //             KuotaIndustri::create([
+        //                 'industri_id' => $industri->id,
+        //                 'jenis_kelamin' => $kelamin,
+        //                 'jurusan_id' => $jurusan->id,
+        //                 'kuota' => $kuota, 
+        //                 'created_at' => now(),
+        //                 'updated_at' => now(),
+        //             ]);
+        //         }
+        //     }
+        // }
 
         // // ======= siswa dan pilihan kota
-        \App\Models\PilihanKota::factory()->count(50)->create();
+        // \App\Models\PilihanKota::factory()->count(50)->create();
 
         // \App\Models\Jurnal::factory()->count(100)->create();
 
