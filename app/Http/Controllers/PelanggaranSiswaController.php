@@ -6,6 +6,7 @@ use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\PelanggaranSiswa;
 use App\Models\Siswa;
+use App\Models\WaliSiswa;
 use Illuminate\Http\Request;
 
 class PelanggaranSiswaController extends Controller
@@ -19,8 +20,6 @@ class PelanggaranSiswaController extends Controller
             $guru = Guru::where('user_id', auth()->user()->id)
                 ->with('hoKelas')  // Ambil kelas yang berelasi dengan guru
                 ->first();
-
-            // Ambil ID kelas yang berelasi dengan guru
             $kelasId = $guru->hoKelas->id;
 
             // Filter pelanggaran siswa yang hanya terjadi pada siswa di kelas tersebut
@@ -36,6 +35,19 @@ class PelanggaranSiswaController extends Controller
 
             // Filter pelanggaran siswa yang hanya terjadi pada siswa di kelas tersebut
             $data = PelanggaranSiswa::where('siswa_id', $siswa->id)
+                ->with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else if(auth()->user()->hasRole('wali_siswa')) {
+            $wali_siswa = WaliSiswa::where('user_id', auth()->user()->id)
+                ->with('siswa.kelas')  // Ambil kelas yang berelasi dengan guru
+                ->first();
+            $kelas_id = $wali_siswa->siswa->kelas->id;
+
+            // Filter pelanggaran siswa yang hanya terjadi pada siswa di kelas tersebut
+            $data = PelanggaranSiswa::whereHas('siswa.kelas', function ($query) use ($kelas_id) {
+                    $query->where('id', $kelas_id);
+                })
                 ->with(['siswa.kelas.jurusan', 'siswa.penempatan.industri'])
                 ->orderBy('created_at', 'desc')
                 ->get();

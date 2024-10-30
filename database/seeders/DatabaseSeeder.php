@@ -61,12 +61,12 @@ class DatabaseSeeder extends Seeder
             AuthSeeder::class,
         ]);
         \App\Models\Pengaturan::factory()->count(1)->create();
-        \App\Models\Guru::factory()->count(3)->create();
+        \App\Models\Guru::factory()->count(10)->create();
         \App\Models\BidangKeahlian::factory()->count(3)->create();
-        \App\Models\Jurusan::factory()->count(3)->create();
-        \App\Models\Kelas::factory()->count(3)->create();
-        \App\Models\Kota::factory()->count(3)->create();
-        \App\Models\Industri::factory()->count(3)->create();
+        \App\Models\Jurusan::factory()->count(5)->create();
+        \App\Models\Kelas::factory()->count(5)->create();
+        \App\Models\Kota::factory()->count(5)->create();
+        \App\Models\Industri::factory()->count(10)->create();
 
         // ====== Buat data kuota industri
         $industris = Industri::all();
@@ -91,7 +91,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // // ======= siswa dan pilihan kota
-        \App\Models\PilihanKota::factory()->count(3)->create();
+        \App\Models\PilihanKota::factory()->count(50)->create();
 
         // \App\Models\Jurnal::factory()->count(100)->create();
 

@@ -200,7 +200,18 @@
                                     const roles = row.cells[2].data.split(', '); 
 
                                     // Urutan prioritas roles
-                                    const roleOrder = ['admin', 'koordinator', 'pembimbing', 'wali_kelas', 'siswa', 'guru'];
+                                    const roleOrder = [
+                                        'admin', 
+                                        'koordinator', 
+                                        'pembimbing', 
+                                        'wali_kelas', 
+                                        'siswa', 
+                                        'guru',
+
+                                        'karyawan',
+                                        'industri',
+                                        'wali_siswa',
+                                    ];
 
                                     // Mengurutkan roles berdasarkan urutan pada roleOrder
                                     const sortedRoles = roles.sort((a, b) => {
@@ -217,16 +228,28 @@
                                                 badgeClass = 'badge bg-primary/20 text-primary rounded-full'; 
                                                 break;
                                             case 'koordinator':
-                                                badgeClass = 'badge bg-info/20 text-info rounded-full'; 
+                                                badgeClass = 'badge bg-primary/20 text-primary rounded-full'; 
                                                 break;
                                             case 'pembimbing':
-                                                badgeClass = 'badge bg-success/20 text-success rounded-full'; 
+                                                badgeClass = 'badge bg-info/20 text-info rounded-full'; 
                                                 break;
                                             case 'wali_kelas':
-                                                badgeClass = 'badge bg-warning/20 text-warning rounded-ful'; 
+                                                badgeClass = 'badge bg-info/20 text-info rounded-full'; 
                                                 break;
                                             case 'siswa':
+                                                badgeClass = 'badge bg-success/20 text-success rounded-ful';
+                                                break;
+                                            case 'guru':
+                                                badgeClass = 'badge bg-success/20 text-success rounded-ful';
+                                                break;
+                                            case 'karyawan':
                                                 badgeClass = 'badge bg-secondary/20 text-secondary rounded-ful';
+                                                break;
+                                            case 'industri':
+                                                badgeClass = 'badge bg-secondary/20 text-secondary rounded-ful';
+                                                break;
+                                            case 'wali_siswa':
+                                                badgeClass = 'badge bg-danger/20 text-danger rounded-ful';
                                                 break;
                                             default:
                                                 badgeClass = 'badge bg-dark/20 text-dark rounded-fu'; 

@@ -13,8 +13,7 @@
         .show {
             display: block;
         }
-    </style>
-    <style>
+
         .cell-content-tanggal {
             text-align: center;
             max-width: 120px; 
@@ -39,12 +38,12 @@
         }
     </style>
 
-
     <div class="panel">
 
             @if(
                 !auth()->user()->hasRole('siswa') && 
                 !auth()->user()->hasRole('wali_kelas') && 
+                !auth()->user()->hasRole('wali_siswa') && 
                 !auth()->user()->hasRole('koordinator')
                 )
 
@@ -136,6 +135,7 @@
 
                     @if(
                         !auth()->user()->hasRole('wali_kelas') &&
+                        !auth()->user()->hasRole('wali_siswa') &&
                         !auth()->user()->hasRole('siswa')
                     ) 
                     <div class="px-5">
@@ -259,6 +259,7 @@
                 @if(
                     !auth()->user()->hasRole('siswa') && 
                     !auth()->user()->hasRole('wali_kelas') && 
+                    !auth()->user()->hasRole('wali_siswa') && 
                     !auth()->user()->hasRole('koordinator')
                     )
 
@@ -273,9 +274,14 @@
     {{-- BOTTOM --}}
     {{-- =========================== --}}
 
-    {{-- alert toast --}}
-    @if(session('status'))
-        <script>
+
+
+    <script>
+        /*************
+         * toast alert 
+         */
+
+        @if(session('status'))
             document.addEventListener('DOMContentLoaded', function () {
                 showAlert("{{ session('status') }}");
             });
@@ -296,75 +302,8 @@
                     customClass: 'sweet-alerts',
                 });
             }
-        </script>
-    @endif
+        @endif
 
-    {{-- data datatable --}}
-    @php
-        $items = [];
-        foreach ($data as $d) {
-            $items[] = [
-                'nama_guru' => $d->guru->user->name ?? '-',
-                'nama_industri' => $d->industri->nama ?? '-',
-                'tanggal' => $d->tanggal ?? '-',
-                'status' => $d->status ?? '-',
-                'action' => $d->id ?? '-',
-            ];
-        }
-    @endphp
-
-    {{-- data datatable hasil --}}
-    @php
-        $dHasil = [];
-
-        if(
-            auth()->user()->hasRole('wali_kelas') || 
-            auth()->user()->hasRole('koordinator')
-        ){
-            foreach ($hasil as $d) {
-                $dHasil[] = [
-                    'nama' => $d->jaddwalMonitoring->guru->user->name?? '-',
-                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
-                    'industri' => $d->siswa->penempatan->industri->nama?? '-',
-                    'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
-                    'hadir' => $d->hadir ?? '-',
-                    'izin' => $d->izin ?? '-',
-                    'alpa' => $d->alpa ?? '-',
-                    'catatan' => $d->catatan ?? '-',
-                ];
-            }
-        } else if (
-            auth()->user()->hasRole('siswa') 
-        ) {
-            foreach ($hasil as $d) {
-                $dHasil[] = [
-                    'nama' => $d->jadwalMonitoring->guru->user->name?? '-',
-                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
-                    'industri' => $d->siswa->penempatan->industri->nama?? '-',
-                    'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
-                    'hadir' => $d->hadir ?? '-',
-                    'izin' => $d->izin ?? '-',
-                    'alpa' => $d->alpa ?? '-',
-                    'catatan' => $d->catatan ?? '-',
-                ];
-            }
-        } else {
-            foreach ($hasil as $d) {
-                $dHasil[] = [
-                    'nama' => $d->siswa->user->name?? '-',
-                    'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
-                    'industri' => $d->siswa->penempatan->industri->nama?? '-',
-                    'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
-                    'hadir' => $d->hadir ?? '-',
-                    'izin' => $d->izin ?? '-',
-                    'alpa' => $d->alpa ?? '-',
-                    'catatan' => $d->catatan ?? '-',
-                ];
-            }
-        }
-    @endphp
-
-    <script>
         /*************
          * tab
          */
@@ -382,9 +321,23 @@
             contents[index].classList.add('show');
         }
 
+
         /*************
-         * datatable hasil
+         * datatable 
          */
+
+        @php
+            $items = [];
+            foreach ($data as $d) {
+                $items[] = [
+                    'nama_guru' => $d->guru->user->name ?? '-',
+                    'nama_industri' => $d->industri->nama ?? '-',
+                    'tanggal' => $d->tanggal ?? '-',
+                    'status' => $d->status ?? '-',
+                    'action' => $d->id ?? '-',
+                ];
+            }
+        @endphp
 
         document.addEventListener("alpine:init", () => {
             Alpine.data('invoiceList', () => ({
@@ -551,8 +504,60 @@
         })
 
         /*************
-         * datatable 
+         * data datatabale hasil 
          */
+
+        @php
+            $dHasil = [];
+
+            if(
+                auth()->user()->hasRole('wali_kelas') || 
+                auth()->user()->hasRole('koordinator')
+            ){
+                foreach ($hasil as $d) {
+                    $dHasil[] = [
+                        'nama' => $d->jaddwalMonitoring->guru->user->name?? '-',
+                        'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                        'industri' => $d->siswa->penempatan->industri->nama?? '-',
+                        'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
+                        'hadir' => $d->hadir ?? '-',
+                        'izin' => $d->izin ?? '-',
+                        'alpa' => $d->alpa ?? '-',
+                        'catatan' => $d->catatan ?? '-',
+                    ];
+                }
+            } else if (
+                auth()->user()->hasRole('siswa') 
+            ) {
+                foreach ($hasil as $d) {
+                    $dHasil[] = [
+                        'nama' => $d->jadwalMonitoring->guru->user->name?? '-',
+                        'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                        'industri' => $d->siswa->penempatan->industri->nama?? '-',
+                        'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
+                        'hadir' => $d->hadir ?? '-',
+                        'izin' => $d->izin ?? '-',
+                        'alpa' => $d->alpa ?? '-',
+                        'catatan' => $d->catatan ?? '-',
+                    ];
+                }
+            } else {
+                foreach ($hasil as $d) {
+                    $dHasil[] = [
+                        'nama' => $d->siswa->user->name?? '-',
+                        'kelas' => $d->siswa->kelas->nama . " " . $d->siswa->kelas->jurusan->singkatan . " " . $d->siswa->kelas->klasifikasi ?? '-',
+                        'industri' => $d->siswa->penempatan->industri->nama?? '-',
+                        'tanggal' => $d->jadwalMonitoring->tanggal?? '-',
+                        'hadir' => $d->hadir ?? '-',
+                        'izin' => $d->izin ?? '-',
+                        'alpa' => $d->alpa ?? '-',
+                        'catatan' => $d->catatan ?? '-',
+                    ];
+                }
+            }
+        @endphp
+
+
 
         let headings
         if(
@@ -750,19 +755,21 @@
             }))
         })
 
-        /*************
-         * filter industri 
-         */
 
-        @if(!auth()->user()->hasRole('siswa'))
-            @if(!auth()->user()->hasRole('koordinator'))
+        @if(
+            !auth()->user()->hasRole('siswa') &&
+            !auth()->user()->hasRole('wali_siswa') &&
+            !auth()->user()->hasRole('koordinator') 
+        )
+            /*************
+             * filter industri 
+             */
                 document.addEventListener("DOMContentLoaded", function(e) {
                     var options = {
                         searchable: true
                     };
                     NiceSelect.bind(document.getElementById("filterIndustri"), options);
                 });
-            @endif
 
             /*************
              * filter kelas 

@@ -13,6 +13,7 @@ use App\Models\MonitoringImage;
 use App\Models\PenempatanIndustri;
 use App\Models\Siswa;
 use App\Models\TemporaryFile;
+use App\Models\WaliSiswa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -29,8 +30,6 @@ class HasilMonitoringController extends Controller
      */
     public function index()
     {
-        // dd(auth()->user()->getRoleNames());
-
         if(auth()->user()->hasRole('pembimbing')){
             $guru = Guru::where('user_id', auth()->user()->id)->first();
             $data = JadwalMonitoring::with(['guru', 'industri'])
@@ -68,6 +67,20 @@ class HasilMonitoringController extends Controller
                     'siswa.penempatan.industri',
                     ])
                 ->get();
+        // } else if(auth()->user()->hasRole('wali_siswa')) {
+        //     $wali_siswa = WaliSiswa::where('user_id', auth()->user()->id)
+        //         ->with('siswa.kelas')  // Ambil kelas yang berelasi dengan guru
+        //         ->first();
+        //     // $siswa = Siswa::where('user_id', auth()->user()->id)->first();
+        //     $siswa = $wali_siswa->siswa;
+        //     $siswa_id = $siswa->id;
+        //     $hasil = HasilMonitoring::where('siswa_id', $siswa_id)
+        //         ->with([
+        //             'siswa.kelas.jurusan', 
+        //             'jadwalMonitoring.guru.user',
+        //             'siswa.penempatan.industri',
+        //             ])
+        //         ->get();
         } else if (auth()->user()->hasRole('koordinator')) {
             $hasil = HasilMonitoring::with([
                     'siswa.kelas.jurusan', 

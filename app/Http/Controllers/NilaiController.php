@@ -9,6 +9,7 @@ use App\Models\Nilai;
 use App\Models\PenempatanIndustri;
 use App\Models\Pengaturan;
 use App\Models\Siswa;
+use App\Models\WaliSiswa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -176,6 +177,129 @@ class NilaiController extends Controller
                 'penempatan2' => $data2,
                 'industri' => $industri,
                 'urutan' => $urutan,
+            ]);
+
+        } else if (auth()->user()->hasRole('wali_siswa')){
+            $wali_siswa = WaliSiswa::where('user_id', auth()->user()->id)
+                ->with(['siswa.kelas.jurusan', 'siswa.izin', 'siswa.user', 'siswa.penempatan.industri'])
+                ->first();
+            $siswa = $wali_siswa->siswa;
+            $siswa_id = $siswa->id;
+            $industri_id = $siswa->penempatan->industri->id;
+
+            // ================================
+            // untuk urutan 1
+            // ================================
+
+            // Ambil data penempatan berdasarkan industri_id
+            $penempatan = PenempatanIndustri::where('industri_id', $industri_id)
+                ->where('siswa_id', $siswa_id)
+                ->with(['siswa.kelas.jurusan', 'industri'])
+                ->get();
+
+            // Ambil industri dari salah satu penempatan (asumsi industri sama)
+            $item_penempatan = $penempatan->first();
+            $industri = $item_penempatan->industri;
+
+            // Ambil capaian yang dikelompokkan berdasarkan jurusan
+            $capaianGrouped = CapaianPembelajaran::with('tujuanPembelajaran.nilai')->get()->groupBy('jurusan_id');
+
+            // Susun data sesuai dengan format yang diinginkan
+            $data = $penempatan->map(function($penempatan) use ($capaianGrouped) {
+                $siswa = $penempatan->siswa;
+                $jurusanId = $siswa->kelas->jurusan->id;
+
+                // Ambil capaian berdasarkan jurusan siswa
+                $capaianForJurusan = $capaianGrouped->get($jurusanId) ?? collect([]);
+
+                return [
+                    'siswa' => [
+                        'id' => $siswa->id,
+                        'nama_lengkap' => $siswa->user->name,
+                        'jenis_kelamin' => $siswa->jenis_kelamin,
+                        'kelas' => [
+                            'nama' => $siswa->kelas->nama,
+                            'klasifikasi' => $siswa->kelas->klasifikasi,
+                            'jurusan' => [
+                                'nama' => $siswa->kelas->jurusan->nama,
+                                'singkatan' => $siswa->kelas->jurusan->singkatan,
+                            ],
+                        ],
+                    ],
+                    'capaian' => $capaianForJurusan->map(function($capaian) use ($siswa) {
+                        return [
+                            'nama' => $capaian->nama,
+                            'tujuan' => $capaian->tujuanPembelajaran->map(function($tujuan) use ($siswa) {
+                                $nilaiObj = $tujuan->nilai
+                                    ->where('siswa_id', $siswa->id)
+                                    ->where('tujuan_pembelajaran_id', $tujuan->id)
+                                    ->where('urutan', 1)
+                                    ->first();
+                                $nilai = $nilaiObj ? $nilaiObj->nilai : null; 
+
+                                return [
+                                    'id' => $tujuan->id,
+                                    'nama' => $tujuan->nama,
+                                    'nilai' => $nilai, // Nilai null jika tidak ditemukan
+                                ];
+                            })->toArray(),
+                        ];
+                    })->toArray(),
+                ];
+            });
+
+            // ================================
+            // untuk urutan 2 
+            // ================================
+
+            // Susun data sesuai dengan format yang diinginkan
+            $data2 = $penempatan->map(function($penempatan) use ($capaianGrouped) {
+                $siswa = $penempatan->siswa;
+                $jurusanId = $siswa->kelas->jurusan->id;
+
+                // Ambil capaian berdasarkan jurusan siswa
+                $capaianForJurusan = $capaianGrouped->get($jurusanId) ?? collect([]);
+
+                return [
+                    'siswa' => [
+                        'id' => $siswa->id,
+                        'nama_lengkap' => $siswa->user->name,
+                        'jenis_kelamin' => $siswa->jenis_kelamin,
+                        'kelas' => [
+                            'nama' => $siswa->kelas->nama,
+                            'klasifikasi' => $siswa->kelas->klasifikasi,
+                            'jurusan' => [
+                                'nama' => $siswa->kelas->jurusan->nama,
+                                'singkatan' => $siswa->kelas->jurusan->singkatan,
+                            ],
+                        ],
+                    ],
+                    'capaian' => $capaianForJurusan->map(function($capaian) use ($siswa) {
+                        return [
+                            'nama' => $capaian->nama,
+                            'tujuan' => $capaian->tujuanPembelajaran->map(function($tujuan) use ($siswa) {
+                                $nilaiObj = $tujuan->nilai
+                                    ->where('siswa_id', $siswa->id)
+                                    ->where('tujuan_pembelajaran_id', $tujuan->id)
+                                    ->where('urutan', 2)
+                                    ->first();
+                                $nilai = $nilaiObj ? $nilaiObj->nilai : null; 
+
+                                return [
+                                    'id' => $tujuan->id,
+                                    'nama' => $tujuan->nama,
+                                    'nilai' => $nilai, // Nilai null jika tidak ditemukan
+                                ];
+                            })->toArray(),
+                        ];
+                    })->toArray(),
+                ];
+            });
+
+            return view('nilai.index', [
+                'penempatan' => $data,
+                'penempatan2' => $data2,
+                'industri' => $industri,
             ]);
         } else {
             $data = Industri::with('kota')

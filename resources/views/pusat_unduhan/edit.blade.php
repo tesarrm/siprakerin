@@ -8,8 +8,9 @@
     <link href="/assets/css/filepond-plugin-image-preview.css" rel="stylesheet" />
 
     <div>
-        <form action="{{ url('pusatunduhan') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ url('pusatunduhan/' . $data->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
             <div class="flex xl:flex-row flex-col gap-2.5">
                 <div class="panel xl:w-[600px] px-0 w-full xl:mt-0 mt-6">
                     <div class=" px-4">
@@ -17,7 +18,7 @@
                         <div class="grid grid-cols-1 gap-4">
                             <div>
                                 <label for="nama">Nama<span class="text-danger">*</span></label>
-                                <input required id="nama" type="text" name="nama" class="form-input w-full" 
+                                <input value="{{$data->nama}}" required id="nama" type="text" name="nama" class="form-input w-full" 
                                 placeholder="Isi Nama"/>
                                 @error('nama')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
@@ -102,5 +103,16 @@
                 });
             }
         });
+
+        // If there is an existing image, load it into FilePond
+        @if($data->file)
+        pond.addFile("{{ asset('storage/posts/' . $data->file) }}")
+            .then(file => {
+                console.log('Existing file loaded', file);
+            })
+            .catch(error => {
+                console.error('Failed to load existing file', error);
+            });
+        @endif
     </script>
 </x-layout.default>

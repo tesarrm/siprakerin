@@ -40,7 +40,7 @@ class PenempatanIndustriController extends Controller
                 $query->where('kelas.id', $kelas->id);
             })->with(['siswa.kelas', 'industri.kota'])->get();
         } else {
-            $penempatan = PenempatanIndustri::with(['siswa.kelas.jurusan', 'industri.kota'])
+            $penempatan = PenempatanIndustri::with(['siswa.kelas.jurusan', 'industri.kota', 'siswa.tahunAjaran'])
                 ->paginate(250);
         }
 

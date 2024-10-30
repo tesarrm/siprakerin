@@ -29,6 +29,8 @@ class IndustriFactory extends Factory
             'password' => Hash::make('password'), 
         ]);
 
+        $user->assignRole('industri');
+
         return [
             'nama' => $namaSiswa,
             'alamat' => $this->faker->name(),

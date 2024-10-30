@@ -47,10 +47,14 @@ class Siswa extends Model
     }
     public function kehadirans()
     {
-        return $this->hasMany(Attendance::class);
+        return $this->hasMany(Kehadiran::class);
     }
     public function tahunAjaran()
     {
         return $this->belongsTo(TahunAjaran::class);
+    }
+    public function izin()
+    {
+        return $this->hasOne(Izin::class);
     }
 }

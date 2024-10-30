@@ -48,6 +48,7 @@
                 @if(
                     auth()->user()->can('r_guru') || 
                     auth()->user()->can('r_kelas') || 
+                    auth()->user()->can('r_karyawan') || 
                     auth()->user()->can('r_siswa')
                    )
                 <h2
@@ -113,6 +114,25 @@
                                     <span
                                         class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
                                         Siswa</span>
+                                </div>
+                            </a>
+                        </li>
+                        @endcan
+
+                        @can('r_karyawan')
+                        <li class="nav-item">
+                            <a href="/karyawan" class="group">
+                                <div class="flex items-center">
+                                    <svg class="group-hover:!text-primary shrink-0" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle opacity="0.5" cx="15" cy="6" r="3" fill="currentColor"/>
+                                        <ellipse opacity="0.5" cx="16" cy="17" rx="5" ry="3" fill="currentColor"/>
+                                        <circle cx="9.00098" cy="6" r="4" fill="currentColor"/>
+                                        <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor"/>
+                                    </svg>
+                                    <span
+                                        class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                        Karyawan</span>
                                 </div>
                             </a>
                         </li>
@@ -219,9 +239,6 @@
                     <ul>
                         @can('r_pilihan_kota')
                             @if(auth()->user()->hasRole('siswa'))
-                            @php
-                                $user = auth()->user();
-                            @endphp
                             <li class="nav-item">
                                 <a href="{{ url('pilihankota-buat') }}" class="group">
                                     <div class="flex items-center">
@@ -241,6 +258,7 @@
                                 </a>
                             </li>
                             @endif
+                            @if(!auth()->user()->hasRole('wali_siswa'))
                             <li class="nav-item">
                                 <a href="{{ url('pilihankota') }}" class="group">
                                     <div class="flex items-center">
@@ -259,6 +277,7 @@
                                     </div>
                                 </a>
                             </li>
+                            @endif
                         @endcan
 
                         @can('r_penempatan_industri')
@@ -538,11 +557,56 @@
                             </a>
                         </li>
                         @endcan
+
+                        @if(
+                            auth()->user()->hasRole('admin') ||
+                            auth()->user()->hasRole('koordinator') 
+                        ) 
+                        @can('r_pusat_unduhan')
+                            {{-- pusat unduhan --}}
+                            <li class="nav-item">
+                                <a href="/pusatunduhan" class="group">
+                                    <div class="flex items-center">
+                                        <svg class="group-hover:!text-primary shrink-0" width="20" height="20"
+                                            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path opacity="0.5" d="M22 16.0003V15.0003C22 12.1718 21.9998 10.7581 21.1211 9.8794C20.2424 9.00072 18.8282 9.00072 15.9998 9.00072H7.99977C5.17135 9.00072 3.75713 9.00072 2.87845 9.8794C2 10.7579 2 12.1711 2 14.9981V15.0003V16.0003C2 18.8287 2 20.2429 2.87868 21.1216C3.75736 22.0003 5.17157 22.0003 8 22.0003H16H16C18.8284 22.0003 20.2426 22.0003 21.1213 21.1216C22 20.2429 22 18.8287 22 16.0003Z" 
+                                                fill="currentColor"/>
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C11.5858 1.25 11.25 1.58579 11.25 2L11.25 12.9726L9.56943 11.0119C9.29986 10.6974 8.82639 10.661 8.51189 10.9306C8.1974 11.2001 8.16098 11.6736 8.43054 11.9881L11.4305 15.4881C11.573 15.6543 11.781 15.75 12 15.75C12.2189 15.75 12.4269 15.6543 12.5694 15.4881L15.5694 11.9881C15.839 11.6736 15.8026 11.2001 15.4881 10.9306C15.1736 10.661 14.7001 10.6974 14.4305 11.0119L12.75 12.9726L12.75 2C12.75 1.58579 12.4142 1.25 12 1.25Z" 
+                                                fill="currentColor"/>
+                                        </svg>
+                                        <span
+                                            class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Pusat Unduhan</span>
+                                    </div>
+                                </a>
+                            </li>
+                            @endcan
+                        @else
+                            @can('r_pusat_unduhan')
+                            {{-- pusat unduhan --}}
+                            <li class="nav-item">
+                                <a href="/pusatunduhan-view" class="group">
+                                    <div class="flex items-center">
+                                        <svg class="group-hover:!text-primary shrink-0" width="20" height="20"
+                                            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path opacity="0.5" d="M22 16.0003V15.0003C22 12.1718 21.9998 10.7581 21.1211 9.8794C20.2424 9.00072 18.8282 9.00072 15.9998 9.00072H7.99977C5.17135 9.00072 3.75713 9.00072 2.87845 9.8794C2 10.7579 2 12.1711 2 14.9981V15.0003V16.0003C2 18.8287 2 20.2429 2.87868 21.1216C3.75736 22.0003 5.17157 22.0003 8 22.0003H16H16C18.8284 22.0003 20.2426 22.0003 21.1213 21.1216C22 20.2429 22 18.8287 22 16.0003Z" 
+                                                fill="currentColor"/>
+                                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 1.25C11.5858 1.25 11.25 1.58579 11.25 2L11.25 12.9726L9.56943 11.0119C9.29986 10.6974 8.82639 10.661 8.51189 10.9306C8.1974 11.2001 8.16098 11.6736 8.43054 11.9881L11.4305 15.4881C11.573 15.6543 11.781 15.75 12 15.75C12.2189 15.75 12.4269 15.6543 12.5694 15.4881L15.5694 11.9881C15.839 11.6736 15.8026 11.2001 15.4881 10.9306C15.1736 10.661 14.7001 10.6974 14.4305 11.0119L12.75 12.9726L12.75 2C12.75 1.58579 12.4142 1.25 12 1.25Z" 
+                                                fill="currentColor"/>
+                                        </svg>
+                                        <span
+                                            class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Pusat Unduhan</span>
+                                    </div>
+                                </a>
+                            </li>
+                            @endcan
+                        @endif
                     </ul>
                 </li>
 
+
                 @if(auth()->user()->can('r_pengaturan') || 
                     auth()->user()->can('r_user') ||
+                    auth()->user()->can('r_wali_siswa') ||
                     auth()->user()->can('r_guru_industri')
                    )
                 <h2
@@ -576,6 +640,47 @@
                             </a>
                         </li>
                         @endcan
+
+                        @if(auth()->user()->can('r_wali_siswa'))
+                        {{-- akun wali siswa --}}
+                        <li class="nav-item">
+                            <a href="/siswa-wali" class="group">
+                                <div class="flex items-center">
+                                    <svg class="group-hover:!text-primary shrink-0" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" 
+                                            fill="currentColor"/>
+                                        <path d="M16.807 19.0112C15.4398 19.9504 13.7841 20.5 12 20.5C10.2159 20.5 8.56023 19.9503 7.193 19.0111C6.58915 18.5963 6.33109 17.8062 6.68219 17.1632C7.41001 15.8302 8.90973 15 12 15C15.0903 15 16.59 15.8303 17.3178 17.1632C17.6689 17.8062 17.4108 18.5964 16.807 19.0112Z" 
+                                            fill="currentColor"/>
+                                        <path d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3432 6 9.00004 7.34315 9.00004 9C9.00004 10.6569 10.3432 12 12 12Z" 
+                                            fill="currentColor"/>
+                                    </svg>
+
+                                    <span
+                                        class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Akun Wali Siswa</span>
+                                </div>
+                            </a>
+                        </li>
+                        {{-- akun industri --}}
+                        <li class="nav-item">
+                            <a href="/industri-akun" class="group">
+                                <div class="flex items-center">
+                                    <svg class="group-hover:!text-primary shrink-0" width="20" height="20"
+                                        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path opacity="0.5" d="M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z" 
+                                            fill="currentColor"/>
+                                        <path d="M16.807 19.0112C15.4398 19.9504 13.7841 20.5 12 20.5C10.2159 20.5 8.56023 19.9503 7.193 19.0111C6.58915 18.5963 6.33109 17.8062 6.68219 17.1632C7.41001 15.8302 8.90973 15 12 15C15.0903 15 16.59 15.8303 17.3178 17.1632C17.6689 17.8062 17.4108 18.5964 16.807 19.0112Z" 
+                                            fill="currentColor"/>
+                                        <path d="M12 12C13.6569 12 15 10.6569 15 9C15 7.34315 13.6569 6 12 6C10.3432 6 9.00004 7.34315 9.00004 9C9.00004 10.6569 10.3432 12 12 12Z" 
+                                            fill="currentColor"/>
+                                    </svg>
+
+                                    <span
+                                        class="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">Akun Indusri</span>
+                                </div>
+                            </a>
+                        </li>
+                        @endif
 
                         @can('r_user')
                         {{-- user --}}

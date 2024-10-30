@@ -480,6 +480,23 @@ class AuthSeeder extends Seeder
             ['name' => 'd_wali_siswa'],
             ['name' => 'd_wali_siswa']
         );
+// pusat unduhan 
+        $permission_c_pusat_unduhan = Permission::updateOrCreate(
+            ['name' => 'c_pusat_unduhan'],
+            ['name' => 'c_pusat_unduhan']
+        );
+        $permission_r_pusat_unduhan = Permission::updateOrCreate(
+            ['name' => 'r_pusat_unduhan'],
+            ['name' => 'r_pusat_unduhan']
+        );
+        $permission_u_pusat_unduhan = Permission::updateOrCreate(
+            ['name' => 'u_pusat_unduhan'],
+            ['name' => 'u_pusat_unduhan']
+        );
+        $permission_d_pusat_unduhan = Permission::updateOrCreate(
+            ['name' => 'd_pusat_unduhan'],
+            ['name' => 'd_pusat_unduhan']
+        );
 
 // =================================================================
 // =================================================================
@@ -604,6 +621,11 @@ class AuthSeeder extends Seeder
         $role_admin->givePermissionTo($permission_u_karyawan);
         $role_admin->givePermissionTo($permission_d_karyawan);
 
+        $role_admin->givePermissionTo($permission_c_pusat_unduhan);
+        $role_admin->givePermissionTo($permission_r_pusat_unduhan);
+        $role_admin->givePermissionTo($permission_u_pusat_unduhan);
+        $role_admin->givePermissionTo($permission_d_pusat_unduhan);
+
 // koordinator 
         $role_koordinator->givePermissionTo($permission_r_pilihan_kota);
         $role_koordinator->givePermissionTo($permission_u_pilihan_kota);
@@ -638,6 +660,8 @@ class AuthSeeder extends Seeder
 
         $role_koordinator->givePermissionTo($permission_r_jurnal);
 
+        $role_koordinator->givePermissionTo($permission_r_pusat_unduhan);
+
 // pembimbing 
         $role_pembimbing->givePermissionTo($permission_c_hasil_monitoring);
         $role_pembimbing->givePermissionTo($permission_r_hasil_monitoring);
@@ -658,6 +682,8 @@ class AuthSeeder extends Seeder
 
         $role_pembimbing->givePermissionTo($permission_r_pkl);
 
+        $role_pembimbing->givePermissionTo($permission_r_pusat_unduhan);
+
 // siswa 
         $role_siswa->givePermissionTo($permission_c_pilihan_kota);
         $role_siswa->givePermissionTo($permission_r_pilihan_kota);
@@ -669,6 +695,8 @@ class AuthSeeder extends Seeder
         $role_siswa->givePermissionTo($permission_u_jurnal);
 
         $role_siswa->givePermissionTo($permission_r_hasil_monitoring);
+
+        $role_siswa->givePermissionTo($permission_r_pusat_unduhan);
 
 // wali kelas 
         $role_wali_kelas->givePermissionTo($permission_r_penempatan_industri);
@@ -683,12 +711,12 @@ class AuthSeeder extends Seeder
 
         $role_wali_kelas->givePermissionTo($permission_r_hasil_monitoring);
 
+        $role_wali_kelas->givePermissionTo($permission_r_pusat_unduhan);
+
 // guru
         $role_guru->givePermissionTo($permission_r_industri);
 
         $role_guru->givePermissionTo($permission_r_kuota_industri);
-
-        $role_guru->givePermissionTo($permission_r_pilihan_kota);
 
         $role_guru->givePermissionTo($permission_r_penempatan_industri);
 
@@ -706,12 +734,12 @@ class AuthSeeder extends Seeder
 
         $role_guru->givePermissionTo($permission_r_hasil_monitoring);
 
+        $role_guru->givePermissionTo($permission_r_pusat_unduhan);
+
 // karyawan 
         $role_karyawan->givePermissionTo($permission_r_industri);
 
         $role_karyawan->givePermissionTo($permission_r_kuota_industri);
-
-        $role_karyawan->givePermissionTo($permission_r_pilihan_kota);
 
         $role_karyawan->givePermissionTo($permission_r_penempatan_industri);
 
@@ -729,13 +757,13 @@ class AuthSeeder extends Seeder
 
         $role_karyawan->givePermissionTo($permission_r_hasil_monitoring);
 
+        $role_karyawan->givePermissionTo($permission_r_pusat_unduhan);
+
 // wali siswa 
 
         $role_wali_siswa->givePermissionTo($permission_r_industri);
 
         $role_wali_siswa->givePermissionTo($permission_r_kuota_industri);
-
-        $role_wali_siswa->givePermissionTo($permission_r_pilihan_kota);
 
         $role_wali_siswa->givePermissionTo($permission_r_penempatan_industri);
 
@@ -749,16 +777,14 @@ class AuthSeeder extends Seeder
 
         $role_wali_siswa->givePermissionTo($permission_r_nilai);
 
-        $role_wali_siswa->givePermissionTo($permission_r_jadwal_monitoring);
-
         $role_wali_siswa->givePermissionTo($permission_r_hasil_monitoring);
+
+        $role_wali_siswa->givePermissionTo($permission_r_pusat_unduhan);
 
 // industri 
         $role_industri->givePermissionTo($permission_r_industri);
 
         $role_industri->givePermissionTo($permission_r_kuota_industri);
-
-        $role_industri->givePermissionTo($permission_r_pilihan_kota);
 
         $role_industri->givePermissionTo($permission_r_penempatan_industri);
 
@@ -775,6 +801,8 @@ class AuthSeeder extends Seeder
         $role_industri->givePermissionTo($permission_r_jadwal_monitoring);
 
         $role_industri->givePermissionTo($permission_r_hasil_monitoring);
+
+        $role_industri->givePermissionTo($permission_r_pusat_unduhan);
 
 
 // assign role to user

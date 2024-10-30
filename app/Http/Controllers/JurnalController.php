@@ -9,6 +9,7 @@ use App\Models\Kehadiran;
 use App\Models\Kelas;
 use App\Models\PenempatanIndustri;
 use App\Models\Siswa;
+use App\Models\WaliSiswa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -133,6 +134,25 @@ class JurnalController extends Controller
                 'libur' => $libur,
                 'alpa' => $alpa,
                 'penempatan' => $penempatan,
+            ]);
+        } else if(auth()->user()->hasRole('wali_siswa')) {
+            $wali_siswa = WaliSiswa::where('user_id', auth()->user()->id)
+                ->with(['siswa.kelas.jurusan', 'siswa.izin', 'siswa.user'])
+                ->first();
+            $kelas = $wali_siswa->siswa->kelas;
+            $izin = $wali_siswa->siswa->izin->get() ?? [];
+            $dataKelas = Kelas::with('jurusan')->get();
+
+            // Filter jurnal berdasarkan kelas
+            $data = Jurnal::whereHas('siswa.kelas', function ($query) use ($kelas) {
+                $query->where('kelas.id', $kelas->id);
+            })->with('siswa.kelas')->get();
+
+            return view('jurnal.index', [
+                'dataIzin' => $izin,
+                'data' => $data,
+                'kelas' => $dataKelas,
+                'wali_siswa' => $wali_siswa,
             ]);
         } else {
             // $data = Jurnal::with(['siswa.kelas', 'siswa.penempatan.industri'])->get();

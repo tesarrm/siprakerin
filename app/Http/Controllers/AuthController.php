@@ -86,6 +86,10 @@ class AuthController extends Controller
     // Logout
     public function logout(Request $request)
     {
+        $user = Auth::user();
+        unset($user->penempatan);
+        unset($user->biodata);
+
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
