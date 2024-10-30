@@ -62,7 +62,7 @@ class IndustriController extends Controller
             'nama' => 'required|string',
             'alamat' => 'required|string',
             'kota_id' => 'required|string',
-            'tahun_ajaran' => 'required|string',
+            // 'tahun_ajaran' => 'required|string',
             'tanggal_awal' => 'nullable|string',
             'tanggal_akhir' => 'nullable|string',
 
@@ -75,20 +75,20 @@ class IndustriController extends Controller
 
         $create = collect($validatedData);
 
-        $industri = Industri::create($create->toArray());
 
         $create2 = collect($request)->except([
             'nama',
             'alamat',
             'kota_id',
-            'tahun_ajaran',
+            // 'tahun_ajaran',
             'tanggal_awal',
             'tanggal_akhir',
+
+            'nama_akun',
+            'email',
+            'password',
         ]);
 
-        $create2->put('industri_id', $industri->id);
-
-        LiburMingguan::create($create2->toArray());
 
         // ========
 
@@ -99,44 +99,18 @@ class IndustriController extends Controller
             'password' => Hash::make($validatedData['password']),
         ];
 
-        // kondisi cek gambar
-        if (!empty($validatedData['gambar'])) {
-            $tmp_file = TemporaryFile::where('folder', $validatedData['gambar'])->first();
-
-            if ($tmp_file) {
-                Storage::copy('posts/tmp/' . $tmp_file->folder . '/'.$tmp_file->file, 'posts/' . $tmp_file->folder . '/' . $tmp_file->file);
-
-                $userData['gambar'] = $tmp_file->folder . '/' . $tmp_file->file;
-
-                Storage::deleteDirectory('posts/tmp/' . $tmp_file->folder);
-                $tmp_file->delete();
-            }
-        } else {
-            $userData['gambar'] = null;
-        }
-
         // Create user
         $user = User::create($userData);
         
         // Assign role
         $user->assignRole('industri');
 
-        // create siswa 
-        $industriData = collect($validatedData)->except([
-            'gambar', 
-            'email', 
-            'password',
+        // create industri
+        $create->put('user_id', $user->id);
 
-            // 'nama',
-            // 'alamat',
-            // 'kota_id',
-            // 'tahun_ajaran',
-            // 'tanggal_awal',
-            // 'tanggal_akhir',
-            // 'nama_akun',
-            ])->toArray();
-        $industriData['user_id'] = $user->id;
-        Industri::create($industriData);
+        $industri = Industri::create($create->toArray());
+        $create2->put('industri_id', $industri->id);
+        LiburMingguan::create($create2->toArray());
 
         return redirect('industri')->with('status', 'Data berhasil ditambah!');
     }
@@ -156,7 +130,7 @@ class IndustriController extends Controller
     {
         $kota = Kota::get();
         $libur = LiburMingguan::where('industri_id', $industri->id)->first();
-        $industri = Industri::with('user')->findOrFail($industri->id);
+        $industri = Industri::with(['user'])->findOrFail($industri->id);
 
         return view('industri.edit', [
             'data' => $industri,
@@ -168,71 +142,71 @@ class IndustriController extends Controller
     /**
      * Update the specified resource in storage.
      */
-public function update($id, Request $request)
-{
-    // Ambil data industri berdasarkan id
-    $industri = Industri::with('user')->findOrFail($id);
-    $user = $industri->user;
+    public function update($id, Request $request)
+    {
+        // Ambil data industri berdasarkan id
+        $industri = Industri::with('user')->findOrFail($id);
+        $user = $industri->user;
 
-    // Validasi data industri
-    $validatedData = $request->validate([
-        'nama' => 'required|string',
-        'alamat' => 'required|string',
-        'kota_id' => 'required|string',
-        'tahun_ajaran' => 'required|string',
-        'tanggal_awal' => 'nullable|string',
-        'tanggal_akhir' => 'nullable|string',
+        // Validasi data industri
+        $validatedData = $request->validate([
+            'nama' => 'required|string',
+            'alamat' => 'required|string',
+            'kota_id' => 'required|string',
+            // 'tahun_ajaran' => 'required|string',
+            'tanggal_awal' => 'nullable|string',
+            'tanggal_akhir' => 'nullable|string',
 
-        'nama_akun' => 'required',
-        'no_telp' => 'required|string|unique:wali_siswas,no_telp',
-    ]);
+            'nama_akun' => 'required',
+            'no_telp' => 'required|string|unique:wali_siswas,no_telp',
+        ]);
 
-    $industriData = collect($validatedData)->except(['nama_akun'])->toArray();
+        $industriData = collect($validatedData)->except(['nama_akun'])->toArray();
 
-    // Update data industri
-    $update = collect($industriData);
-    $industri->update($update->toArray());
+        // Update data industri
+        $update = collect($industriData);
+        $industri->update($update->toArray());
 
-    // hapus libur mingguan lama
-    $liburI = LiburMingguan::where('industri_id', $industri->id)->get();
+        // hapus libur mingguan lama
+        $liburI = LiburMingguan::where('industri_id', $industri->id)->get();
 
-    foreach ($liburI as $data) {
-        $data->delete();
+        foreach ($liburI as $data) {
+            $data->delete();
+        }
+
+        // Ambil data libur mingguan yang berhubungan dengan industri
+        $libur = LiburMingguan::where('industri_id', $industri->id)->first();
+
+        // Ambil data request untuk hari libur (kecuali field industri yang sudah diupdate)
+        $update2 = collect($request)->except([
+            'nama',
+            'alamat',
+            'kota_id',
+            // 'tahun_ajaran',
+            'tanggal_awal',
+            'tanggal_akhir',
+
+            'nama_akun',
+            'no_telp',
+        ]);
+
+        // Tambahkan industri_id ke data libur mingguan
+        $update2->put('industri_id', $industri->id);
+
+        // Cek apakah data libur sudah ada atau belum, jika ada update, jika tidak create
+        if ($libur) {
+            $libur->update($update2->toArray());
+        } else {
+            LiburMingguan::create($update2->toArray());
+        }
+
+        $user->name = $validatedData['nama_akun'];
+        $user->save();
+
+
+        // Redirect dengan pesan status
+        return redirect('industri')->with('status', 'Data berhasil diedit!');
     }
-
-    // Ambil data libur mingguan yang berhubungan dengan industri
-    $libur = LiburMingguan::where('industri_id', $industri->id)->first();
-
-    // Ambil data request untuk hari libur (kecuali field industri yang sudah diupdate)
-    $update2 = collect($request)->except([
-        'nama',
-        'alamat',
-        'kota_id',
-        'tahun_ajaran',
-        'tanggal_awal',
-        'tanggal_akhir',
-
-        'nama_akun',
-        'no_telp',
-    ]);
-
-    // Tambahkan industri_id ke data libur mingguan
-    $update2->put('industri_id', $industri->id);
-
-    // Cek apakah data libur sudah ada atau belum, jika ada update, jika tidak create
-    if ($libur) {
-        $libur->update($update2->toArray());
-    } else {
-        LiburMingguan::create($update2->toArray());
-    }
-
-    $user->name = $validatedData['nama_akun'];
-    $user->save();
-
-
-    // Redirect dengan pesan status
-    return redirect('industri')->with('status', 'Data berhasil diedit!');
-}
 
 
     /**
@@ -296,5 +270,20 @@ public function update($id, Request $request)
         } else {
             return response()->json(['success' => false]);
         }
+    }
+
+    public function deleteMultiple(Request $request)
+    {
+        $ids = $request->input('ids');
+
+        // Ambil semua data guru berdasarkan ID yang dipilih
+        $data = Industri::whereIn('id', $ids)->get();
+
+        foreach ($data as $d) {
+            // Hapus datad 
+            $d->delete();
+        }
+
+        return response()->json(['success' => true]);
     }
 }

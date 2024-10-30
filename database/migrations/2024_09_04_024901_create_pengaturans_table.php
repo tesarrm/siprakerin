@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('pengaturans', function (Blueprint $table) {
             $table->id();
-            $table->string('tahun_ajaran');
+            $table->foreignId('tahun_ajaran_id')->constrained('tahun_ajarans')->onDelete('cascade');
             $table->string('penilaian_2');
         });
     }

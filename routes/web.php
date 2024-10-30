@@ -28,7 +28,9 @@ use App\Http\Controllers\PilihanKotaController;
 use App\Http\Controllers\PrakerinController;
 use App\Http\Controllers\PusatUnduhanController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\TahunAjaranController;
 use App\Http\Controllers\UserController;
+use App\Models\TahunAjaran;
 
 Route::get('/', [DashboardController::class, 'index']);
 Route::view('/tabel', 'tabel');
@@ -122,6 +124,7 @@ Route::post('industri-akun/{id}/reset', [IndustriController::class, 'resetPasswo
 Route::post('industri/{id}/nonaktif', [IndustriController::class, 'nonaktif']);
 Route::post('industri/{id}/aktif', [IndustriController::class, 'aktif']);
 Route::get('industri-akun', [IndustriController::class, 'indexAkun']);
+Route::post('industri/delete-multiple', [IndustriController::class, 'deleteMultiple']);
 
 Route::resource('kuotaindustri', KuotaIndustriController::class);
 Route::post('kuota-industri', [KuotaIndustriController::class, 'storeOrUpdate'])->name('kuota-industri.storeOrUpdate');
@@ -176,3 +179,5 @@ Route::get('pusat-unduhan', [DashboardController::class, 'indexPusatUnduhan']);
 Route::resource('pusatunduhan', PusatUnduhanController::class);
 Route::post('/tmp-upload-pusatunduhan', [PusatUnduhanController::class, 'tmpUpload']);
 Route::delete('/tmp-delete-pusatunduhan', [PusatUnduhanController::class, 'tmpDelete']);
+
+Route::resource('tahunajaran', TahunAjaranController::class);

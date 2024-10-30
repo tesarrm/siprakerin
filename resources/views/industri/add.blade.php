@@ -16,13 +16,13 @@
                     <div class="px-4 mb-6">
                         <div class="text-lg font-semibold mb-4">Data Industri</div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
+                            {{-- <div>
                                 <label for="tahun_ajaran">Tahun Ajaran<span class="text-danger">*</span></label>
                                 <input value="{{ $pengaturan->tahun_ajaran }} "required id="tahun_ajaran" type="text" name="tahun_ajaran" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                 @error('tahun_ajaran')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
                             <div>
                                 <label for="nama">Nama<span class="text-danger">*</span></label>
                                 <input required id="nama" type="text" name="nama" class="form-input w-full" 
@@ -118,7 +118,7 @@
                                 @enderror
                             </div>
                             <div>
-                                <label for="email">Email></label>
+                                <label for="email">Email</label>
                                 <input required id="email" type="text" name="email" class="form-input w-full"
                                     placeholder="Isi Email" />
                                 @error('email')

@@ -26,13 +26,13 @@
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            <div>
+                            {{-- <div>
                                 <label for="tahun_ajaran">Tahun Ajaran<span class="text-danger">*</span></label>
                                 <input value="{{ $data->tahun_ajaran }} "required id="tahun_ajaran" type="text" name="tahun_ajaran" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
                                 @error('tahun_ajaran')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
                             <div>
                                 <label for="jurusan_id">Jurusan<span class="text-danger">*</span></label>
                                 <select required id="jurusan_id" name="jurusan_id" class="selectize w-full">

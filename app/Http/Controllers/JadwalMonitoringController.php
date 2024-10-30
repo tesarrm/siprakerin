@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Guru;
 use App\Models\Industri;
 use App\Models\JadwalMonitoring;
+use App\Models\Pengaturan;
 use Illuminate\Http\Request;
 
 class JadwalMonitoringController extends Controller
@@ -25,7 +26,7 @@ class JadwalMonitoringController extends Controller
      */
     public function index()
     {
-        $data = JadwalMonitoring::with(['guru', 'industri'])
+        $data = JadwalMonitoring::with(['guru', 'industri', 'tahunAjaran'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -53,10 +54,12 @@ class JadwalMonitoringController extends Controller
         $industri = Industri::with('gurus.user')
             ->whereHas('penempatanIndustri')
             ->get();
+        $pengaturan = Pengaturan::first();
 
         return view('jadwal_monitoring.add', [
             'guru' => $guru,
             'industri' => $industri,
+            'pengaturan' => $pengaturan,
         ]);
     }
 
@@ -67,6 +70,7 @@ class JadwalMonitoringController extends Controller
             'guru' => 'required',
             'industri_id' => 'required',
             'tanggal' => 'required',
+            'tahun_ajaran_id' => 'required',
         ]);
 
         // Cari guru berdasarkan nama
@@ -103,7 +107,7 @@ class JadwalMonitoringController extends Controller
         $industri = Industri::with('gurus.user')
             ->whereHas('penempatanIndustri')
             ->get();
-        $jadwal_monitoring = JadwalMonitoring::with('guru.user')
+        $jadwal_monitoring = JadwalMonitoring::with(['guru.user', 'tahunAjaran'])
             ->findOrFail($id);
         
         return view('jadwal_monitoring.edit', [

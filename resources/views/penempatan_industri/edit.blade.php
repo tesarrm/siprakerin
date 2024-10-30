@@ -384,7 +384,6 @@
         /*************
          * datatable input 
          */
-
         document.addEventListener("alpine:init", () => {
             Alpine.data("form", () => ({
                 getMatchingKota(pilihankota) {
@@ -405,14 +404,10 @@
                     jenis_kelamin: siswa.jenis_kelamin,
                     kelas: siswa.kelas.nama + " " + siswa.kelas.jurusan.singkatan + " " + siswa.kelas.klasifikasi,
                     jurusan: siswa.kelas.jurusan.singkatan + " (" + siswa.kelas.jurusan.nama + ")",
-                    tahun_ajaran: (() => {
-                        let penempatanSiswa = @json($penempatan).find(penempatan => penempatan.siswa_id == siswa.id);
-                        return penempatanSiswa ? penempatanSiswa.tahun_ajaran : "";
-                    })()
+                    tahun_ajaran: siswa.tahun_ajaran.nama,
                 })),
                 siswaData: @json($siswa),
                 kuota: @json($output),
-                pengaturan: @json($pengaturan),
                 jurusanKuota: {},
 
                 initialize() {
@@ -523,7 +518,8 @@
                             this.tableData[index].jenis_kelamin = selectedSiswa.jenis_kelamin;
                             this.tableData[index].kelas = selectedSiswa.kelas.nama + " " + selectedSiswa.kelas.jurusan.singkatan + " " + selectedSiswa.kelas.klasifikasi;
                             this.tableData[index].jurusan = selectedSiswa.kelas.jurusan.singkatan + " (" + selectedSiswa.kelas.jurusan.nama + ")";
-                            this.tableData[index].tahun_ajaran = this.pengaturan.tahun_ajaran;
+                            // this.tableData[index].tahun_ajaran = this.pengaturan.tahun_ajaran;
+                            this.tableData[index].tahun_ajaran = selectedSiswa.tahun_ajaran.nama;
 
                             // Kurangi kuota
                             this.jurusanKuota[jenisKelamin][jurusanId]--;

@@ -38,12 +38,12 @@ class KelasController extends Controller
     {
         $jurusan = Jurusan::get();
         $guru = Guru::with('user')->get();
-        $pengaturan = Pengaturan::first();
+        // $pengaturan = Pengaturan::first();
 
         return view('kelas.add', [
             'jurusan' => $jurusan,
             'guru' => $guru,
-            'pengaturan' => $pengaturan
+            // 'pengaturan' => $pengaturan
         ]);
     }
 
@@ -51,7 +51,7 @@ class KelasController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string',
-            'tahun_ajaran' => 'required|string',
+            // 'tahun_ajaran' => 'required|string',
             'jurusan_id' => 'required',
             'klasifikasi' => 'required|string',
             'guru_id' => 'required',
@@ -74,13 +74,13 @@ class KelasController extends Controller
         $kelas = Kelas::findOrFail($id);
         $jurusan = Jurusan::get();
         $guru = Guru::with('user')->get();
-        $pengaturan = Pengaturan::first();
+        // $pengaturan = Pengaturan::first();
 
         return view('kelas.edit', [
             'data' => $kelas,
             'jurusan' => $jurusan,
             'guru' => $guru,
-            'pengaturan' => $pengaturan
+            // 'pengaturan' => $pengaturan
         ]);
     }
 
@@ -90,11 +90,12 @@ class KelasController extends Controller
 
         $validatedData = $request->validate([
             'nama' => 'required|string',
-            'tahun_ajaran' => 'required|string',
+            // 'tahun_ajaran' => 'required|string',
             'jurusan_id' => 'required',
             'klasifikasi' => 'required|string',
             'guru_id' => 'required',
         ]);
+
 
         $kelas = Kelas::findOrFail($id);
         $oldGuru = Guru::with('user')->findOrFail($kelas->guru_id);

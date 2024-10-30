@@ -14,7 +14,6 @@ class PenempatanIndustri extends Model
         'industri_id',
         'siswa_id',
         'pilihan',
-        'tahun_ajaran'
     ];
 
     public function industri()

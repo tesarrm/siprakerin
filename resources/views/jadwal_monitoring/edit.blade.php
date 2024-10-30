@@ -18,6 +18,17 @@
                         <div class="text-lg font-semibold mb-4">Data Jadwal Monitoring</div>
                         <div class="grid grid-cols-1 gap-4">
                             <div>
+                                <label for="tahun_ajaran">Tahun Ajaran<span class="text-danger">*</span></label>
+                                <input 
+                                    value="{{$data->tahunAjaran->nama}}" 
+                                    id="tahun_ajaran" 
+                                    type="text" 
+                                    class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" 
+                                    readonly
+                                    placeholder="Isi Tahun Ajaran" 
+                                />
+                            </div>
+                            <div>
                                 <label for="industri_id">Industri<span class="text-danger">*</span></label>
                                 <select required id="industri_id" name="industri_id" class="selectize w-full" x-model="selectedIndustri" @change="updateGuru">
                                     <option value="">Pilih Industri</option>

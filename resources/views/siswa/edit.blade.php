@@ -31,6 +31,17 @@
                         <div class="text-lg font-semibold">Informasi Umum</div>
                         <div class="grid grid-cols-1 mt-4 mb-6 sm:grid-cols-2 gap-4">
                             <div>
+                                <label for="tahun_ajaran">Tahun Ajaran<span class="text-danger">*</span></label>
+                                <input 
+                                    value="{{$data->tahunAjaran->nama}}" 
+                                    id="tahun_ajaran" 
+                                    type="text" 
+                                    class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" 
+                                    readonly
+                                    placeholder="Isi Tahun Ajaran" 
+                                />
+                            </div>
+                            <div>
                                 <label for="nis">NIS<span class="text-danger">*</span></label>
                                 <input value="{{ $data->nis }}" required id="nis" type="text" name="nis" class="form-input w-full" 
                                     placeholder="Isi NIS" />

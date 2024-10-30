@@ -13,7 +13,7 @@ class Industri extends Model
         'nama',
         'alamat',
         'kota_id',
-        'tahun_ajaran',
+        // 'tahun_ajaran',
         'tanggal_awal',
         'tanggal_akhir',
 

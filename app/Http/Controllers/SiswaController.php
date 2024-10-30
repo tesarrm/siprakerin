@@ -34,14 +34,14 @@ class SiswaController extends Controller
 
     public function index()
     {
-        $data = $this->model->with(['kelas', 'user'])
+        $pengaturan = Pengaturan::first();
+        $data = Siswa::with(['kelas', 'user', 'tahunAjaran'])
             ->where('aktif', 1)
-            // ->orderBy('nama_lengkap', 'asc')
+            ->where('tahun_ajaran_id', $pengaturan->tahun_ajaran_id)
             ->join('users', 'siswas.user_id', '=', 'users.id') // Menyambungkan dengan tabel users
             ->orderBy('users.name', 'asc') // Mengurutkan berdasarkan nama di tabel users
             ->select('siswas.*') // Memilih kolom dari tabel gurus agar tidak terjadi duplikasi
             ->paginate(250);
-        $pengaturan = Pengaturan::first();
         $kelas = Kelas::with('jurusan')->get();
 
         return view('siswa.index', [
@@ -57,9 +57,11 @@ class SiswaController extends Controller
     public function create()
     {
         $kelas = Kelas::with('jurusan.bidangKeahlian')->get();
+        $pengaturan = Pengaturan::first();
 
         return view('siswa.add', [
             'kelas' => $kelas,
+            'pengaturan' => $pengaturan,
         ]);
     }
 
@@ -82,6 +84,7 @@ class SiswaController extends Controller
             'agama' => 'nullable|string',
             'alamat' => 'nullable|string',
             'no_telp' => 'nullable|string',
+            'tahun_ajaran_id' => 'required',
 
             'email' => 'required|string|unique:users,email|max:255',
             'password' => 'required',
@@ -175,7 +178,7 @@ class SiswaController extends Controller
     {
         $kelas = Kelas::get();
 
-        $siswa = Siswa::with('walisiswa')->findOrFail($siswa->id);
+        $siswa = Siswa::with(['walisiswa', 'tahunAjaran'])->findOrFail($siswa->id);
 
         return view('siswa.edit', [
             'data' => $siswa,

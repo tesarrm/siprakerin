@@ -128,13 +128,20 @@ class PenempatanIndustriController extends Controller
     public function edit($industri_id)
     {
         $industri = Industri::with('kota')->findOrFail($industri_id);
-        $siswa = Siswa::with(['kelas.jurusan'])->get();
-        $pengaturan = Pengaturan::first();
+        $siswa = Siswa::with(['kelas.jurusan', 'tahunAjaran'])->get();
 
         $kota_id = $industri->kota->id;
 
         // // Filter siswa berdasarkan pilihan_kotas yang kota_id_1, kota_id_2, atau kota_id_3 cocok dengan kota_id industri
-        $siswa = Siswa::with(['user', 'kelas.jurusan', 'pilihankota.kota1', 'pilihankota.kota2', 'pilihankota.kota3', 'penempatan'])
+        $siswa = Siswa::with([
+            'user', 
+            'kelas.jurusan', 
+            'pilihankota.kota1', 
+            'pilihankota.kota2', 
+            'pilihankota.kota3', 
+            'penempatan',
+            'tahunAjaran'
+            ])
             ->whereHas('pilihankota', function ($query) use ($kota_id) {
                 $query->where('kota_id_1', $kota_id)
                     ->orWhere('kota_id_2', $kota_id)
@@ -147,17 +154,19 @@ class PenempatanIndustriController extends Controller
         $jurusan = Jurusan::get();
         $penempatan = PenempatanIndustri::where('industri_id', $industri_id)->get();
         $siswaIds = $penempatan->pluck('siswa_id')->toArray();
-        // $siswa = Siswa::whereHas('pilihanKota')
-        //     ->whereIn('id', $siswaIds) 
-        //     ->with('kelas.jurusan')
-        //     ->get();
         $siswaTerfilter = Siswa::whereIn('id', $siswaIds)
-                            ->with(['penempatan', 'kelas.jurusan', 'pilihankota.kota1', 'pilihankota.kota2', 'pilihankota.kota3'])
+                            ->with([
+                                'penempatan', 
+                                'kelas.jurusan', 
+                                'pilihankota.kota1', 
+                                'pilihankota.kota2', 
+                                'pilihankota.kota3',
+                                'tahunAjaran',
+                                ])
                             ->get();
 
         return view('penempatan_industri.edit', compact([
             'penempatan', 
-            'pengaturan',
             'industri', 
             'siswa', 
             'siswaTerfilter', 
@@ -188,7 +197,7 @@ class PenempatanIndustriController extends Controller
             'industri_id' => 'required|string',
             'data.*.id_siswa' => 'required|string',
             'pilihan' => 'nullable|string',
-            'tahun_ajaran' => 'nullable|string',
+            // 'tahun_ajaran' => 'nullable|string',
         ]);
 
         if ($validated->fails()) {
@@ -209,7 +218,7 @@ class PenempatanIndustriController extends Controller
                         'industri_id' => $industri_id,
                         'siswa_id' => $data['id_siswa'],
                         'pilihan' => $request->pilihan,
-                        'tahun_ajaran' => $request->tahun_ajaran
+                        // 'tahun_ajaran' => $request->tahun_ajaran
                     ],
                 );
             }

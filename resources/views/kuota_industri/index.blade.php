@@ -27,7 +27,7 @@
                 'nama' => $d->nama,
                 'alamat' => $d->alamat,
                 'kota' => $d->kota->nama,
-                'tahun_ajaran' => $d->tahun_ajaran,
+                // 'tahun_ajaran' => $d->tahun_ajaran,
             ];
 
             // Hitung total kuota laki-laki dan perempuan
@@ -47,23 +47,23 @@
             //     $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
             // }
 
-    // Tentukan kuota awal untuk semua jurusan (0 jika tidak ada data)
-    foreach ($jurusan as $jrs) {
-        $row["L-{$jrs->singkatan}"] = 0;
-    }
+            // Tentukan kuota awal untuk semua jurusan (0 jika tidak ada data)
+            foreach ($jurusan as $jrs) {
+                $row["L-{$jrs->singkatan}"] = 0;
+            }
 
-    foreach ($jurusan as $jrs) {
-        $row["P-{$jrs->singkatan}"] = 0;
-        $row["L-{$jrs->singkatan}"] = 0;
-    }
+            foreach ($jurusan as $jrs) {
+                $row["P-{$jrs->singkatan}"] = 0;
+                $row["L-{$jrs->singkatan}"] = 0;
+            }
 
-    // Isi kuota berdasarkan data yang ada
-    foreach ($d->kuotaIndustri as $kuota) {
-        $jurusanSingkatan = $kuota->jurusan->singkatan;
-        $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
-        $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
-        $row[$formattedKey] = $kuota->kuota;
-    }
+            // Isi kuota berdasarkan data yang ada
+            foreach ($d->kuotaIndustri as $kuota) {
+                $jurusanSingkatan = $kuota->jurusan->singkatan;
+                $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
+                $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
+                $row[$formattedKey] = $kuota->kuota;
+            }
 
             $row['Aksi'] = $d->id;
 
@@ -80,7 +80,7 @@
                             <th>Nama</th>
                             <th>Alamat</th>
                             <th>Kota</th>
-                            <th>Tahun Ajaran</th>
+                            <th class="hidden">Tahun Ajaran</th>
                             @foreach ($jurusanLakiLaki as $jurusan)
                                 <th>{{ $jurusan }}</th>
                             @endforeach
@@ -93,7 +93,7 @@
                             <th></th>
                             <th></th>
                             <th></th>
-                            <th></th>
+                            <th class="hidden"></th>
                             <th colspan="{{ $jurusanLakiLaki->count() }}" class="!text-center border-b border-r">Laki-Laki</th>
                             <th colspan="{{ $jurusanPerempuan->count() }}" class="!text-center border-b">Perempuan</th>
                             <th></th>
@@ -228,7 +228,7 @@
                     function generateSequence(start, count) {
                         return Array.from({ length: count }, (_, i) => start + i);
                     }
-                    const countArr = generateSequence(4, {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}});
+                    const countArr = generateSequence(3, {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}});
 
                     this.datatable = new simpleDatatables.DataTable('#myTable', {
          
@@ -242,7 +242,7 @@
                                 select: 0,
                                 sortable: false,
                                 render: function(data, cell, row) {
-                                    const select = 4 + {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}};
+                                    const select = 3 + {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}};
                                     const id = row.cells[select].data; 
                                     return `<a href="/kuotaindustri/${id}/edit" class="hover:underline">${ data }</a>`;
                                 }
@@ -280,7 +280,7 @@
                                 }
                             },
                             {
-                                select: 4 + {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}},
+                                select: 3 + {{$jurusanLakiLaki->count() + $jurusanPerempuan->count()}},
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">

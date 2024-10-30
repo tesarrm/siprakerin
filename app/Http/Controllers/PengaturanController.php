@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pengaturan;
+use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 
 class PengaturanController extends Controller
@@ -16,31 +17,22 @@ class PengaturanController extends Controller
     public function index()
     {
         $data= $this->pModel->first();
+        $tahun_ajaran = TahunAjaran::get();
         
         return view('pengaturan.index', [
-            'data' => $data
+            'data' => $data,
+            'tahun_ajaran' => $tahun_ajaran,
         ]);
     }
-
-    // public function store(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'tahun_ajaran' => 'required|string',
-    //     ]);
-
-    //     $data = $this->pModel->first();
-    //     $update = collect($validatedData);
-    //     $data->update($update->toArray());
-    // }
 
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'tahun_ajaran' => 'required|string',
+            'tahun_ajaran_id' => 'required',
             'penilaian_2' => 'nullable',
         ]);
 
-        $data = $this->pModel->first();
+        $data = Pengaturan::first();
 
         if ($data) {
             $data->update($validatedData);

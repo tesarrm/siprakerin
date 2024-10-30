@@ -293,7 +293,7 @@
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                 'agama' => $d->agama ?? '-',
                 'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
-                'tahun_ajaran' => $pengaturan->tahun_ajaran ?? '-',
+                'tahun_ajaran' => $d->tahunAjaran->nama ?? '-',
                 'gambar' => $d->user->gambar, 
                 'action' => $d->id ?? '-', 
 

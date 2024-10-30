@@ -123,7 +123,7 @@
                 'nama' => $d->nama ?? '-',
                 'alamat' => $d->alamat ?? '-',
                 'kota' => $d->kota->nama ?? '-',
-                'tahun_ajaran' => $d->tahun_ajaran ?? '-',
+                // 'tahun_ajaran' => $d->tahun_ajaran ?? '-',
                 'action' => $d->id ?? '-',
             ];
         }
@@ -161,7 +161,7 @@
                                 "Nama",
                                 "Alamat",
                                 "Kota",
-                                "Tahun Ajaran",
+                                // "Tahun Ajaran",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -201,7 +201,7 @@
                                 }
                             },
                             {
-                                select: 5,
+                                select: 4,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const rowId = `row-${data}`; // Buat unique row ID berdasarkan data
@@ -314,7 +314,7 @@
                             customClass: 'sweet-alerts'
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                fetch('/guru/delete-multiple', {
+                                fetch('/industri/delete-multiple', {
                                     method: 'POST',
                                     headers: {
                                         'Content-Type': 'application/json',

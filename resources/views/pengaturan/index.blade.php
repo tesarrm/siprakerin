@@ -8,8 +8,20 @@
                     <div class=" px-4">
                         <div class="flex justify-between lg:flex-row flex-col">
                             <div class="lg:w-1/2 w-full ltr:lg:mr-6 rtl:lg:ml-6 mb-6">
-                                <div class="text-lg font-semibold">Pengaturan Umum</div>
-                                <div class="mt-4 flex items-center">
+                                <div class="text-lg font-semibold mb-6">Pengaturan Umum</div>
+                                <div>
+                                    <label for="tahun_ajaran_id">Tahun Ajaran<span class="text-danger">*</span></label>
+                                    <select required id="tahun_ajaran_id" name="tahun_ajaran_id" class="form-select w-full">
+                                        <option value="">Pilih Tahun Ajaran</option>
+                                        @foreach($tahun_ajaran as $item)
+                                            <option value="{{ $item->id }}" @selected($data->tahun_ajaran_id == $item->id)>{{ $item->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('tahun_ajaran_id')
+                                        <div class="mt-2 text-danger">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                                {{-- <div class="mt-4 flex items-center">
                                     <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Tahun Ajaran<span class="text-danger">*</span></label>
                                     <div class="flex-1">
                                         <input value="{{ $data->tahun_ajaran }}" required id="reciever-name" type="text" name="tahun_ajaran" class="form-input w-full" 
@@ -18,7 +30,7 @@
                                             <div class="mt-2 text-danger">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
                                 {{-- <div class="mt-4 flex items-center">
                                     <label for="reciever-name" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Penilaian Ke-2<span class="text-danger">*</span></label>
                                     <div class="flex-1">

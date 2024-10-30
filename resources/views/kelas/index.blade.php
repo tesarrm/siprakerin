@@ -83,7 +83,7 @@
                 'jurusan' => $d->jurusan->nama ?? '-',
                 // 'bidang_keahlian' => $d->jurusan->bidangKeahlian->nama ?? '-',
                 'guru' => $d->guru->user->name?? '-',
-                'tahun_ajaran' => $d->tahun_ajaran ?? '-',
+                // 'tahun_ajaran' => $d->tahun_ajaran ?? '-',
                 'action' => $d->id ?? '-', 
             ];
         }
@@ -139,7 +139,7 @@
                                 "Jurusan",
                                 // "Bidang Keahlian",
                                 "Wali Kelas",
-                                "Tahun Ajaran",
+                                // "Tahun Ajaran",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -195,7 +195,7 @@
                                 }
                             },
                             {
-                                select: 6,
+                                select: 5,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const rowId = `row-${data}`; // Buat unique row ID berdasarkan data

@@ -16,6 +16,8 @@ tujuan_pembelajarans
 nilais
 jadwal_monitorings
 monitorings
+wali_siswas
+karyawans
 
 ========
 
@@ -79,3 +81,41 @@ jadwal_monitorings
 hasil_monitorings 
     monitoring_id
     siswa_id
+
+wali_siswas
+    user_id 
+    siswa_id
+
+karyawans
+    siswa_id
+
+============
+
+gurus
+bidang_keahlians
+jurusans
+kelas
+-siswas
+kotas
+industris
+kuota_industris
+-siswa-pilihan_kotas
+-siswa-penempatan_industris
+-siswa-jurnals
+-siswa-kehadirans
+-siswa-pelanggarans
+capaian_pembelajarans
+tujuan_pembelajarans
+-siswa-nilais
+-jadwal_monitorings
+-jadwal_monitoring-monitorings
+-siswa-wali_siswas
+karyawans
+
+tahun_ajaran
+    industri
+    kelas
+    penempatan
+    kuota industri
+    nilai
+    pkl

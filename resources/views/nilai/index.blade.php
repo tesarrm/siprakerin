@@ -61,7 +61,7 @@
                     'nama' => $d->nama ?? '-',
                     'alamat' => $d->alamat ?? '-',
                     'kota' => $d->kota->nama ?? '-',
-                    'tahun_ajaran' => $d->tahun_ajaran ?? '-',
+                    // 'tahun_ajaran' => $d->tahun_ajaran ?? '-',
                     'total_siswa' => $d->penempatan_industri_count?? '-',
                     'action' => $d->id ?? '-',
                 ];
@@ -103,7 +103,7 @@
                                     "Nama Industri",
                                     "Alamat",
                                     "Kota",
-                                    "Tahun Ajaran",
+                                    // "Tahun Ajaran",
                                     "Total Siswa",
                                     "Aksi",
                                 ],
@@ -129,7 +129,7 @@
                                     }
                                 },
                                 {
-                                    select: 4,
+                                    select: 3,
                                     render: function(data, cell, row) {
                                         if(data != '-'){
                                             return `
@@ -145,7 +145,7 @@
                                     }
                                 },
                                 {
-                                    select: 5,
+                                    select: 4,
                                     sortable: false,
                                     render: function(data, cell, row) {
                                         return `<div class="flex gap-4 items-center">

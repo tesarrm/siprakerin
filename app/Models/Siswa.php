@@ -12,6 +12,7 @@ class Siswa extends Model
     protected $fillable = [
         'user_id',
         'kelas_id',
+        'tahun_ajaran_id',
         'aktif',
         'pas_foto',
         'nis',
@@ -47,5 +48,9 @@ class Siswa extends Model
     public function kehadirans()
     {
         return $this->hasMany(Attendance::class);
+    }
+    public function tahunAjaran()
+    {
+        return $this->belongsTo(TahunAjaran::class);
     }
 }

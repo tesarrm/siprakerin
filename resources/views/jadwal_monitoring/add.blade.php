@@ -21,6 +21,18 @@
                         <div class="grid grid-cols-1 gap-4">
                             <!-- Industri Dropdown -->
                             <div>
+                                <label for="tahun_ajaran">Tahun Ajaran<span class="text-danger">*</span></label>
+                                <input type="text" name="tahun_ajaran_id" class="hidden" value="{{$pengaturan->tahunAjaran->id}}">
+                                <input 
+                                    value="{{$pengaturan->tahunAjaran->nama}}" 
+                                    id="tahun_ajaran" 
+                                    type="text" 
+                                    class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" 
+                                    readonly
+                                    placeholder="Isi Tahun Ajaran" 
+                                />
+                            </div>
+                            <div>
                                 <label for="industri_id">Industri<span class="text-danger">*</span></label>
                                 <select 
                                     required 

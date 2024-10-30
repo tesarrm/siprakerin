@@ -18,7 +18,6 @@ return new class extends Migration
 
             $table->boolean('aktif')->default(1);
             $table->string('nama');
-            $table->string('tahun_ajaran');
             $table->string('klasifikasi');
             $table->timestamps();
         });
