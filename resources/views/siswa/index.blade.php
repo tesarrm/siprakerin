@@ -851,7 +851,7 @@
 
                 filterByKelas() {
                     if(this.selectedKelas){
-                        fetch(`{{ secure_url(route('siswa.filter')) }}`, { 
+                        fetch(`{{ url('siswa/filter')) }}`, { 
                             method: 'POST',
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
