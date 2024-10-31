@@ -23,6 +23,7 @@ class Siswa extends Model
         'agama',
         'alamat',
         'no_telp',
+        'no_hp',
     ];
 
     public function kelas()

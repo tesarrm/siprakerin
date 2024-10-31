@@ -155,7 +155,7 @@
                             <li>
                                 <a href="{{ $data->url(1) }}"
                                 class="flex justify-center font-semibold px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
-                                    1
+                                    250
                                 </a>
                             </li>
                             @if ($start > 2)
@@ -172,7 +172,7 @@
                                             'bg-primary text-white dark:text-white-light dark:bg-primary' : 
                                             'bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary'
                                         }}">
-                                    {{ $i }}
+                                    {{ $i * 250 }}
                                 </a>
                             </li>
                         @endfor
@@ -192,7 +192,7 @@
                             <li>
                                 <a href="{{ $data->url($data->lastPage()) }}"
                                 class="flex justify-center font-semibold px-3.5 py-2 transition bg-white-light text-dark hover:text-white hover:bg-primary dark:text-white-light dark:bg-[#191e3a] dark:hover:bg-primary">
-                                    {{ $data->lastPage() }}
+                                    {{ $data->lastPage() * 250 }}
                                 </a>
                             </li>
                         @endif

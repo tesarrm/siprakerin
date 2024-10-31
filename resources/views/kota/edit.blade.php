@@ -20,8 +20,8 @@
                                 @enderror
                             </div>
                             <div>
-                                <label for="biaya">Biaya<span class="text-danger">*</span></label>
-                                <input value="{{$data->biaya}}" required id="biaya" type="number" name="biaya" class="form-input w-full" 
+                                <label for="biaya">Biaya</label>
+                                <input value="{{$data->biaya}}" id="biaya" type="number" name="biaya" class="form-input w-full" 
                                 placeholder="Isi Biaya"/>
                                 @error('biaya')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
@@ -30,7 +30,7 @@
                             <div>
                                 <label for="keterangan">Keterangan</label>
                                 <textarea id="keterangan" rows="3" name="keterangan" class="form-textarea" 
-                                    placeholder="Isi Keterangan" required>{{$data->keterangan}}</textarea>
+                                    placeholder="Isi Keterangan" >{{$data->keterangan}}</textarea>
                                 @error('keterangan')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror

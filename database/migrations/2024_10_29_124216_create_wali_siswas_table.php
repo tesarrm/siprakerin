@@ -19,6 +19,7 @@ return new class extends Migration
             $table->boolean('aktif')->default(1);
             $table->string('pekerjaan')->nullable();
             $table->string('no_telp')->nullable();
+            $table->string('no_hp')->nullable();
             $table->enum('jenis_kelamin', ['Laki-laki', 'Perempuan'])->nullable();
             $table->timestamps();
         });

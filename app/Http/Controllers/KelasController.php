@@ -26,7 +26,7 @@ class KelasController extends Controller
     {
         $data = Kelas::with(['jurusan.bidangKeahlian', 'guru'])
             ->where('aktif', 1)
-            ->orderBy('nama', 'asc')
+            // ->orderBy('nama', 'asc')
             ->get();
 
         return view('kelas.index', [
