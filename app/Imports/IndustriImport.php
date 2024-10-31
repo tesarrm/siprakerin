@@ -18,6 +18,7 @@ class IndustriImport implements ToCollection, WithHeadingRow
 
     public function collection(Collection $rows)
     {
+
         foreach ($rows as $index => $row){
             // membuat array nama kelas yang valid
             $kota = Kota::get();

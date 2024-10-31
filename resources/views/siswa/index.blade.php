@@ -6,6 +6,7 @@
     <link rel='stylesheet' type='text/css' href='{{ Vite::asset('resources/css/nice-select2.css') }}'>
     <script src="/assets/js/nice-select2.js"></script>
 
+
     <div x-data="dataList">
         <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
             <div class="px-5">
@@ -254,6 +255,36 @@
         /*************
          * excel error 
          */
+        @if($errors->any())
+            document.addEventListener('DOMContentLoaded', function () {
+                const errors = @json($errors->all());
+                displayAlerts(errors);
+            });
+
+            async function displayAlerts(errors) {
+                for (const error of errors) {
+                    await showAlert(error);
+                }
+            }
+
+            async function showAlert(message) {
+                const toast = window.Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+
+                await toast.fire({
+                    icon: 'error',
+                    title: message,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+            }
+        @endif
 
 
         /*************
