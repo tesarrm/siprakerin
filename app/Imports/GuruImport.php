@@ -22,7 +22,7 @@ class GuruImport implements ToCollection, WithHeadingRow
     */
     public function collection(Collection $rows)
     {
-        foreach ($rows as $row){
+        foreach ($rows as $index => $row){
             // // Validasi setiap baris data
             // $validator = Validator::make($row->toArray(), [
             //     'nip' => 'required',
@@ -63,9 +63,17 @@ class GuruImport implements ToCollection, WithHeadingRow
             });
 
 
-            // Jika validasi gagal, tambahkan error ke dalam array $errors
+            // // Jika validasi gagal, tambahkan error ke dalam array $errors
+            // if ($validator->fails()) {
+            //     $this->errors[] = $validator->errors()->all();
+            //     continue; // lewati row ini jika validasi gagal
+            // }
+
+            // Jika validasi gagal, tambahkan nomor baris ke dalam error
             if ($validator->fails()) {
-                $this->errors[] = $validator->errors()->all();
+                foreach ($validator->errors()->all() as $message) {
+                    $this->errors[] = "Row " . ($index + 1) . ": " . $message;
+                }
                 continue; // lewati row ini jika validasi gagal
             }
 
