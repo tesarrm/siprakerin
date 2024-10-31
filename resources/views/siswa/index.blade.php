@@ -221,9 +221,14 @@
     {{-- BOTTOM --}}
     {{-- =========================== --}}
 
-    {{-- alert toast --}}
-    @if(session('status'))
-        <script>
+
+
+    <script>
+        /*************
+         * alert toast 
+         */
+
+        @if(session('status'))
             document.addEventListener('DOMContentLoaded', function () {
                 showAlert("{{ session('status') }}");
             });
@@ -244,79 +249,51 @@
                     customClass: 'sweet-alerts',
                 });
             }
-        </script>
-    @endif
+        @endif
 
-    {{-- alert toast import excel error --}}
-    @if($errors->any())
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const errors = @json($errors->all());
-                displayAlerts(errors);
-            });
+        /*************
+         * excel error 
+         */
 
-            async function displayAlerts(errors) {
-                for (const error of errors) {
-                    await showAlert(error);
-                }
+
+        /*************
+         * database 
+         */
+
+        @php
+            $items = [];
+            foreach ($data as $d) {
+                $items[] = [
+                    'id' => $d->id ?? '-',
+                    'nama' => $d->user->name ?? '-',
+                    'nis' => $d->nis ?? '-',
+                    'email' => $d->user->email ?? '-',
+                    'jenis_kelamin' => $d->jenis_kelamin ?? '-',
+                    'agama' => $d->agama ?? '-',
+                    'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
+                    'tahun_ajaran' => $d->tahunAjaran->nama ?? '-',
+                    'gambar' => $d->user->gambar, 
+                    'action' => $d->id ?? '-', 
+
+                    '_user_id' => $d->user_id ?? '-', // 10
+                    '_kelas_id' => $d->kelas->nama ?? '-',
+                    '_aktif' => $d->aktif ?? '-',
+                    '_gambar' => $d->user->gambar,
+                    '_nis' => $d->nis ?? '-',
+                    '_nisn' => $d->nisn ?? '-',
+                    '_nama_lengkap' => $d->user->name ?? '-',
+                    '_nama' => $d->user->name ?? '-',
+                    '_tempat_lahir' => $d->tempat_lahir ?? '-',
+                    '_tanggal_lahir' => $d->tanggal_lahir ?? '-',
+                    '_jenis_kelamin' => $d->jenis_kelamin ?? '-', //20
+                    '_agama' => $d->agama ?? '-',
+                    '_alamat' => $d->alamat ?? '-',
+                    '_no_telp' => $d->no_telp ?? '-',
+                    '_email' => $d->user->email ?? '-',
+                ];
             }
+        @endphp
 
-            async function showAlert(message) {
-                const toast = window.Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    padding: '2em',
-                    customClass: 'sweet-alerts',
-                });
-
-                await toast.fire({
-                    icon: 'error',
-                    title: message,
-                    padding: '2em',
-                    customClass: 'sweet-alerts',
-                });
-            }
-        </script>
-    @endif
-
-    {{-- data datatable --}}
-    @php
-        $items = [];
-        foreach ($data as $d) {
-            $items[] = [
-                'id' => $d->id ?? '-',
-                'nama' => $d->user->name ?? '-',
-                'nis' => $d->nis ?? '-',
-                'email' => $d->user->email ?? '-',
-                'jenis_kelamin' => $d->jenis_kelamin ?? '-',
-                'agama' => $d->agama ?? '-',
-                'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
-                'tahun_ajaran' => $d->tahunAjaran->nama ?? '-',
-                'gambar' => $d->user->gambar, 
-                'action' => $d->id ?? '-', 
-
-                '_user_id' => $d->user_id ?? '-', // 10
-                '_kelas_id' => $d->kelas->nama ?? '-',
-                '_aktif' => $d->aktif ?? '-',
-                '_gambar' => $d->user->gambar,
-                '_nis' => $d->nis ?? '-',
-                '_nisn' => $d->nisn ?? '-',
-                '_nama_lengkap' => $d->user->name ?? '-',
-                '_nama' => $d->user->name ?? '-',
-                '_tempat_lahir' => $d->tempat_lahir ?? '-',
-                '_tanggal_lahir' => $d->tanggal_lahir ?? '-',
-                '_jenis_kelamin' => $d->jenis_kelamin ?? '-', //20
-                '_agama' => $d->agama ?? '-',
-                '_alamat' => $d->alamat ?? '-',
-                '_no_telp' => $d->no_telp ?? '-',
-                '_email' => $d->user->email ?? '-',
-            ];
-        }
-    @endphp
-
-    <script>
         /*************
          * filter kelas 
          */

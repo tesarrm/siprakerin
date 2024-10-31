@@ -22,25 +22,25 @@
                             <div id="textarea-wrapper" class="grid grid-cols-1 gap-4">
                                 @foreach($jurusan->capaianPembelajaran as $index => $capaian)
                                     <div class="capaian-container">
-                                        <label for="capaian_pembelajaran_{{ $index + 1 }}" class="text-base">
+                                        <label for="capaian_pembelajaran_{{ $index }}" class="text-base">
                                             Capaian Pembelajaran {{ $index + 1 }}
                                         </label>
                                         <textarea 
-                                            id="capaian_pembelajaran_{{ $index + 1 }}" 
+                                            id="capaian_pembelajaran_{{ $index }}" 
                                             rows="2" 
                                             name="capaian_pembelajaran[{{ $index }}][nama]" 
                                             class="form-textarea" 
                                             required
                                         >{{ old('capaian_pembelajaran.' . $index . '.nama', $capaian->nama) }}</textarea>
 
-                                        <div id="tujuan-wrapper-{{ $index + 1 }}" class="grid grid-cols-1 gap-4 mt-4 ml-6 tujuan-container">
+                                        <div id="tujuan-wrapper-{{ $index }}" class="grid grid-cols-1 gap-4 mt-4 ml-6 tujuan-container">
                                             @foreach($capaian->tujuanPembelajaran as $tujuanIndex => $tujuan)
                                                 <div>
-                                                    <label for="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}">
+                                                    <label for="tujuan_pembelajaran_{{ $index }}_{{ $tujuanIndex }}">
                                                         Tujuan Pembelajaran {{ $tujuanIndex + 1 }}
                                                     </label>
                                                     <input 
-                                                        id="tujuan_pembelajaran_{{ $index + 1 }}_{{ $tujuanIndex + 1 }}" 
+                                                        id="tujuan_pembelajaran_{{ $index }}_{{ $tujuanIndex }}" 
                                                         name="capaian_pembelajaran[{{ $index }}][tujuan_pembelajaran][]" 
                                                         class="form-input" 
                                                         value="{{ old('capaian_pembelajaran.' . $index . '.tujuan_pembelajaran.' . $tujuanIndex, $tujuan->nama) }}" 
@@ -52,7 +52,7 @@
                                         <div class="flex gap-4 ml-6 mt-2">
                                             <ul class="flex items-center justify-center gap-2">
                                                 <li>
-                                                    <a href="javascript:;" x-tooltip="Tambah" onclick="addTujuan({{ $index + 1 }})">
+                                                    <a href="javascript:;" x-tooltip="Tambah" onclick="addTujuan({{ $index }})">
                                                         <svg width="24" height="24" viewBox="0 0 24 24"
                                                             fill="none" xmlns="http://www.w3.org/2000/svg"
                                                             class="w-5 h-5 text-primary">
@@ -64,7 +64,7 @@
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a href="javascript:;" x-tooltip="Hapus" onclick="removeTujuan({{ $index + 1 }})">
+                                                    <a href="javascript:;" x-tooltip="Hapus" onclick="removeTujuan({{ $index }})">
                                                         <svg width="24" height="24" viewBox="0 0 24 24"
                                                             fill="none" xmlns="http://www.w3.org/2000/svg"
                                                             class="w-5 h-5 text-danger">
@@ -223,7 +223,7 @@
 
         function removeTujuan(capaianIndex) {
             const tujuanWrapper = document.getElementById(`tujuan-wrapper-${capaianIndex}`);
-            if (tujuanWrapper.children.length > 1) {
+            if (tujuanWrapper.children.length >= 1) {
                 tujuanWrapper.removeChild(tujuanWrapper.lastElementChild);
             }
         }

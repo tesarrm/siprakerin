@@ -129,6 +129,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('industri/{id}/aktif', [IndustriController::class, 'aktif']);
     Route::get('industri-akun', [IndustriController::class, 'indexAkun']);
     Route::post('industri/delete-multiple', [IndustriController::class, 'deleteMultiple']);
+    Route::get('industri-export', [IndustriController::class, 'export']);
+    Route::post('industri-import', [IndustriController::class, 'import']);
+    Route::get('industri-template', [IndustriController::class, 'downloadTemplate']);
 
     Route::resource('kuotaindustri', KuotaIndustriController::class);
     Route::post('kuota-industri', [KuotaIndustriController::class, 'storeOrUpdate'])->name('kuota-industri.storeOrUpdate');

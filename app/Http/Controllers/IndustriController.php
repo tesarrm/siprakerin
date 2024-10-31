@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\IndustriImport;
 use App\Models\Industri;
 use App\Models\Kota;
 use App\Models\LiburMingguan;
@@ -11,6 +12,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use Maatwebsite\Excel\Facades\Excel;
 
 class IndustriController extends Controller
 {
@@ -285,5 +288,16 @@ class IndustriController extends Controller
         }
 
         return response()->json(['success' => true]);
+    }
+
+    public function import(Request $request){
+        try {
+            Excel::import(new IndustriImport, $request->file('excel'));
+            return redirect()->back()->with('status', 'Data berhasil diimpor!');
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors()->getMessages();
+
+            return redirect()->back()->withErrors($errors)->withInput();
+        }
     }
 }

@@ -114,17 +114,21 @@ class CapaianPembelajaranController extends Controller
  
     public function storeOrUpdate(Request $request)
     {
+        // dd($request);
         // Validasi input data
         $validated = $request->validate([
             'jurusan_id' => 'required|integer', 
             'capaian_pembelajaran' => 'required|array|min:1',
             'capaian_pembelajaran.*.nama' => 'required|string',
-            'capaian_pembelajaran.*.tujuan_pembelajaran' => 'required|array|min:1',
-            'capaian_pembelajaran.*.tujuan_pembelajaran.*' => 'required|string',
+            'capaian_pembelajaran.*.tujuan_pembelajaran' => 'nullable|array',
+            'capaian_pembelajaran.*.tujuan_pembelajaran.*' => 'nullable|string',
         ]);
 
+
         // Hapus Capaian Pembelajaran lama berdasarkan jurusan_id
-        CapaianPembelajaran::where('jurusan_id', $validated['jurusan_id'])->delete();
+        CapaianPembelajaran::
+            where('jurusan_id', $validated['jurusan_id'])
+            ->delete();
 
         // Simpan Capaian Pembelajaran baru dan Tujuan Pembelajaran terkait
         foreach ($validated['capaian_pembelajaran'] as $capaian) {
@@ -134,12 +138,23 @@ class CapaianPembelajaranController extends Controller
                 'nama' => $capaian['nama'],
             ]);
 
-            // Simpan Tujuan Pembelajaran terkait
-            foreach ($capaian['tujuan_pembelajaran'] as $tujuan) {
-                TujuanPembelajaran::create([
-                    'capaian_pembelajaran_id' => $capaianPembelajaran->id,
-                    'nama' => $tujuan,
-                ]);
+            // // Simpan Tujuan Pembelajaran terkait
+            // foreach ($capaian['tujuan_pembelajaran'] as $tujuan) {
+            //     TujuanPembelajaran::create([
+            //         'capaian_pembelajaran_id' => $capaianPembelajaran->id,
+            //         'nama' => $tujuan,
+            //     ]);
+            // }
+
+            // Periksa apakah "tujuan_pembelajaran" ada pada array $capaian
+            if (isset($capaian['tujuan_pembelajaran'])) {
+                // Simpan Tujuan Pembelajaran terkait
+                foreach ($capaian['tujuan_pembelajaran'] as $tujuan) {
+                    TujuanPembelajaran::create([
+                        'capaian_pembelajaran_id' => $capaianPembelajaran->id,
+                        'nama' => $tujuan,
+                    ]);
+                }
             }
         }
 

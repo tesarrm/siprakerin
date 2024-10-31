@@ -78,7 +78,7 @@
                                                 </button>
                                             </div>
                                             <div class="p-5">
-                                                <form action="/siswa-import" method="POST" enctype="multipart/form-data">
+                                                <form action="/industri-import" method="POST" enctype="multipart/form-data">
                                                     @csrf
                                                     <div>
                                                         <label for="ctnFile">Unduh Template</label>
@@ -190,6 +190,41 @@
                 });
                 toast.fire({
                     icon: 'success',
+                    title: message,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+            }
+        @endif
+
+        /*************
+         * excel alert 
+         */
+
+        @if($errors->any())
+            document.addEventListener('DOMContentLoaded', function () {
+                const errors = @json($errors->all());
+                displayAlerts(errors);
+            });
+
+            async function displayAlerts(errors) {
+                for (const error of errors) {
+                    await showAlert(error);
+                }
+            }
+
+            async function showAlert(message) {
+                const toast = window.Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+
+                await toast.fire({
+                    icon: 'error',
                     title: message,
                     padding: '2em',
                     customClass: 'sweet-alerts',

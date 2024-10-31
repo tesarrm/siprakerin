@@ -2,42 +2,141 @@
     <link rel="stylesheet" href="{{ Vite::asset('resources/css/swiper-bundle.min.css') }}">
     <script src="/assets/js/swiper-bundle.min.js"></script>
     <script src="/assets/js/simple-datatables.js"></script>
+    <style>
+        .tab-content {
+            display: none;
+        }
+        .show {
+            display: block;
+        }
+    </style>
 
-    <div x-data="dataList">
-        <div class="panel px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
-            <div class="px-5">
-                <div class="md:absolute md:top-5 ltr:md:left-5 rtl:md:right-5">
-                    <div class="flex items-center gap-2 mb-5">
-                        <button type="button" class="btn btn-danger gap-2" @click="deleteRow()">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                                xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
-                                <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round"></path>
-                                <path
-                                    d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
-                                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
-                                <path opacity="0.5" d="M9.5 11L10 16" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round"></path>
-                                <path opacity="0.5" d="M14.5 11L14 16" stroke="currentColor" stroke-width="1.5"
-                                    stroke-linecap="round"></path>
-                                <path opacity="0.5"
-                                    d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
-                                    stroke="currentColor" stroke-width="1.5"></path>
-                            </svg>
-                            Hapus </button>
-                        <a href="/pusatunduhan/create" class="btn btn-primary gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                stroke-linejoin="round" class="w-5 h-5">
-                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                            </svg>
-                            Tambah </a>
+
+    <div class="panel">
+        <div id="tabs" x-data="{ tab: 'guru'}">
+            <ul class="flex flex-wrap mb-5 border-b border-white-light dark:border-[#191e3a]">
+                <li class="tab active">
+                    <a href="javascript:;"
+                        class="p-5 py-3 -mb-[1px] flex items-center relative before:transition-all before:duration-700 before:absolute hover:text-secondary before:bottom-0 before:w-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:bg-secondary hover:before:w-full"
+                        onclick="showTab(0)"
+                        :class="{'border-b !border-secondary text-secondary' : tab === 'guru'}" @click="tab = 'guru'"
+                        >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
+                            <path d="M20 7L4 7" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path opacity="0.7" d="M15 12L4 12" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            <path opacity="0.4" d="M9 17H4" 
+                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        List </a>
+                </li>
+                <li class="tab">
+                    <a href="javascript:;"
+                        class="p-5 py-3 -mb-[1px] flex items-center relative before:transition-all before:duration-700 hover:text-secondary before:absolute before:w-0 before:bottom-0 before:left-0 before:right-0 before:m-auto before:h-[1px] before:bg-secondary hover:before:w-full"
+                        onclick="showTab(1)"
+                        :class="{'border-b !border-secondary text-secondary' : tab === 'kelas'}" @click="tab = 'kelas'"
+                        ">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 ltr:mr-2 rtl:ml-2">
+                            <path d="M12 22H15C18.866 22 22 18.866 22 15V12C22 7.28595 22 4.92893 20.5355 3.46447C19.0711 2 16.714 2 12 2C7.28595 2 4.92893 2 3.46447 3.46447C2 4.92893 2 7.28595 2 12C2 16.714 2 19.0711 3.46447 20.5355C4.92893 22 7.28595 22 12 22Z" 
+                                stroke="currentColor" stroke-width="1.5"/>
+                            <path opacity="0.5" d="M15 22C15 20.1387 15 19.2081 15.2447 18.4549C15.7393 16.9327 16.9327 15.7393 18.4549 15.2447C19.2081 15 20.1387 15 22 15" 
+                                stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        Card</a>
+                </li>
+            </ul>
+        </div>
+        <div id="tab-content">
+            <div class="tab-content show">
+
+                <div x-data="dataList">
+                    <div class="px-0 border-[#e0e6ed] dark:border-[#1b2e4b]">
+                        <div class="px-5">
+                            <div class="md:absolute">
+                                <div class="flex items-center gap-2 mb-5">
+                                    <button type="button" class="btn btn-danger gap-2" @click="deleteRow()">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                                            <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round"></path>
+                                            <path
+                                                d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                            <path opacity="0.5" d="M9.5 11L10 16" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round"></path>
+                                            <path opacity="0.5" d="M14.5 11L14 16" stroke="currentColor" stroke-width="1.5"
+                                                stroke-linecap="round"></path>
+                                            <path opacity="0.5"
+                                                d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                                                stroke="currentColor" stroke-width="1.5"></path>
+                                        </svg>
+                                        Hapus </button>
+                                    <a href="/pusatunduhan/create" class="btn btn-primary gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24"
+                                            fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                            stroke-linejoin="round" class="w-5 h-5">
+                                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        </svg>
+                                        Tambah </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="invoice-table">
+                            <table id="myTable" class="whitespace-nowrap"></table>
+                        </div>
                     </div>
                 </div>
+
             </div>
-            <div class="invoice-table">
-                <table id="myTable" class="whitespace-nowrap"></table>
+            <div class="tab-content">
+
+                <form action="{{url('pusatunduhan/download')}}" method="POST">
+                    @csrf
+                    <div class="pt-5">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 mb-6 text-white">
+
+                            @if(!empty($data))
+                                @foreach($data as $d)
+                                    <div
+                                        class="w-full bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none">
+                                        <div class="py-7 px-6">
+                                            <div class="-mt-7 mb-7 -mx-6 rounded-tl rounded-tr h-[215px] overflow-hidden">
+
+                                                {{-- Tentukan gambar berdasarkan ekstensi file --}}
+                                                @php
+                                                    $extension = pathinfo($d->file, PATHINFO_EXTENSION);
+                                                    $imageSrc = match ($extension) {
+                                                        'pdf' => '/assets/images/pdf-file.png',
+                                                        'doc', 'docx' => '/assets/images/office-word.png',
+                                                        'xls', 'xlsx' => '/assets/images/office-excel.png',
+                                                        default => '/assets/images/other-file.png',
+                                                    };
+                                                @endphp
+
+                                                <img src="{{ $imageSrc }}" alt="file image" class="w-full h-full object-cover" />
+                                            </div>
+                                            <h5 class="text-[#3b3f5c] text-xl font-semibold mb-4 dark:text-white-light">
+                                                {{ $d->nama }}
+                                            </h5>
+                                            <input class="hidden" type="text" name="file" value="{{ $d->file }}">
+                                            <button type="submit" class="btn btn-primary mt-6">
+                                                Unduh
+                                            </button>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @else
+                                <div class="text-black dark:text-white text-center">Dokumen tidak ada!</div>
+                            @endif
+
+                        </div>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>
@@ -85,6 +184,23 @@
     @endphp
 
     <script>
+        /*************
+         * tab 
+         */
+        
+        function showTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            // Hapus kelas aktif dari semua tab dan sembunyikan semua konten
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('show'));
+
+            // Tambahkan kelas aktif pada tab yang dipilih dan tampilkan kontennya
+            tabs[index].classList.add('active');
+            contents[index].classList.add('show');
+        }
+
         /*************
          * datatable 
          */
