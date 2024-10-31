@@ -70,7 +70,7 @@ class SiswaImport implements ToCollection, WithHeadingRow
             // Jika validasi gagal, tambahkan nomor baris ke dalam error
             if ($validator->fails()) {
                 foreach ($validator->errors()->all() as $message) {
-                    $this->errors[] = "Row " . ($index + 1) . ": " . $message;
+                    $this->errors[] = "Row " . ($index) . ": " . $message;
                 }
                 continue; // lewati row ini jika validasi gagal
             }
