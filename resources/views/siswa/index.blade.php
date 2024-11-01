@@ -340,14 +340,14 @@
          * filter kelas 
          */
 
-        document.getElementById('filterKelas').addEventListener('change', function() {
-            let selectedKelas = this.value;
-            if(selectedKelas) {
-                document.getElementById('pagePlus').style.display = 'none';
-            } else {
-                document.getElementById('pagePlus').style.display = 'flex';
-            }
-        });
+        // document.getElementById('filterKelas').addEventListener('change', function() {
+        //     let selectedKelas = this.value;
+        //     if(selectedKelas) {
+        //         document.getElementById('pagePlus').style.display = 'none';
+        //     } else {
+        //         document.getElementById('pagePlus').style.display = 'flex';
+        //     }
+        // });
 
         /*************
          * detail
@@ -851,7 +851,7 @@
 
                 filterByKelas() {
                     if(this.selectedKelas){
-                        fetch(`{{ url('siswa-filter') }}`, { 
+                        fetch(`{{ env('APP_URL', 'http://localhost') . '/siswa-filter' }}`, { 
                             method: 'POST',
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',

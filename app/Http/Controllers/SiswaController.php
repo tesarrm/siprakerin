@@ -405,7 +405,7 @@ class SiswaController extends Controller
             });
 
         // saya ingin filter siswa dari kelas id
-        $siswa = Siswa::with(['kelas', 'user'])
+        $siswa = Siswa::with(['kelas', 'user', 'tahunAjaran'])
             ->where('aktif', 1)
             ->where('kelas_id', $kelas->id) 
             ->get();
@@ -414,20 +414,20 @@ class SiswaController extends Controller
         foreach ($siswa as $d) {
             $items[] = [
                 'id' => $d->id ?? '-',
+                'nama' => $d->user->name ?? '-',
                 'nis' => $d->nis ?? '-',
-                'nama' => $d->nama ?? '-',
+                'email' => $d->user->email ?? '-',
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                 'agama' => $d->agama ?? '-',
                 'kelas' => $d->kelas->nama . " " . $d->kelas->jurusan->singkatan . " " . $d->kelas->klasifikasi ?? '-',
-                'tahun_ajaran' => Pengaturan::first()->tahun_ajaran ?? '-', // Tambahkan jika diperlukan
-                'email' => $d->user->email ?? '-',
-                'gambar' => $d->gambar, 
+                'tahun_ajaran' => $d->tahunAjaran->nama ?? '-', // Tambahkan jika diperlukan
+                'gambar' => $d->user->gambar, 
                 'action' => $d->id ?? '-', 
 
                 '_user_id' => $d->user_id ?? '-', 
                 '_kelas_id' => $d->kelas->nama ?? '-',
                 '_aktif' => $d->aktif ?? '-',
-                '_gambar' => $d->gambar,
+                '_gambar' => $d->user->gambar,
                 '_nis' => $d->nis ?? '-',
                 '_nisn' => $d->nisn ?? '-',
                 '_nama_lengkap' => $d->user->name?? '-',
