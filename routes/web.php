@@ -101,7 +101,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('siswa-export', [SiswaController::class, 'export']);
     Route::post('siswa-import', [SiswaController::class, 'import']);
     Route::get('siswa-template', [SiswaController::class, 'downloadTemplate']);
-    Route::post('siswa/filter', [SiswaController::class, 'filter'])->name('siswa.filter');
+    Route::post('siswa-filter', [SiswaController::class, 'filter'])->name('siswa.filter');
     Route::post('pilihankota/filter', [PilihanKotaController::class, 'index2'])->name('pilihankota.filter');
     Route::get('siswa-wali', [SiswaController::class, 'indexWali']);
 
