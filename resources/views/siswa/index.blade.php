@@ -851,7 +851,7 @@
 
                 filterByKelas() {
                     if(this.selectedKelas){
-                        fetch(`{{ url('siswa/filter') }}`, { 
+                        fetch(`https://techtitan.cloud/siswa/filter`, { 
                             method: 'POST',
                             headers: {
                                 'X-Requested-With': 'XMLHttpRequest',
