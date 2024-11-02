@@ -41,7 +41,7 @@
 
                 foreach ($jurusan as $jrs) {
                     $row["P-{$jrs->singkatan}"] = 0;
-                    $row["L-{$jrs->singkatan}"] = 0;
+                    // $row["L-{$jrs->singkatan}"] = 0;
                 }
 
                 // Isi kuota berdasarkan data yang ada
@@ -73,7 +73,7 @@
 
                 foreach ($jurusan as $jrs) {
                     $row["P-{$jrs->singkatan}"] = 0;
-                    $row["L-{$jrs->singkatan}"] = 0;
+                    // $row["L-{$jrs->singkatan}"] = 0;
                 }
 
                 // Isi kuota berdasarkan data yang ada
@@ -420,24 +420,6 @@
                     });
                 },
 
-                checkAllCheckbox() {
-                    if (this.items.length && this.selectedRows.length === this.items.length) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                },
-
-                checkAll(isChecked) {
-                    if (isChecked) {
-                        this.selectedRows = this.items.map((d) => {
-                            return d.id;
-                        });
-                    } else {
-                        this.selectedRows = [];
-                    }
-                },
-
                 setTableData() {
                     this.dataArr = [];
                     for (let i = 0; i < this.items.length; i++) {
@@ -454,8 +436,7 @@
                     return this.items.filter((d) =>
                         (d.nama && d.nama.toLowerCase().includes(this.searchText)) ||
                         (d.alamat && d.alamat.toLowerCase().includes(this.searchText)) ||
-                        (d.kota && d.kota.toLowerCase().includes(this.searchText)) ||
-                        (d.tahun_ajaran && d.tahun_ajaran.toLowerCase().includes(this.searchText))
+                        (d.kota && d.kota.toLowerCase().includes(this.searchText)) 
                     );
                 },
             }))

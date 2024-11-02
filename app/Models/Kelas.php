@@ -12,6 +12,7 @@ class Kelas extends Model
     protected $fillable = [
         'nama', 
         'jurusan_id', 
+        'jurusan_id_2', 
         'klasifikasi', 
         'guru_id', 
     ];
@@ -19,6 +20,10 @@ class Kelas extends Model
     public function jurusan()
     {
         return $this->belongsTo(Jurusan::class);
+    }
+    public function jurusan2()
+    {
+        return $this->belongsTo(Jurusan::class, 'jurusan_id_2');
     }
     public function guru()
     {

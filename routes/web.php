@@ -131,6 +131,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('industri/delete-multiple', [IndustriController::class, 'deleteMultiple']);
     Route::get('industri-export', [IndustriController::class, 'export']);
     Route::post('industri-import', [IndustriController::class, 'import']);
+    Route::post('industrikuota-import', [IndustriController::class, 'importKuota']);
     Route::get('industri-template', [IndustriController::class, 'downloadTemplate']);
 
     Route::resource('kuotaindustri', KuotaIndustriController::class);
@@ -148,6 +149,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('jurnal', JurnalController::class);
     Route::get('jurnal/{jurnalId}/delete', [JurnalController::class, 'destroy']);
     Route::resource('izin', IzinController::class);
+    Route::get('izin/{id}/delete', [IzinController::class, 'destroy']);
     Route::get('attendance', [KehadiranController::class, 'index']);
     Route::get('attendance-data', [KehadiranController::class, 'getAttendanceData']);
     Route::get('cek', [KehadiranController::class, 'storeCron']);

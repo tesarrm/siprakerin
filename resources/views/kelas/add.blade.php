@@ -45,6 +45,18 @@
                                 @enderror
                             </div>
                             <div>
+                                <label for="jurusan_id_2">Sub Jurusan</label>
+                                <select id="jurusan_id_2" name="jurusan_id_2" class="selectize w-full">
+                                    <option value="">Pilih Sub Jurusan</option>
+                                    @foreach($subJurusan as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('jurusan_id_2')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
                                 <label for="klasifikasi">Klasifikasi<span class="text-danger">*</span></label>
                                 <input required id="klasifikasi" type="text" name="klasifikasi" class="form-input w-full" 
                                 placeholder="Isi Klasifikasi"/>
@@ -125,5 +137,11 @@
                 searchable: true
             };
             NiceSelect.bind(document.getElementById("guru_id"), options);
+        });
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("jurusan_id_2"), options);
         });
 </script>

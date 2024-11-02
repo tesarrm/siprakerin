@@ -53,7 +53,7 @@ class AuthController extends Controller
 
         // Jika tidak ditemukan, cek NIS di tabel siswa
         if (!$user) {
-            $siswa = Siswa::where('nis', $loginField)
+            $siswa = Siswa::where('nisn', $loginField)
                         ->orWhere('no_telp', $loginField)
                         ->first();
             
@@ -147,6 +147,8 @@ class AuthController extends Controller
 
         // Update password baru
         $user = Auth::user();
+        unset($user->penempatan);
+        unset($user->biodata);
         $user->password = Hash::make($request->new_password);
         $user->save();
 

@@ -12,11 +12,24 @@ use App\Models\TujuanPembelajaran;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 use Faker\Factory as Faker;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
     public function run()
     {
+        // $role_siswa = Role::updateOrCreate(
+        //     ['name' => 'siswa'],
+        //     ['name' => 'siswa']
+        // );
+        // $permission_r_jurnal = Permission::updateOrCreate(
+        //     ['name' => 'r_jurnal'],
+        //     ['name' => 'r_jurnal']
+        // );
+        // $role_siswa->givePermissionTo($permission_r_jurnal);
+
+        // ======>
         \App\Models\User::factory()->create([
             'name' => 'Admin',
             'username' => 'admin',
@@ -25,6 +38,7 @@ class DatabaseSeeder extends Seeder
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ]);
+        // ======>
 
         // \App\Models\User::factory()->create([
         //     'name' => 'Kabeng',
@@ -48,6 +62,7 @@ class DatabaseSeeder extends Seeder
         //     'remember_token' => Str::random(10),
         // ]);
 
+        // ======>
         \App\Models\TahunAjaran::factory()->create([
             'nama' => '2024/2025',
         ]);
@@ -62,6 +77,8 @@ class DatabaseSeeder extends Seeder
             AuthSeeder::class,
         ]);
         \App\Models\Pengaturan::factory()->count(1)->create();
+        // ======>
+
         // \App\Models\Guru::factory()->count(10)->create();
         // \App\Models\BidangKeahlian::factory()->count(3)->create();
         // \App\Models\Jurusan::factory()->count(5)->create();
@@ -69,7 +86,7 @@ class DatabaseSeeder extends Seeder
         // \App\Models\Kota::factory()->count(5)->create();
         // \App\Models\Industri::factory()->count(10)->create();
 
-        // // ====== Buat data kuota industri
+        // ====== Buat data kuota industri
         // $industris = Industri::all();
         // $jurusans = Jurusan::all();
         // $jenisKelamin = ['Laki-laki', 'Perempuan'];

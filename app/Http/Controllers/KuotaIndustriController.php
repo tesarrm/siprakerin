@@ -22,6 +22,9 @@ class KuotaIndustriController extends Controller
 
     public function index()
     {
+        // $jurusanList = Jurusan::doesntHave('jurusans')->get()->keyBy('singkatan'); // Mengambil semua jurusan dan mengindeks dengan nama jurusan
+
+        // dd($jurusanList);
         $data = Industri::where('aktif', 1)
             ->with([
                 'kuotaIndustri', 
@@ -29,7 +32,7 @@ class KuotaIndustriController extends Controller
                 'kota'])
             ->orderBy('nama', 'asc')
             ->paginate(100);
-        $jurusan = Jurusan::get();
+        $jurusan = Jurusan::doesntHave('jurusans')->get();
 
         return view('kuota_industri.index', [
             'data' => $data,
@@ -55,7 +58,8 @@ class KuotaIndustriController extends Controller
     public function edit($industri_id)
     {
         // Ambil semua jurusan
-        $jurusans = Jurusan::all();
+        // $jurusans = Jurusan::all();
+        $jurusans = Jurusan::doesntHave('jurusans')->get();
 
         // Ambil kuota yang sudah ada untuk industri tertentu
         $kuotaIndustri = KuotaIndustri::where('industri_id', $industri_id)->get();

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('kelas', function (Blueprint $table) {
             $table->id();
             $table->foreignId('jurusan_id')->constrained('jurusans')->onDelete('cascade');
+            $table->foreignId('jurusan_id_2')->nullable()->constrained('jurusans')->onDelete('cascade');
             $table->foreignId('guru_id')->nullable()->constrained('gurus')->onDelete('set null');
 
             $table->boolean('aktif')->default(1);

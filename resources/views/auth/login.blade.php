@@ -31,14 +31,14 @@
                     <div class="w-full max-w-[440px] lg:mt-16">
                         <div class="mb-10">
                             <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
-                            <p class="text-base font-bold leading-normal text-white-dark">Masukkan Email, NIS, NIP, atau No. Telp dan password untuk login</p>
+                            <p class="text-base font-bold leading-normal text-white-dark">Masukkan Email, NISN, NIP, atau No. Telp dan password untuk login</p>
                         </div>
                         <form action="{{ url('login') }}" method="POST" class="space-y-5 dark:text-white" ">
                             @csrf
                             <div>
-                                <label for="login">Email, NIS, NIP, atau No. Telp</label>
+                                <label for="login">Email, NISN, NIP, atau No. Telp</label>
                                 <div class="relative text-white-dark">
-                                    <input name="login" id="login" type="text" placeholder="Email, NIS, NIP, atau No. Telp" class="form-input ps-10 placeholder:text-white-dark" />
+                                    <input name="login" id="login" type="text" placeholder="Email, NISN, NIP, atau No. Telp" class="form-input ps-10 placeholder:text-white-dark" />
                                     <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
                                             <path opacity="0.5"

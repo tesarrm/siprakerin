@@ -59,13 +59,17 @@ class JurnalController extends Controller
                 'kelas' => $kelas,
             ]);
         } else if(auth()->user()->hasRole('siswa')) {
-            $siswa = Siswa::where('user_id', auth()->user()->id)->first();
-            $penempatan = PenempatanIndustri::with('industri.libur')->where('siswa_id', $siswa->id)->first();
+            $siswa = Siswa::where('user_id', auth()->user()->id)
+                ->first();
+            $penempatan = PenempatanIndustri::with('industri.libur')
+                ->where('siswa_id', $siswa->id)
+                ->first();
             $dIzin = Izin::with('siswa.kelas.jurusan')
                 ->where('siswa_id', $siswa->id)
                 ->orderBy('created_at', 'desc')
                 ->get();
-            $attendances = Kehadiran::where('siswa_id', $siswa->id)->get();
+            $attendances = Kehadiran::where('siswa_id', $siswa->id)
+                ->get();
             $hadir = Kehadiran::where([
                 'siswa_id' => $siswa->id, 
                 'status' => 'hadir'
@@ -119,8 +123,12 @@ class JurnalController extends Controller
                 ->get();
 
             // hanya satu kali dalam sehari
-            $jurnalToDay = Jurnal::whereDate('created_at', Carbon::today())->where('siswa_id', $siswa->id)->first();
-            $izinToDay = Izin::whereDate('created_at', Carbon::today())->where('siswa_id', $siswa->id)->first();
+            $jurnalToDay = Jurnal::whereDate('created_at', Carbon::today())
+                ->where('siswa_id', $siswa->id)
+                ->first();
+            $izinToDay = Izin::whereDate('created_at', Carbon::today())
+                ->where('siswa_id', $siswa->id)
+                ->first();
             $lebih = isset($jurnalToDay) || isset($izinToDay);
 
             return view('jurnal.index', [
@@ -185,17 +193,33 @@ class JurnalController extends Controller
 
         $isLM = isset($hariLibur[$dayName]) && $hariLibur[$dayName] === 'on';
 
+        // // Ambil data libur untuk tahun ini
+        // $currentYear = Carbon::now()->year;
+        // $responseCurrentYear = Http::get('https://api-harilibur.vercel.app/api', [
+        //     'year' => strval($currentYear),
+        // ]);
 
-        // Ambil data libur untuk tahun ini
-        $currentYear = Carbon::now()->year;
-        $responseCurrentYear = Http::get('https://api-harilibur.vercel.app/api', [
-            'year' => strval($currentYear),
-        ]);
+        // if ($responseCurrentYear->successful()) {
+        //     $dataCurrentYear = $responseCurrentYear->json();
+        // } else {
+        //     dd('Error: ' . $responseCurrentYear->status());
+        // }
 
-        if ($responseCurrentYear->successful()) {
-            $dataCurrentYear = $responseCurrentYear->json();
-        } else {
-            dd('Error: ' . $responseCurrentYear->status());
+        try {
+            // Ambil data libur untuk tahun ini
+            $currentYear = Carbon::now()->year;
+            $responseCurrentYear = Http::get('https://api-harilibur.vercel.app/api', [
+                'year' => strval($currentYear),
+            ]);
+
+            if ($responseCurrentYear->successful()) {
+                $dataCurrentYear = $responseCurrentYear->json();
+            } else {
+                return response()->json(['error' => 'Tidak dapat mengambil data, status: ' . $responseCurrentYear->status()]);
+            }
+        } catch (\Exception $e) {
+            // return response()->json(['error' => 'Tidak dapat terhubung ke server. Pesan: ' . $e->getMessage()]);
+            return back()->with('error', 'Gagal mendapatkan data tanggal merah!');
         }
 
         // dd($dataCurrentYear);

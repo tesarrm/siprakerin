@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Guru;
 use App\Models\Jurusan;
 use App\Models\Kelas;
-use App\Models\Pengaturan;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -24,9 +23,8 @@ class KelasController extends Controller
 
     public function index()
     {
-        $data = Kelas::with(['jurusan.bidangKeahlian', 'guru'])
+        $data = Kelas::with(['jurusan.bidangKeahlian', 'jurusan2', 'guru'])
             ->where('aktif', 1)
-            // ->orderBy('nama', 'asc')
             ->get();
 
         return view('kelas.index', [
@@ -37,13 +35,13 @@ class KelasController extends Controller
     public function create()
     {
         $jurusan = Jurusan::get();
+        $subJurusan = Jurusan::whereNotNull('jurusan_id')->get();
         $guru = Guru::with('user')->get();
-        // $pengaturan = Pengaturan::first();
 
         return view('kelas.add', [
             'jurusan' => $jurusan,
+            'subJurusan' => $subJurusan,
             'guru' => $guru,
-            // 'pengaturan' => $pengaturan
         ]);
     }
 
@@ -51,8 +49,8 @@ class KelasController extends Controller
     {
         $validatedData = $request->validate([
             'nama' => 'required|string',
-            // 'tahun_ajaran' => 'required|string',
             'jurusan_id' => 'required',
+            'jurusan_id_2' => 'nullable',
             'klasifikasi' => 'required|string',
             'guru_id' => 'required',
         ]);
@@ -73,14 +71,14 @@ class KelasController extends Controller
 
         $kelas = Kelas::findOrFail($id);
         $jurusan = Jurusan::get();
+        $subJurusan = Jurusan::whereNotNull('jurusan_id')->get();
         $guru = Guru::with('user')->get();
-        // $pengaturan = Pengaturan::first();
 
         return view('kelas.edit', [
             'data' => $kelas,
             'jurusan' => $jurusan,
+            'subJurusan' => $subJurusan,
             'guru' => $guru,
-            // 'pengaturan' => $pengaturan
         ]);
     }
 
@@ -90,8 +88,8 @@ class KelasController extends Controller
 
         $validatedData = $request->validate([
             'nama' => 'required|string',
-            // 'tahun_ajaran' => 'required|string',
             'jurusan_id' => 'required',
+            'jurusan_id_2' => 'nullable',
             'klasifikasi' => 'required|string',
             'guru_id' => 'required',
         ]);

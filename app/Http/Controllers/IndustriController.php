@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Imports\IndustriImport;
+use App\Imports\IndustriKuotaImport;
 use App\Models\Industri;
 use App\Models\Kota;
 use App\Models\LiburMingguan;
@@ -65,14 +66,15 @@ class IndustriController extends Controller
             'nama' => 'required|string',
             'alamat' => 'required|string',
             'kota_id' => 'required|string',
-            // 'tahun_ajaran' => 'required|string',
             'tanggal_awal' => 'nullable|string',
             'tanggal_akhir' => 'nullable|string',
 
             'nama_akun' => 'required',
-            'no_telp' => 'required|string|unique:wali_siswas,no_telp',
+            'no_telp' => 'nullable|string',
+            'no_hp' => 'nullable|string',
 
-            'email' => 'required|string|unique:users,email|max:255',
+            'username' => 'required|string|unique:users,username|max:255',
+            'email' => 'nullable|string|unique:users,email|max:255',
             'password' => 'required',
         ]);
 
@@ -88,6 +90,7 @@ class IndustriController extends Controller
             'tanggal_akhir',
 
             'nama_akun',
+            'username',
             'email',
             'password',
         ]);
@@ -98,6 +101,7 @@ class IndustriController extends Controller
         // Create user data
         $userData = [
             'name' => $validatedData['nama_akun'],
+            'username' => $validatedData['username'],
             'email' => $validatedData['email'],
             'password' => Hash::make($validatedData['password']),
         ];
@@ -156,15 +160,16 @@ class IndustriController extends Controller
             'nama' => 'required|string',
             'alamat' => 'required|string',
             'kota_id' => 'required|string',
-            // 'tahun_ajaran' => 'required|string',
             'tanggal_awal' => 'nullable|string',
             'tanggal_akhir' => 'nullable|string',
 
             'nama_akun' => 'required',
-            'no_telp' => 'required|string|unique:wali_siswas,no_telp',
+            'username' => 'required|string|unique:users,username,' . $user->id,
+            'no_telp' => 'nullable|string',
+            'no_hp' => 'nullable|string',
         ]);
 
-        $industriData = collect($validatedData)->except(['nama_akun'])->toArray();
+        $industriData = collect($validatedData)->except(['nama_akun', 'username'])->toArray();
 
         // Update data industri
         $update = collect($industriData);
@@ -190,6 +195,7 @@ class IndustriController extends Controller
             'tanggal_akhir',
 
             'nama_akun',
+            'username',
             'no_telp',
         ]);
 
@@ -204,6 +210,7 @@ class IndustriController extends Controller
         }
 
         $user->name = $validatedData['nama_akun'];
+        $user->username = $validatedData['username'];
         $user->save();
 
 
@@ -293,6 +300,17 @@ class IndustriController extends Controller
     public function import(Request $request){
         try {
             Excel::import(new IndustriImport, $request->file('excel'));
+            return redirect()->back()->with('status', 'Data berhasil diimpor!');
+        } catch (ValidationException $e) {
+            $errors = $e->validator->errors()->getMessages();
+
+            return redirect()->back()->withErrors($errors)->withInput();
+        }
+    }
+
+    public function importKuota(Request $request){
+        try {
+            Excel::import(new IndustriKuotaImport, $request->file('excel'));
             return redirect()->back()->with('status', 'Data berhasil diimpor!');
         } catch (ValidationException $e) {
             $errors = $e->validator->errors()->getMessages();

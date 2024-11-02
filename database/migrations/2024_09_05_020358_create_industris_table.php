@@ -20,6 +20,7 @@ return new class extends Migration
             $table->text('alamat')->nullable();
             $table->string('tanggal_awal')->nullable();
             $table->string('tanggal_akhir')->nullable();
+            $table->text('keterangan')->nullable();
 
             $table->foreignId('user_id')->nullable()->constrained('users');
             $table->string('no_telp')->nullable();

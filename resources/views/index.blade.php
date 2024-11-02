@@ -442,9 +442,21 @@
                             <div class="flex flex-col justify-center items-center">
                                 <img src="{{ $siswa->gambar ? asset('storage/posts/' . $siswa->gambar) : asset('storage/blank_profile.png') }}" 
                                     alt="image" class="w-24 h-24 rounded-full object-cover mb-5" />
-                                <p class="font-semibold text-primary text-xl">{{ $siswa->user->name}}</p>
+                                <p class="font-semibold text-primary text-xl text-center">{{ $siswa->user->name}}</p>
                             </div>
                                 <ul class="mt-5 flex flex-col space-y-4 font-semibold text-white-dark">
+                                    <li class="border-b pb-2 !text-dark !font-bold">
+                                        <div class="flex justify-between">
+                                            <div class="w-full">Industri</div>
+                                            <div class="w-full items-end text-end">{{$siswa->penempatan->industri->nama ?? '-'}}</div>
+                                        </div>
+                                    </li>
+                                    <li class="border-b pb-2 !text-dark !font-bold">
+                                        <div class="flex justify-between">
+                                            <div class="w-full">Wali</div>
+                                            <div class="w-full items-end text-end">{{$siswa->walisiswa->user->name ?? '-'}}</div>
+                                        </div>
+                                    </li>
                                     <li class="border-b pb-2">
                                         <div class="flex justify-between">
                                             <div class="w-full">NIS</div>
@@ -466,7 +478,7 @@
                                     <li class="border-b pb-2">
                                         <div class="flex justify-between">
                                             <div class="w-full">Tahun Ajaran</div>
-                                            <div class="w-full items-end text-end">{{$siswa->kelas->tahun_ajaran ?? '-'}}</div>
+                                            <div class="w-full items-end text-end">{{$siswa->tahunAjaran->nama ?? '-'}}</div>
                                         </div>
                                     </li>
                                     <li class="border-b pb-2">
@@ -479,12 +491,6 @@
                                         <div class="flex justify-between">
                                             <div class="w-full">No Telp</div>
                                             <div class="w-full items-end text-end">{{$siswa->no_telp ?? '-'}}</div>
-                                        </div>
-                                    </li>
-                                    <li class="border-b pb-2">
-                                        <div class="flex justify-between">
-                                            <div class="w-full">Industri</div>
-                                            <div class="w-full items-end text-end">{{$siswa->penempatan->industri->nama ?? '-'}}</div>
                                         </div>
                                     </li>
                                 </ul>
@@ -651,7 +657,7 @@
                                                 <li class="flex justify-between mb-1">
                                                     <span>{{ ($tujuanIndex + 1) . '. ' . $tujuan->nama }}</span>
                                                     <!-- Tambahkan hidden input untuk tujuan_pembelajaran_id -->
-                                                    <input type="text" value="{{ $tujuan->nilai->where('urutan', 2)->first()->nilai}}" class="form-input w-20 pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Nilai" />
+                                                    <input type="text" value="{{ $tujuan->nilai->where('urutan', 2)->first() ? $tujuan->nilai->where('urutan', 2)->first()->nilai : null }}" class="form-input w-20 pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Nilai" />
                                                 </li>
                                             @endforeach
                                         </ol>

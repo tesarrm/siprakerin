@@ -26,13 +26,6 @@
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
-                            {{-- <div>
-                                <label for="tahun_ajaran">Tahun Ajaran<span class="text-danger">*</span></label>
-                                <input value="{{ $data->tahun_ajaran }} "required id="tahun_ajaran" type="text" name="tahun_ajaran" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly/>
-                                @error('tahun_ajaran')
-                                    <div class="mt-2 text-danger">{{ $message }}</div>
-                                @enderror
-                            </div> --}}
                             <div>
                                 <label for="jurusan_id">Jurusan<span class="text-danger">*</span></label>
                                 <select required id="jurusan_id" name="jurusan_id" class="selectize w-full">
@@ -42,6 +35,18 @@
                                     @endforeach
                                 </select>
                                 @error('jurusan_id')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="jurusan_id_2">Sub Jurusan</label>
+                                <select id="jurusan_id_2" name="jurusan_id_2" class="selectize w-full">
+                                    <option value="">Pilih Sub Jurusan</option>
+                                    @foreach($subJurusan as $item)
+                                        <option value="{{ $item->id }}" @selected($data->jurusan_id_2 == $item->id)>{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('jurusan_id_2')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -125,6 +130,12 @@
                 searchable: true
             };
             NiceSelect.bind(document.getElementById("guru_id"), options);
+        });
+        document.addEventListener("DOMContentLoaded", function(e) {
+            var options = {
+                searchable: true
+            };
+            NiceSelect.bind(document.getElementById("jurusan_id_2"), options);
         });
 
 </script>

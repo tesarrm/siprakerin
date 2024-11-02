@@ -72,7 +72,7 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <label for="tanggal_akhir">Hari Libur<span class="text-danger">*</span></label>
+                            <label for="tanggal_akhir">Hari Libur</label>
                             <div class="grid grid-cols-1 sm:grid-cols-7 mt-3">
                                 <div>
                                     <input name="senin" type="checkbox" class="form-checkbox" 
@@ -119,6 +119,14 @@
                                 @enderror
                             </div>
                             <div>
+                                <label for="no_hp">No HP</label>
+                                <input value="{{$data->no_hp}}" id="no_hp" type="text" name="no_hp" class="form-input w-full" 
+                                    placeholder="Isi No HP" />
+                                @error('no_hp')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
                                 <label for="no_telp">No Telp</label>
                                 <input value="{{$data->no_telp}}" id="no_telp" type="text" name="no_telp" class="form-input w-full" 
                                     placeholder="Isi No Telp" />
@@ -127,6 +135,22 @@
                                 @enderror
                             </div>
                             <div>
+                                <label for="username">Username<span class="text-danger">*</span></label>
+                                <input value="{{$data->user ? $data->user->username: ''}}" required id="username" type="text" name="username" class="form-input w-full"
+                                    placeholder="Isi Username" />
+                                @error('username')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="email">Email</label>
+                                <input value="{{$data->user ? $data->user->email: ''}}" id="email" type="text" name="email" class="form-input w-full"
+                                    placeholder="Isi Email" />
+                                @error('email')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            {{-- <div>
                                 <label for="email">Email<span class="text-danger">*</span></label>
                                 <input value="{{ $data->user ? $data->user->email : '' }}" 
                                     type="email" 
@@ -137,7 +161,7 @@
                                 @error('email')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
 

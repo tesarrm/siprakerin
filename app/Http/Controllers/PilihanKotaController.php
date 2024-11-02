@@ -254,7 +254,9 @@ public function index2(Request $request)
     {
         $user_id = auth()->user()->id;
 
+
         $siswa = Siswa::where('user_id', $user_id)
+            ->with('kelas.jurusan2')
             ->with('kelas.jurusan')
             ->first();
         $data = PilihanKota::where('siswa_id', $siswa->id)->first();
@@ -266,12 +268,32 @@ public function index2(Request $request)
             $data->kota_id_3 = '';
         }
 
+        // // Ambil jurusan siswa beserta kuota industrinya yang memiliki relasi dengan kota industri
+        // $jurusan = Jurusan::with('kuotaIndustris.industri.kota')
+        //     ->whereHas('kuotaIndustris')
+        //     ->findOrFail($siswa->kelas->jurusan->id);
+            // ->whereHas('kuotaIndustris', function ($query) use ($siswa) {
+            //     $query->where('jenis_kelamin', $siswa->jenis_kelamin);
+            // })
+
+        // Cek jurusan yang tersedia: gunakan jurusan2 jika ada, jika tidak, gunakan jurusan
+        $jurusanId = $siswa->kelas->jurusan2->id ?? $siswa->kelas->jurusan->id;
 
         // Ambil jurusan siswa beserta kuota industrinya yang memiliki relasi dengan kota industri
-        $jurusan = Jurusan::with('kuotaIndustris.industri.kota')
-            ->whereHas('kuotaIndustris')
-            ->findOrFail($siswa->kelas->jurusan->id);
-        
+        // $jurusan = Jurusan::with('kuotaIndustris.industri.kota')
+        //     ->whereHas('kuotaIndustris')
+        //     ->findOrFail($jurusanId);
+
+        // Ambil jurusan siswa beserta kuota industrinya yang sesuai jenis kelamin siswa
+        $jurusan = Jurusan::with([
+            'kuotaIndustris' => function ($query) use ($siswa) {
+                $query->where('jenis_kelamin', $siswa->jenis_kelamin);
+            },
+            'kuotaIndustris.industri.kota'
+        ])->whereHas('kuotaIndustris', function ($query) use ($siswa) {
+            $query->where('jenis_kelamin', $siswa->jenis_kelamin);
+        })->findOrFail($jurusanId);
+
         if($jurusan) {
             // Ambil ID kota yang terkait dengan kuotaIndustris.industri.kota
             $kotaIds = $jurusan->kuotaIndustris
@@ -301,6 +323,7 @@ public function index2(Request $request)
             'kota_id_2' => 'required|exists:kotas,id',
             'kota_id_3' => 'required|exists:kotas,id',
         ]);
+
 
         PilihanKota::where('siswa_id', $request->input('siswa_id'))
             ->delete();

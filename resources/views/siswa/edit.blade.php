@@ -90,7 +90,7 @@
                             </div>
                             <div>
                                 <label for="email">Email<span class="text-danger">*</span></label>
-                                <input value="{{$data->user->email}}" required id="email" type="text" name="email" class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly
+                                <input value="{{ $data->user->email}}" required id="email" type="email" name="email" class="form-input w-full"
                                     placeholder="Isi Email" />
                                 @error('email')
                                     <div class="mt-2 text-danger">{{ $message }}</div>

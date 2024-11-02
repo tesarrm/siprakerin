@@ -86,7 +86,7 @@
                     </a>
                 </div>
 
-                <div class="dropdown" x-data="dropdown" @click.outside="open = false">
+                {{-- <div class="dropdown" x-data="dropdown" @click.outside="open = false">
                     <a href="javascript:;"
                         class="relative block p-2 rounded-full bg-white-light/40 dark:bg-dark/40 hover:text-primary hover:bg-white-light/90 dark:hover:bg-dark/60"
                         @click="toggle">
@@ -181,7 +181,7 @@
                             </li>
                         </template>
                     </ul>
-                </div>
+                </div> --}}
                 <div class="dropdown flex-shrink-0" x-data="dropdown" @click.outside="open = false">
                     <a href="javascript:;" class="relative group" @click="toggle()">
                         <span>

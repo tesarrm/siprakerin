@@ -43,7 +43,13 @@
                             </div> --}}
                             <div>
                                 <label for="nama">Nama<span class="text-danger">*</span></label>
-                                <input value="{{ $siswa->user->nama}}" required id="nama" type="text" name="nama" class="form-input w-full"
+                                <input value="{{ $siswa->user->name }}" 
+                                    required 
+                                    id="nama" 
+                                    type="text" 
+                                    name="nama" 
+                                    class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" 
+                                    readonly
                                     placeholder="Isi Nama" />
                                 @error('nama')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
@@ -59,7 +65,13 @@
                             </div>
                             <div>
                                 <label for="nisn">NISN<span class="text-danger">*</span></label>
-                                <input value="{{ $siswa->nisn}}" required id="nisn" type="text" name="nisn" class="form-input w-full" 
+                                <input value="{{ $siswa->nisn}}" 
+                                    required 
+                                    id="nisn" 
+                                    type="text" 
+                                    name="nisn" 
+                                    class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" 
+                                    readonly
                                     placeholder="Isi NISN" />
                                 @error('nisn')
                                     <div class="mt-2 text-danger">{{ $message }}</div>

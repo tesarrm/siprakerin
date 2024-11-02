@@ -33,7 +33,8 @@
     </style>
 
     @php
-        $cud = auth()->user()->can('c_jurnal') && auth()->user()->can('u_jurnal') && auth()->user()->can('d_jurnal');
+        // $cud = auth()->user()->can('c_jurnal') && auth()->user()->can('u_jurnal') && auth()->user()->can('d_jurnal');
+        $cud = false;
         $cu = auth()->user()->can('c_jurnal') && auth()->user()->can('u_jurnal');
     @endphp
 
@@ -300,7 +301,6 @@
     {{-- =========================== --}}
     {{-- BOTTOM --}}
     {{-- =========================== --}}
-
  
 
     <script>
@@ -331,6 +331,29 @@
             }
         @endif
 
+        @if(session('error'))
+            document.addEventListener('DOMContentLoaded', function () {
+                showAlert("{{ session('error') }}");
+            });
+
+            async function showAlert(message) {
+                const toast = window.Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+                toast.fire({
+                    icon: 'error',
+                    title: message,
+                    padding: '2em',
+                    customClass: 'sweet-alerts',
+                });
+            }
+        @endif
+
         /*************
          * data database jurnal 
          */
@@ -350,7 +373,7 @@
                         'action' => $d->id ?? '-', 
                     ];
                 }
-            } else if ($cu) {
+            } else if (auth()->user()->hasRole('siswa')) {
                 foreach ($data as $d) {
                     $items[] = [
                         'nis' => $d->siswa->nis ?? '-',
@@ -659,7 +682,7 @@
  
         ];
 
-        if (@json($cu)) {
+        if (@json(auth()->user()->hasRole('siswa'))) {
             headings = [
                 "NIS",
                 "Nama",
@@ -786,11 +809,29 @@
                                     ></path>
                                 </svg>
                             </a>
+                            <a href="#" class="hover:text-danger" @click="deleteSingleRow('${data}')">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                                    <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                    <path
+                                        d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                        stroke-linecap="round"
+                                    ></path>
+                                    <path opacity="0.5" d="M9.5 11L10 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                    <path opacity="0.5" d="M14.5 11L14 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                    <path
+                                        opacity="0.5"
+                                        d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                                        stroke="currentColor"
+                                        stroke-width="1.5"
+                                    ></path>
+                                </svg>
+                            </a>
                             ` : '';
                         
                         return `<div>
                                     <div class="flex gap-4 items-center">
-                                        ${showButton}
                                         <a href="/jurnal/${data}" class="hover:text-info">
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path 
@@ -805,9 +846,7 @@
                                                 />
                                             </svg>
                                         </a>
-
-
-
+                                        ${showButton}
                                     </div>
                                 </div>`;
                     }
@@ -1302,9 +1341,11 @@
                                 render: function(data, cell, row) {
                                     if(data != '-'){
                                         return `
-                                            <span class="badge badge-outline-info text-sm">
-                                                ${data}
-                                            </span>
+                                            <div style="min-width: 100px;">
+                                                <span class="badge badge-outline-info text-sm">
+                                                    ${data}
+                                                </span>
+                                            </div>
                                         `;
                                     } else {
                                         return `
@@ -1351,6 +1392,25 @@
                                                 ></path>
                                             </svg>
                                         </a>
+                                        <a href="#" class="hover:text-danger" @click="deleteSingleRow('${data}')">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5">
+                                                <path d="M20.5001 6H3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                                <path
+                                                    d="M18.8334 8.5L18.3735 15.3991C18.1965 18.054 18.108 19.3815 17.243 20.1907C16.378 21 15.0476 21 12.3868 21H11.6134C8.9526 21 7.6222 21 6.75719 20.1907C5.89218 19.3815 5.80368 18.054 5.62669 15.3991L5.16675 8.5"
+                                                    stroke="currentColor"
+                                                    stroke-width="1.5"
+                                                    stroke-linecap="round"
+                                                ></path>
+                                                <path opacity="0.5" d="M9.5 11L10 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                                <path opacity="0.5" d="M14.5 11L14 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path>
+                                                <path
+                                                    opacity="0.5"
+                                                    d="M6.5 6C6.55588 6 6.58382 6 6.60915 5.99936C7.43259 5.97849 8.15902 5.45491 8.43922 4.68032C8.44784 4.65649 8.45667 4.62999 8.47434 4.57697L8.57143 4.28571C8.65431 4.03708 8.69575 3.91276 8.75071 3.8072C8.97001 3.38607 9.37574 3.09364 9.84461 3.01877C9.96213 3 10.0932 3 10.3553 3H13.6447C13.9068 3 14.0379 3 14.1554 3.01877C14.6243 3.09364 15.03 3.38607 15.2493 3.8072C15.3043 3.91276 15.3457 4.03708 15.4286 4.28571L15.5257 4.57697C15.5433 4.62992 15.5522 4.65651 15.5608 4.68032C15.841 5.45491 16.5674 5.97849 17.3909 5.99936C17.4162 6 17.4441 6 17.5 6"
+                                                    stroke="currentColor"
+                                                    stroke-width="1.5"
+                                                ></path>
+                                            </svg>
+                                        </a>
                                         ` : '';
                                         @else
                                         const showButton = ''; 
@@ -1358,7 +1418,6 @@
                                     
                                     return `<div>
                                                 <div class="flex gap-4 items-center">
-                                                    ${showButton}
                                                     <a href="#" @click="$dispatch('open-detail', { rowId: '${rowId}' })" class="hover:text-info">
                                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path 
@@ -1373,6 +1432,7 @@
                                                             />
                                                         </svg>
                                                     </a>
+                                                    ${showButton}
 
                                                     <div x-data="detail1" @open-detail.window="if ($event.detail.rowId === '${rowId}') toggle2()">
                                                         <div class="fixed inset-0 bg-[black]/60 z-[999] hidden" :class="open && '!block'" style="text-wrap: wrap;">
@@ -1516,6 +1576,58 @@
                         (d.catatan && d.catatan.toLowerCase().includes(this.searchText))
                     );
                 },
+
+                deleteSingleRow(id) {
+                    window.Swal.fire({
+                        icon: 'warning',
+                        title: 'Apakah Anda yakin?',
+                        text: "Data yang dihapus tidak dapat dikembalikan!",
+                        showCancelButton: true,
+                        confirmButtonText: 'Hapus',
+                        cancelButtonText: 'Batal',
+                        padding: '2em',
+                        customClass: 'sweet-alerts'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/izin/${id}/delete`, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    window.Swal.fire({
+                                        title: 'Dihapus!',
+                                        text: 'Data berhasil dihapus.',
+                                        icon: 'success',
+                                        customClass: 'sweet-alerts'
+                                    });
+                                    this.items = this.items.filter(item => item.id != id);
+                                } else {
+                                    window.Swal.fire({
+                                        title: 'Gagal!',
+                                        text: 'Terjadi kesalahan saat menghapus data.',
+                                        icon: 'error',
+                                        customClass: 'sweet-alerts'
+                                    });
+                                }
+                            })
+                            .catch(error => {
+                                console.log(error)
+                                window.Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Terjadi kesalahan saat menghapus data.',
+                                    icon: 'error',
+                                    customClass: 'sweet-alerts'
+                                });
+                            });
+                        }
+                    });
+                }
+
             }))
         })
     </script>

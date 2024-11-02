@@ -142,8 +142,10 @@ class IzinController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Izin $izin)
+    public function destroy($id)
     {
-        //
+        $data = Izin::findOrFail($id);
+        $data->delete();
+        return response()->json(['success' => true]);
     }
 }

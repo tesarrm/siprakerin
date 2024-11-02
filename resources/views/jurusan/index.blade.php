@@ -81,6 +81,7 @@
                 'nama' => $d->nama,
                 'singkatan' => $d->singkatan,
                 'bidang_keahlian' => $d->bidangKeahlian->nama ?? '-',
+                'parent' => $d->jurusan->nama ?? '-',
                 'action' => $d->id ?? '-',
             ];
         }
@@ -118,6 +119,7 @@
                                 "Nama",
                                 "Singkatan",
                                 "Bidang Keahlian",
+                                "Parent",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -130,6 +132,14 @@
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<input type="checkbox" class="form-checkbox mt-1" :id="'chk' + ${data}" :value="(${data})" x-model.number="selectedRows" />`;
+                                }
+                            },
+                            {
+                                select: 1,
+                                sortable: false,
+                                render: function(data, cell, row) {
+                                    const id = row.cells[0].data; 
+                                    return `<a href="/jurusan/${id}/edit" class="hover:underline">${ data }</a>`;
                                 }
                             },
                             {
@@ -158,6 +168,22 @@
                             },
                             {
                                 select: 4,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-success text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 5,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     return `<div class="flex gap-4 items-center">

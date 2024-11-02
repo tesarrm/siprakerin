@@ -514,6 +514,23 @@ class AuthSeeder extends Seeder
             ['name' => 'd_tahun_ajaran'],
             ['name' => 'd_tahun_ajaran']
         );
+// izin 
+        $permission_c_izin = Permission::updateOrCreate(
+            ['name' => 'c_izin'],
+            ['name' => 'c_izin']
+        );
+        $permission_r_izin = Permission::updateOrCreate(
+            ['name' => 'r_izin'],
+            ['name' => 'r_izin']
+        );
+        $permission_u_izin = Permission::updateOrCreate(
+            ['name' => 'u_izin'],
+            ['name' => 'u_izin']
+        );
+        $permission_d_izin = Permission::updateOrCreate(
+            ['name' => 'd_izin'],
+            ['name' => 'd_izin']
+        );
 
 // =================================================================
 // =================================================================
@@ -648,6 +665,11 @@ class AuthSeeder extends Seeder
         $role_admin->givePermissionTo($permission_u_tahun_ajaran);
         $role_admin->givePermissionTo($permission_d_tahun_ajaran);
 
+        $role_admin->givePermissionTo($permission_c_izin);
+        $role_admin->givePermissionTo($permission_r_izin);
+        $role_admin->givePermissionTo($permission_u_izin);
+        $role_admin->givePermissionTo($permission_d_izin);
+
 // koordinator 
         $role_koordinator->givePermissionTo($permission_r_pilihan_kota);
         $role_koordinator->givePermissionTo($permission_u_pilihan_kota);
@@ -715,6 +737,12 @@ class AuthSeeder extends Seeder
         $role_siswa->givePermissionTo($permission_c_jurnal);
         $role_siswa->givePermissionTo($permission_r_jurnal);
         $role_siswa->givePermissionTo($permission_u_jurnal);
+        $role_siswa->givePermissionTo($permission_d_jurnal);
+
+        $role_admin->givePermissionTo($permission_c_izin);
+        $role_admin->givePermissionTo($permission_r_izin);
+        $role_admin->givePermissionTo($permission_u_izin);
+        $role_admin->givePermissionTo($permission_d_izin);
 
         $role_siswa->givePermissionTo($permission_r_hasil_monitoring);
 

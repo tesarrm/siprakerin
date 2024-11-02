@@ -363,7 +363,7 @@ class DashboardController extends Controller
             ));
         } else if (auth()->user()->hasRole('siswa')) {
             $siswa = Siswa::where('user_id', auth()->user()->id)
-                ->with(['kelas.jurusan', 'penempatan'])
+                ->with(['kelas.jurusan', 'penempatan', 'tahunAjaran', 'walisiswa.user'])
                 ->first();
 
             $siswa_id = $siswa->id;

@@ -13,12 +13,13 @@ class Industri extends Model
         'nama',
         'alamat',
         'kota_id',
-        // 'tahun_ajaran',
         'tanggal_awal',
         'tanggal_akhir',
+        'keterangan',
 
         'user_id',
         'no_telp',
+        'no_hp',
     ];
 
     public function kuotaIndustri()

@@ -19,15 +19,10 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->everyMinute();
 
-        // $schedule->call(function () {
-        //     app(AttendanceController::class)->store(new \Illuminate\Http\Request());
-        // // })->dailyAt('01:00'); 
-        // })->everyMinute();
-
         $schedule->call(function () {
             KehadiranController::storeCron();
-        // })->dailyAt('01:00'); 
-        })->everyMinute();
+        })->dailyAt('01:00'); 
+        // })->everyMinute();
     }
 
     /**

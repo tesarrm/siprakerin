@@ -17,7 +17,9 @@ class CapaianPembelajaranController extends Controller
         $jurusan = Jurusan::with([
             'bidangKeahlian', 
             'capaianPembelajaran.tujuanPembelajaran'])
+            // ->doesntHave('jurusans')
             ->orderBy('nama', 'asc')
+            ->whereNull('jurusan_id')
             ->get();
 
         return view('capaian.index', compact(['jurusan']));

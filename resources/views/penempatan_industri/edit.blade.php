@@ -25,6 +25,36 @@
             $totalLakiLaki = 0;
             $totalPerempuan = 0;
 
+            // foreach ($d->kuotaIndustri as $kuota) {
+            //     $jurusanSingkatan = $kuota->jurusan->singkatan;
+            //     $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
+            //     $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
+            //     $row[$formattedKey] = $kuota->kuota;
+
+            //     // Tambahkan kuota laki-laki dan perempuan ke total
+            //     if ($jenisKelamin == 'L') {
+            //         $totalLakiLaki += $kuota->kuota;
+            //     } else {
+            //         $totalPerempuan += $kuota->kuota;
+            //     }
+            // }
+
+            // // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
+            // foreach ($allJurusan as $jurusanSingkatan) {
+            //     $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
+            //     $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
+            // }
+
+            // Tentukan kuota awal untuk semua jurusan (0 jika tidak ada data)
+            foreach ($jurusan as $jrs) {
+                $row["L-{$jrs->singkatan}"] = 0;
+            }
+
+            foreach ($jurusan as $jrs) {
+                $row["P-{$jrs->singkatan}"] = 0;
+            }
+
+            // Isi kuota berdasarkan data yang ada
             foreach ($d->kuotaIndustri as $kuota) {
                 $jurusanSingkatan = $kuota->jurusan->singkatan;
                 $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
@@ -37,12 +67,6 @@
                 } else {
                     $totalPerempuan += $kuota->kuota;
                 }
-            }
-
-            // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
-            foreach ($allJurusan as $jurusanSingkatan) {
-                $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
-                $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
             }
 
             $items[] = $row;
@@ -83,11 +107,17 @@
     @endphp
 
     <div>
+        @if(empty($industri->tanggal_awal) || empty($industri->tanggal_akhir) || $noLiburIndustri)
+            <div class="mb-4 flex items-center p-3.5 rounded text-danger bg-danger-light dark:bg-danger-dark-light border border-danger">
+                <span class="ltr:pr-2 rtl:pl-2"><strong class="ltr:mr-1 rtl:ml-1">Peringatan!</strong>Isi Tanggal Awal, Tanggal Akhir masa PKL dan Libur Mingguan Industri terlebih dahulu.</span>
+            </div>
+        @endif
+
         <form action="{{ route('penempatan.storeOrUpdate') }}" method="POST">
             @csrf
             <input type="hidden" name="industri_id" value="{{ $industri->id }}">
             <div class="flex xl:flex-row flex-col gap-2.5">
-                <div class="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6" style="width: 100%;">
+                <div class="panel px-0 flex-1 py-6 style="width: 100%;">
                     <div class=" px-4">
                         <div class="text-lg font-semibold">Penempatan Prakerin</div>
                         <div class="flex justify-between lg:flex-row flex-col">
@@ -108,6 +138,18 @@
                                     <label for="alamat" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Alamat</span></label>
                                     <div class="flex-1">
                                         <input value="{{ $industri->alamat }}" required id="alamat" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Alamat" />
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center">
+                                    <label for="tanggal_awal" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Tanggal Awal</span></label>
+                                    <div class="flex-1">
+                                        <input value="{{ $industri->tanggal_awal }}" required id="tanggal_awal" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Tanggal Awal" />
+                                    </div>
+                                </div>
+                                <div class="mt-4 flex items-center">
+                                    <label for="tanggal_akhir" class="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">Tanggal Akhir</span></label>
+                                    <div class="flex-1">
+                                        <input value="{{ $industri->tanggal_akhir }}" required id="tanggal_akhir" type="text"  class="form-input pointer-events-none bg-[#eee] dark:bg-[#1b2e4b] cursor-not-allowed" readonly placeholder="Isi Tanggal Akhir" />
                                     </div>
                                 </div>
                             </div>
@@ -145,82 +187,84 @@
                         {{-- table input --}}
                         <div x-data="form" x-init="initialize()" class="table-responsive">
                             @if($totalLakiLaki + $totalPerempuan > 0)
-                            <table class="table-auto" style="margin-bottom: 100px;">
-                                <thead>
-                                    <tr>
-                                        <th class="px-4 py-5">Nama Siswa</th>
-                                        <th class="px-4 py-5">Pilihan Kota</th>
-                                        <th class="px-4 py-5">Jenis Kelamin</th>
-                                        <th class="px-4 py-5">Kelas</th>
-                                        <th class="px-4 py-5">Tahun Ajaran</th>
-                                        <th class="px-4 py-5">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <template x-for="(row, index) in tableData" :key="index">
+                                <table class="table-auto" style="margin-bottom: 100px;">
+                                    <thead>
                                         <tr>
-                                            <td class="px-4 py-2">
-                                                <select 
-                                                    :id="'searchable-select-' + index"
-                                                    :name="'data['+index+'][id_siswa]'" 
-                                                    x-model="row.id_siswa" 
-                                                    @change="updateSiswa(row.id_siswa, index)" 
-                                                    class="selectize w-full" 
-                                                    style="border:none; padding: 5px; padding-right: 30px;"
-                                                >
-                                                    <option value="">Pilih Siswa</option>
-                                                    <template x-for="siswa in siswaData" :key="siswa.id">
-                                                        <option :value="siswa.id" :selected="row.id_siswa == siswa.id">
-                                                            <span x-text="siswa.user.name + ' | '"></span>
-                                                            <span x-text="siswa.kelas.nama + ' ' + siswa.kelas.jurusan.singkatan + ' ' + siswa.kelas.klasifikasi + ' | '"></span>
-                                                            {{-- Logika pengecekan kota --}}
-                                                            <span x-show="siswa.pilihankota.kota1.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota2.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota3.nama === '{{ $industri->kota->nama }}'">
-                                                                (<span x-text="getMatchingKota(siswa.pilihankota)"></span>)
-                                                            </span>
-                                                        </option>
-                                                    </template>
-                                                </select>
-                                              </td>
-                                            <td class="px-4 py-2">
-                                                <input type="text" x-model="row.pilihan" name="pilihan" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td>
-                                            <td class="px-4 py-2">
-                                                <input type="text" x-model="row.jenis_kelamin" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td>
-                                            <td class="px-4 py-2">
-                                                <input type="text" x-model="row.kelas" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td>
-                                            <td class="px-4 py-2">
-                                                <input type="text" x-model="row.tahun_ajaran" name="tahun_ajaran" class="form-input w-full" style="border:none; padding: 0;" readonly />
-                                            </td>
-                                            <td class="px-4 py-2 text-center">
-                                                {{-- <button type="button" @click="removeRow(index)" class="text-red-500">Hapus</button> --}}
-                                                <a href="javascript:;" x-tooltip="Delete" @click="removeRow(index)" >
-
-                                                    <svg width="24" height="24" viewBox="0 0 24 24"
-                                                        fill="none" xmlns="http://www.w3.org/2000/svg"
-                                                        class="w-5 h-5 text-danger">
-                                                        <circle opacity="0.5" cx="12" cy="12"
-                                                            r="10" stroke="currentColor"
-                                                            stroke-width="1.5" />
-                                                        <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
-                                                            stroke="currentColor" stroke-width="1.5"
-                                                            stroke-linecap="round" />
-                                                    </svg>
-                                                </a>
-                                            </td>
+                                            <th class="px-4 py-5">Nama Siswa</th>
+                                            <th class="px-4 py-5">Pilihan Kota</th>
+                                            <th class="px-4 py-5">Jenis Kelamin</th>
+                                            <th class="px-4 py-5">Kelas</th>
+                                            <th class="px-4 py-5">Tahun Ajaran</th>
+                                            <th class="px-4 py-5">Action</th>
                                         </tr>
-                                    </template>
-                                </tbody>
-                            </table>
-                            <div class="flex mr-7 mt-4">
-                                <button type="button" @click="addRow" class="btn btn-sm btn-dark w-8 h-8 p-0 rounded-full ml-auto">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
-                                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                    </svg>
-                                </button>
-                            </div>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="(row, index) in tableData" :key="index">
+                                            <tr>
+                                                <td class="px-4 py-2">
+                                                    <select 
+                                                        :id="'searchable-select-' + index"
+                                                        :name="'data['+index+'][id_siswa]'" 
+                                                        x-model="row.id_siswa" 
+                                                        @change="updateSiswa(row.id_siswa, index)" 
+                                                        class="selectize w-full" 
+                                                        style="border:none; padding: 5px; padding-right: 30px;"
+                                                    >
+                                                        <option value="">Pilih Siswa</option>
+                                                        <template x-for="siswa in siswaData" :key="siswa.id">
+                                                            <option :value="siswa.id" :selected="row.id_siswa == siswa.id">
+                                                                <span x-text="siswa.user.name + ' | '"></span>
+                                                                <span x-text="siswa.kelas.nama + ' ' + siswa.kelas.jurusan.singkatan + ' ' + siswa.kelas.klasifikasi + ' | '"></span>
+                                                                {{-- Logika pengecekan kota --}}
+                                                                <span x-show="siswa.pilihankota.kota1.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota2.nama === '{{ $industri->kota->nama }}' || siswa.pilihankota.kota3.nama === '{{ $industri->kota->nama }}'">
+                                                                    (<span x-text="getMatchingKota(siswa.pilihankota)"></span>)
+                                                                </span>
+                                                            </option>
+                                                        </template>
+                                                    </select>
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    <input type="text" x-model="row.pilihan" name="pilihan" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    <input type="text" x-model="row.jenis_kelamin" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    <input type="text" x-model="row.kelas" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                </td>
+                                                <td class="px-4 py-2">
+                                                    <input type="text" x-model="row.tahun_ajaran" name="tahun_ajaran" class="form-input w-full" style="border:none; padding: 0;" readonly />
+                                                </td>
+                                                <td class="px-4 py-2 text-center">
+                                                    {{-- <button type="button" @click="removeRow(index)" class="text-red-500">Hapus</button> --}}
+                                                    <a href="javascript:;" x-tooltip="Delete" @click="removeRow(index)" >
+
+                                                        <svg width="24" height="24" viewBox="0 0 24 24"
+                                                            fill="none" xmlns="http://www.w3.org/2000/svg"
+                                                            class="w-5 h-5 text-danger">
+                                                            <circle opacity="0.5" cx="12" cy="12"
+                                                                r="10" stroke="currentColor"
+                                                                stroke-width="1.5" />
+                                                            <path d="M14.5 9.50002L9.5 14.5M9.49998 9.5L14.5 14.5"
+                                                                stroke="currentColor" stroke-width="1.5"
+                                                                stroke-linecap="round" />
+                                                        </svg>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                                @if(!empty($industri->tanggal_awal) && !empty($industri->tanggal_akhir && !$noLiburIndustri))
+                                    <div class="flex mr-7 mt-4">
+                                        <button type="button" @click="addRow" class="btn btn-sm btn-dark w-8 h-8 p-0 rounded-full ml-auto">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5">
+                                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @endif
                             @endif
                         </div>
                         </div>
@@ -266,9 +310,14 @@
     {{-- BOTTOM --}}
     {{-- =========================== --}}
 
-    {{-- alert toast --}}
-    @if(session('error'))
-        <script>
+
+
+    <script>
+        /*************
+         * alert toast 
+         */
+
+        @if(session('error'))
             document.addEventListener('DOMContentLoaded', function () {
                 showAlert("{{ session('error') }}");
             });
@@ -289,10 +338,8 @@
                     customClass: 'sweet-alerts',
                 });
             }
-        </script>
-    @endif
+        @endif
 
-    <script>
         /*************
          * atur posisi header table 
          */

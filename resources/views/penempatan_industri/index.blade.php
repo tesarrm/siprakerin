@@ -47,6 +47,37 @@
                 $totalLakiLaki = 0;
                 $totalPerempuan = 0;
 
+                // foreach ($d->kuotaIndustri as $kuota) {
+                //     $jurusanSingkatan = $kuota->jurusan->singkatan;
+                //     $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
+                //     $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
+                //     $row[$formattedKey] = $kuota->kuota;
+
+                //     // Tambahkan kuota laki-laki dan perempuan ke total
+                //     if ($jenisKelamin == 'L') {
+                //         $totalLakiLaki += $kuota->kuota;
+                //     } else {
+                //         $totalPerempuan += $kuota->kuota;
+                //     }
+                // }
+
+                // // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
+                // foreach ($allJurusan as $jurusanSingkatan) {
+                //     $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
+                //     $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
+                // }
+
+                // Tentukan kuota awal untuk semua jurusan (0 jika tidak ada data)
+                foreach ($jurusan as $jrs) {
+                    $row["L-{$jrs->singkatan}"] = 0;
+                }
+
+                foreach ($jurusan as $jrs) {
+                    $row["P-{$jrs->singkatan}"] = 0;
+                    // $row["L-{$jrs->singkatan}"] = 0;
+                }
+
+                // Isi kuota berdasarkan data yang ada
                 foreach ($d->kuotaIndustri as $kuota) {
                     $jurusanSingkatan = $kuota->jurusan->singkatan;
                     $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
@@ -59,12 +90,6 @@
                     } else {
                         $totalPerempuan += $kuota->kuota;
                     }
-                }
-
-                // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
-                foreach ($allJurusan as $jurusanSingkatan) {
-                    $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
-                    $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
                 }
 
                 $row['total_kuota'] = $totalLakiLaki + $totalPerempuan;
@@ -100,6 +125,37 @@
                 $totalLakiLaki = 0;
                 $totalPerempuan = 0;
 
+                // foreach ($d->kuotaIndustri as $kuota) {
+                //     $jurusanSingkatan = $kuota->jurusan->singkatan;
+                //     $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
+                //     $formattedKey = "{$jenisKelamin}-{$jurusanSingkatan}";
+                //     $row[$formattedKey] = $kuota->kuota;
+
+                //     // Tambahkan kuota laki-laki dan perempuan ke total
+                //     if ($jenisKelamin == 'L') {
+                //         $totalLakiLaki += $kuota->kuota;
+                //     } else {
+                //         $totalPerempuan += $kuota->kuota;
+                //     }
+                // }
+
+                // // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
+                // foreach ($allJurusan as $jurusanSingkatan) {
+                //     $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
+                //     $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
+                // }
+
+                // Tentukan kuota awal untuk semua jurusan (0 jika tidak ada data)
+                foreach ($jurusan as $jrs) {
+                    $row["L-{$jrs->singkatan}"] = 0;
+                }
+
+                foreach ($jurusan as $jrs) {
+                    $row["P-{$jrs->singkatan}"] = 0;
+                    // $row["L-{$jrs->singkatan}"] = 0;
+                }
+
+                // Isi kuota berdasarkan data yang ada
                 foreach ($d->kuotaIndustri as $kuota) {
                     $jurusanSingkatan = $kuota->jurusan->singkatan;
                     $jenisKelamin = $kuota->jenis_kelamin == 'Laki-laki' ? 'L' : 'P';
@@ -114,11 +170,6 @@
                     }
                 }
 
-                // Isi semua jurusan dengan kuota, set 0 jika tidak ada kuota
-                foreach ($allJurusan as $jurusanSingkatan) {
-                    $row["L-{$jurusanSingkatan}"] = $row["L-{$jurusanSingkatan}"] ?? 0;
-                    $row["P-{$jurusanSingkatan}"] = $row["P-{$jurusanSingkatan}"] ?? 0;
-                }
 
                 $row['total_kuota'] = $totalLakiLaki + $totalPerempuan;
                 $row['terisi'] = $d->total_terisi;

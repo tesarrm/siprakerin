@@ -297,7 +297,7 @@
                 $items[] = [
                     'id' => $d->id ?? '-',
                     'nama' => $d->user->name ?? '-',
-                    'nis' => $d->nis ?? '-',
+                    'nisn' => $d->nisn ?? '-',
                     'email' => $d->user->email ?? '-',
                     'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                     'agama' => $d->agama ?? '-',
@@ -393,7 +393,7 @@
                             headings: [
                                 '<input type="checkbox" class="form-checkbox" :checked="checkAllCheckbox" :value="checkAllCheckbox" @change="checkAll($event.target.checked)"/>',
                                 "Nama",
-                                "NIS",
+                                "NISN",
                                 "Email",
                                 "Jenis Kelamin",
                                 "Agama",

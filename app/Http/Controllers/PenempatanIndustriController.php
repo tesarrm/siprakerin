@@ -40,7 +40,11 @@ class PenempatanIndustriController extends Controller
                 $query->where('kelas.id', $kelas->id);
             })->with(['siswa.kelas', 'industri.kota'])->get();
         } else {
-            $penempatan = PenempatanIndustri::with(['siswa.kelas.jurusan', 'industri.kota', 'siswa.tahunAjaran'])
+            $penempatan = PenempatanIndustri::with([
+                    'siswa.kelas.jurusan', 
+                    'industri.kota', 
+                    'siswa.tahunAjaran'
+                    ])
                 ->paginate(250);
         }
 
@@ -52,7 +56,8 @@ class PenempatanIndustriController extends Controller
             ->orderBy('nama', 'asc')
             ->paginate(100);
 
-        $jurusan = Jurusan::get();
+        // $jurusan = Jurusan::get();
+        $jurusan = Jurusan::doesntHave('jurusans')->get();
         $kota = Kota::get();
         $kelas = Kelas::with('jurusan')->get();
 
@@ -93,6 +98,7 @@ class PenempatanIndustriController extends Controller
         $data = Industri::with(['kuotaIndustri', 'kuotaIndustri.jurusan'])
                     ->where('id', $industri_id)->get();
         $jurusan = Jurusan::get();
+        // $jurusan = Jurusan::doesntHave('jurusans')->get();
         $penempatan = PenempatanIndustri::where('industri_id', $industri_id)->get();
         $siswaIds = $penempatan->pluck('siswa_id')->toArray();
         $siswaTerfilter = Siswa::whereIn('id', $siswaIds)
@@ -127,9 +133,8 @@ class PenempatanIndustriController extends Controller
      */
     public function edit($industri_id)
     {
-        $industri = Industri::with('kota')->findOrFail($industri_id);
-        $siswa = Siswa::with(['kelas.jurusan', 'tahunAjaran'])->get();
-
+        $industri = Industri::with(['kota', 'libur'])->findOrFail($industri_id);
+        // $siswa = Siswa::with(['kelas.jurusan', 'tahunAjaran'])->get();
         $kota_id = $industri->kota->id;
 
         // // Filter siswa berdasarkan pilihan_kotas yang kota_id_1, kota_id_2, atau kota_id_3 cocok dengan kota_id industri
@@ -143,15 +148,22 @@ class PenempatanIndustriController extends Controller
             'tahunAjaran'
             ])
             ->whereHas('pilihankota', function ($query) use ($kota_id) {
-                $query->where('kota_id_1', $kota_id)
-                    ->orWhere('kota_id_2', $kota_id)
-                    ->orWhere('kota_id_3', $kota_id);
+                // $query->where('kota_id_1', $kota_id)
+                //     ->orWhere('kota_id_2', $kota_id)
+                //     ->orWhere('kota_id_3', $kota_id);
+                $query->whereNotNull('status') // Menambah kondisi status tidak null
+                    ->where(function ($query) use ($kota_id) {
+                        $query->where('kota_id_1', $kota_id)
+                            ->orWhere('kota_id_2', $kota_id)
+                            ->orWhere('kota_id_3', $kota_id);
+                    });
             })
             ->get();
 
         $data = Industri::with(['kuotaIndustri', 'kuotaIndustri.jurusan'])
                     ->where('id', $industri_id)->get();
-        $jurusan = Jurusan::get();
+        // $jurusan = Jurusan::get();
+        $jurusan = Jurusan::doesntHave('jurusans')->get();
         $penempatan = PenempatanIndustri::where('industri_id', $industri_id)->get();
         $siswaIds = $penempatan->pluck('siswa_id')->toArray();
         $siswaTerfilter = Siswa::whereIn('id', $siswaIds)
@@ -165,9 +177,21 @@ class PenempatanIndustriController extends Controller
                                 ])
                             ->get();
 
+        $noLiburIndustri = 
+            $industri->libur &&
+            !$industri->libur->senin &&
+            !$industri->libur->selasa &&
+            !$industri->libur->rabu &&
+            !$industri->libur->kamis &&
+            !$industri->libur->jumat &&
+            !$industri->libur->sabtu &&
+            !$industri->libur->minggu;
+
+
         return view('penempatan_industri.edit', compact([
             'penempatan', 
             'industri', 
+            'noLiburIndustri', 
             'siswa', 
             'siswaTerfilter', 
             'data', 

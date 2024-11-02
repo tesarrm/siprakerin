@@ -81,9 +81,8 @@
                 'nama' => $d->nama . " " . $d->jurusan->singkatan . " " . $d->klasifikasi ?? '-',
                 'klasifikasi' => $d->klasifikasi ?? '-',
                 'jurusan' => $d->jurusan->nama ?? '-',
-                // 'bidang_keahlian' => $d->jurusan->bidangKeahlian->nama ?? '-',
+                'sub_jurusan' => $d->jurusan2->nama ?? '-',
                 'guru' => $d->guru->user->name?? '-',
-                // 'tahun_ajaran' => $d->tahun_ajaran ?? '-',
                 'action' => $d->id ?? '-', 
             ];
         }
@@ -137,9 +136,8 @@
                                 "Nama",
                                 "Klasifikasi",
                                 "Jurusan",
-                                // "Bidang Keahlian",
+                                "Sub Jurusan",
                                 "Wali Kelas",
-                                // "Tahun Ajaran",
                                 "Aksi",
                             ],
                             data: this.dataArr
@@ -196,6 +194,22 @@
                             },
                             {
                                 select: 5,
+                                render: function(data, cell, row) {
+                                    if(data != '-'){
+                                        return `
+                                            <span class="badge badge-outline-warning text-sm">
+                                                ${data}
+                                            </span>
+                                        `;
+                                    } else {
+                                        return `
+                                            ${data}
+                                        `;
+                                    }
+                                }
+                            },
+                            {
+                                select: 6,
                                 sortable: false,
                                 render: function(data, cell, row) {
                                     const rowId = `row-${data}`; // Buat unique row ID berdasarkan data

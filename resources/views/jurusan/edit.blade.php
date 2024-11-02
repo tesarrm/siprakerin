@@ -12,6 +12,18 @@
                         <div class="text-lg font-semibold mb-4">Data Jurusan</div>
                         <div class="grid grid-cols-1 gap-4">
                             <div>
+                                <label for="jurusan_id">Parent</label>
+                                <select id="jurusan_id" name="jurusan_id" class="form-select w-full">
+                                    <option value="">Pilih Jurusan</option>
+                                    @foreach($jurusan as $item)
+                                        <option value="{{ $item->id }}" @selected($data->jurusan_id == $item->id)>{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('jurusan_id')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
                                 <label for="nama">Nama<span class="text-danger">*</span></label>
                                 <input value="{{$data->nama}}" required id="nama" type="text" name="nama" class="form-input w-full" 
                                 placeholder="Isi Nama"/>

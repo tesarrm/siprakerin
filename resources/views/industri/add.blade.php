@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <div class="mt-4">
-                            <label for="tanggal_akhir">Hari Libur<span class="text-danger">*</span></label>
+                            <label for="tanggal_akhir">Hari Libur</label>
                             <div class="grid grid-cols-1 sm:grid-cols-7 mt-3">
                                 <div>
                                     <input name="senin" type="checkbox" class="form-checkbox" />Senin 
@@ -102,10 +102,18 @@
                         <div class="text-lg font-semibold mt-4">Informasi Akun</div>
                         <div class="grid grid-cols-1 mt-4 mb-6 sm:grid-cols-2 gap-4">
                             <div>
-                                <label for="nama_akun">Nama</label>
+                                <label for="nama_akun">Nama<span class="text-danger">*</span></label>
                                 <input required id="nama_akun" type="text" name="nama_akun" class="form-input w-full"
                                     placeholder="Isi Nama" />
                                 @error('nama_akun')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
+                                <label for="no_hp">No HP</label>
+                                <input id="no_hp" type="text" name="no_hp" class="form-input w-full" 
+                                    placeholder="Isi No HP" />
+                                @error('no_hp')
                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -118,8 +126,16 @@
                                 @enderror
                             </div>
                             <div>
+                                <label for="username">Username<span class="text-danger">*</span></label>
+                                <input required id="username" type="text" name="username" class="form-input w-full"
+                                    placeholder="Isi Username" />
+                                @error('username')
+                                    <div class="mt-2 text-danger">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div>
                                 <label for="email">Email</label>
-                                <input required id="email" type="text" name="email" class="form-input w-full"
+                                <input id="email" type="text" name="email" class="form-input w-full"
                                     placeholder="Isi Email" />
                                 @error('email')
                                     <div class="mt-2 text-danger">{{ $message }}</div>

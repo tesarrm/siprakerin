@@ -36,7 +36,7 @@
                                                 <select required id="kota_id_2" name="kota_id_2" class="form-select w-full">
                                                     <option value="">Pilih Pilihan 2</option>
                                                     @foreach($kota as $item)
-                                                        <option value="{{ $item->id }}" @selected($data->kota_id_1 == $item->id)>{{ $item->nama }}</option>
+                                                        <option value="{{ $item->id }}" @selected($data->kota_id_2 == $item->id)>{{ $item->nama }}</option>
                                                     @endforeach
                                                 </select>
                                                 @error('kota_id_2')
@@ -62,11 +62,11 @@
                                         </div>
                                         <div class="mt-4 flex">
                                             <label for="reciever-name" class="ltr:mr-4 rtl:ml-2 w-1/4 mb-0 text-end">
-                                                Alasan<span class="text-danger">*</span>
+                                                Alasan
                                             </label>
                                             <div class="flex-1">
                                                 <textarea id="alasan" rows="3" name="alasan" class="form-textarea" 
-                                                    placeholder="Isi Alasan" required>{{ $data->alasan }}</textarea>
+                                                    placeholder="Isi Alasan">{{ $data->alasan }}</textarea>
                                                 @error('alasan')
                                                     <div class="mt-2 text-danger">{{ $message }}</div>
                                                 @enderror

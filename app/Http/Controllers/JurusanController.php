@@ -29,9 +29,11 @@ class JurusanController extends Controller
     public function create()
     {
         $bk = BidangKeahlian::get();
+        $jurusan = Jurusan::orderBy('nama', 'asc')->get();
 
         return view('jurusan.add', [
-            'bk' => $bk
+            'bk' => $bk,
+            'jurusan' => $jurusan,
         ]);
     }
 
@@ -41,6 +43,7 @@ class JurusanController extends Controller
             'nama' => 'required|string',
             'singkatan' => 'required|string',
             'bidang_keahlian_id' => 'required',
+            'jurusan_id' => 'nullable',
         ]);
 
         $create = collect($validatedData);
@@ -53,10 +56,12 @@ class JurusanController extends Controller
     public function edit(Jurusan $jurusan)
     {
         $bk = BidangKeahlian::get();
+        $jr = Jurusan::orderBy('nama', 'asc')->get();
 
         return view('jurusan.edit', [
             'data' => $jurusan,
-            'bk' => $bk
+            'bk' => $bk,
+            'jurusan' => $jr,
         ]);
     }
 
@@ -68,6 +73,7 @@ class JurusanController extends Controller
             'nama' => 'required|string',
             'singkatan' => 'required|string',
             'bidang_keahlian_id' => 'required',
+            'jurusan_id' => 'nullable',
         ]);
 
         $update = collect($validatedData);

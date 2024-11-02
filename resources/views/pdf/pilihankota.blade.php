@@ -28,6 +28,7 @@
         table {
             background: #fff;
             border-collapse: collapse;
+            width: 100%;
         }
         table, th, td {
             border: 1px solid black;
@@ -54,7 +55,7 @@
 <body>
 <div style="width: 813.70px; height: 1247.40px; position: relative; background: white">
   <img style="width: 811.83px; height: 1243.68px; left: 0px; top: 0px; position: absolute" src="{{ $base64 }}" />
-  <div style="width: 269px; left: 139px; top: 236px; position: absolute; text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">{{ $siswa->user->name}}</div>
+  <div style="width: 300px; left: 139px; top: 236px; position: absolute; text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">{{ $siswa->user->name}}</div>
   <div style="width: 269px; left: 533px; top: 236px; position: absolute; text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">{{ $siswa->kelas->jurusan->singkatan . " " . $siswa->kelas->klasifikasi }}</div>
   <div class="container-table">
     <table style="text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">
@@ -100,8 +101,7 @@
         Alasan memilih tempat PKL:
     </div>
     <div style="text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">
-        In publishing and graphic design, Lorem ipsum is a  placeholder text commonly used to demonstrate the visual form of a  document or a typeface without relying on meaningful conte
-        In publishing and graphic design, Lorem ipsum is a  placeholder text commonly used to demonstrate the visual form of a  document or a typeface without relying on meaningful conte
+        {{$pilihan->alasan}}
     </div>
     <div style="margin-top: 12px; margin-bottom: 5px; text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">
         Keterangan:
@@ -109,24 +109,33 @@
     <div style="text-align: justify; color: black; font-size: 16px; font-family: Source Serif Pro; font-weight: 400; word-wrap: break-word">
         <ol style="margin: 0">
             <li>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa, perspiciatis.
+                Beri tanda checklist ( V ) pada kolom pilihan
             </li>
             <li>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae ipsum velit, veritatis ducimus fugiat voluptates ullam similique nihil enim voluptatem suscipit, dolor natus consequatur harum quibusdam aliquid adipisci corrupti nostrum tempore distinctio sint explicabo odit. Modi amet suscipit harum optio, necessitatibus debitis cum, dolorem praesentium ipsam expedita sequi quod itaque.
+                Dalam menentukan pilihan kota tempat PKL, harus diperhitungkan dengan saksama dan
+                disetujui Orang Tua, agar dikemudian hari tidak terjadi pindah kota/tempat PKL dengan alasan
+                apapun
             </li>
             <li>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa, perspiciatis.
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa, perspiciatis.
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa, perspiciatis.
+                Yang dimaksud biaya hidup adalah biaya hidup untuk siswa selama melaksanakan PKL
             </li>
             <li>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa, perspiciatis.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae ipsum velit, veritatis ducimus fugiat voluptates ullam similique nihil enim voluptatem suscipit, dolor natus consequatur harum quibusdam aliquid adipisci corrupti nostrum tempore distinctio sint explicabo odit. Modi amet suscipit harum optio, necessitatibus debitis cum, dolorem praesentium ipsam expedita sequi quod itaque.
+                Kuota tempat PKL bagi siswa yang memilih di luar kota masih sangat terbatas karena kondisi
+                pandemi terakhir, namun pihak sekolah tetap berusaha untuk mencari tempat PKL yang sesuai
+                dengan tetap mengacu pada anjuran pemerintah dan aturan sekolah serta penerapan protokol
+                kesehatan di industri tersebut
             </li>
             <li>
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa, perspiciatis.
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa, perspiciatis.
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ipsa, perspiciatis.
+                Apabila siswa mendapatkan tempat PKL di luar pilihan kota tersebut di atas, mohon
+                mencantumkan pada kolom kota lain dan segera melaporkan ke Bagian PKL untuk ditindaklanjui
+            </li>
+            <li>
+                Siswa yang mendapat tempat PKL di luar penempatan dari sekolah, harus menunjukkan Surat
+                Rekomendasi/Surat Persetujuan dari perusahaan yang dimaksud
+            </li>
+            <li>
+                Setelah diisi dan ditandatangani, blanko ini dikumpulkan kembali ke wali kelas, paling lambat
+                tanggal 15 Desember 2024.
             </li>
         </ol>
     </div>

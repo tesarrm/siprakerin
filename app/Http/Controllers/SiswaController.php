@@ -415,7 +415,7 @@ class SiswaController extends Controller
             $items[] = [
                 'id' => $d->id ?? '-',
                 'nama' => $d->user->name ?? '-',
-                'nis' => $d->nis ?? '-',
+                'nisn' => $d->nisn ?? '-',
                 'email' => $d->user->email ?? '-',
                 'jenis_kelamin' => $d->jenis_kelamin ?? '-',
                 'agama' => $d->agama ?? '-',
